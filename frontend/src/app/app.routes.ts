@@ -1,25 +1,28 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterComponent } from './features/auth/register/register.component';
-import { DashboardComponent } from './features/dashboard/dashboard.component'; // Asegúrate que exista
-import { authGuard } from './core/guards/auth.guard'; // Importa el guard
+import { DashboardComponent } from './features/dashboard/dashboard.component'; // Página pública
+import { HomeComponent } from './features/home/home.component';           // Nueva página protegida
+import { authGuard } from './core/guards/auth.guard'; // El guard se usará para /home
 
 export const routes: Routes = [
   // Rutas públicas
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  { path: 'dashboard', component: DashboardComponent }, // Dashboard ahora es público
 
-  // Rutas protegidas
+  // Ruta protegida (nueva)
   {
-    path: 'dashboard',
-    component: DashboardComponent,
-    canActivate: [authGuard] // Aplica el guard aquí
+    path: 'home', // La ruta para usuarios autenticados
+    component: HomeComponent,
+    canActivate: [authGuard] // Protegida por el guard
   },
-  // Puedes tener más rutas protegidas aquí
 
-  // Redirección por defecto
-   { path: '', redirectTo: '/dashboard', pathMatch: 'full' }, // Intenta ir al dashboard por defecto
+  // Redirección por defecto: va al dashboard público
+  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
 
-  // Ruta comodín (página no encontrada) - podría redirigir a login o a una página 404
-   { path: '**', redirectTo: '/login' } // O redirige a una página 'NotFoundComponent'
+  // Ruta comodín: redirige al dashboard público si la ruta no existe
+  { path: '**', redirectTo: '/dashboard' }
+  // Alternativa: crear un componente NotFoundComponent y redirigir aquí
+  // { path: '**', component: NotFoundComponent }
 ];

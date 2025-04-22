@@ -1,0 +1,168 @@
+/* styles.css (O login.component.css / register.component.css) */
+
+/* Estilos base heredados o inspirados en tu CSS original */
+:host {
+  display: block;
+  font-family: sans-serif; /* Heredado */
+}
+
+.auth-page-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  /* Usamos un fondo sutil similar al hero-visual o blanco */
+  background-color: #f8f7ff;
+  /* background-color: #ffffff; */ /* Alternativa: fondo blanco */
+}
+
+.auth-card {
+  background-color: #ffffff; /* Fondo blanco como el contenedor principal */
+  padding: 2.5rem 3rem;      /* Padding generoso, similar a hero-content */
+  border: 1px solid #eee;    /* Borde sutil como landing-header */
+  border-radius: 8px;        /* Mismo radio que los botones */
+  max-width: 450px;
+  width: 100%;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Sombra suave opcional */
+}
+
+/* Título de la Card */
+.auth-card mat-card-title {
+  color: #333;             /* Color de título principal */
+  font-weight: bold;        /* O 600 si prefieres */
+  font-size: 1.8rem;        /* Tamaño adecuado para el título del formulario */
+  text-align: center;
+  margin-bottom: 2rem;    /* Espacio antes del formulario */
+}
+
+/* Estilo para los campos de formulario */
+.full-width {
+  width: 100%;
+  margin-bottom: 1.5rem; /* Espacio entre campos */
+}
+
+/* Contenedor del botón principal */
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;     /* Espacio sobre el botón */
+  margin-bottom: 1.5rem; /* Espacio bajo el botón */
+}
+
+/* --- Estilos para sobrescribir/complementar Angular Material Buttons --- */
+/* Aplicar estilos .btn y .btn-primary a mat-raised-button */
+/* Puede requerir ajustar especificidad o usar !important si Material interfiere mucho */
+/* O podrías usar <button class="btn btn-primary"> en lugar de mat-raised-button */
+
+button.mat-raised-button.btn.btn-primary,
+a.mat-button.btn.btn-primary, /* Si usas <a mat-button> */
+a.mat-flat-button.btn.btn-primary { /* Si usas <a mat-flat-button> */
+  /* Heredados de .btn */
+  padding: 0.75rem 1.5rem; /* Ajusta si necesitas el padding de .btn-cta */
+  border: none;
+  border-radius: 8px !important; /* Forzar sobre Material */
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex; /* Para alinear spinner y texto */
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  line-height: normal !important; /* Resetear line-height de Material si interfiere */
+  min-width: auto !important; /* Resetear min-width de Material */
+
+  /* Heredados de .btn-primary */
+  background-color: #6b4fbb !important; /* Forzar sobre Material */
+  color: #fff !important;
+
+  /* Estilo Hover */
+  &:hover {
+    /* Usamos una función SASS aquí, en CSS plano necesitas el valor calculado */
+    /* darken(#6b4fbb, 10%) es aprox #563d9a */
+    background-color: #563d9a !important;
+  }
+
+   /* Estilo Disabled (opcional, Material ya tiene uno) */
+   &:disabled {
+     background-color: rgba(107, 79, 187, 0.5) !important;
+     color: rgba(255, 255, 255, 0.7) !important;
+     cursor: not-allowed;
+   }
+}
+
+/* Ajuste para el spinner dentro del botón */
+button.mat-raised-button.btn.btn-primary mat-spinner {
+  margin: 0; /* Quitar margen si lo tiene */
+  /* El color del spinner se hereda o se puede setear */
+}
+button.mat-raised-button.btn.btn-primary .mat-mdc-button-persistent-ripple {
+    border-radius: 8px; /* Asegurar que el ripple coincida */
+}
+
+
+/* Mensajes de Error y Éxito */
+.error-message,
+.success-message {
+  text-align: center;
+  padding: 0.75rem;
+  margin-bottom: 1.5rem;
+  border-radius: 4px; /* Radio más pequeño para mensajes */
+  font-size: 0.9em;
+  font-weight: 500;
+}
+
+.error-message {
+  background-color: #fdebee; /* Fondo rojo muy pálido */
+  color: #c82333; /* Rojo oscuro para texto */
+  border: 1px solid #f5c6cb; /* Borde rojo pálido */
+}
+
+.success-message {
+  background-color: #eaf SFE8; /* Fondo verde muy pálido */
+  color: #155724; /* Verde oscuro para texto */
+  border: 1px solid #c3e6cb; /* Borde verde pálido */
+}
+
+
+/* Enlace inferior (Login/Register) */
+.auth-link {
+  text-align: center;
+  margin-top: 1.5rem; /* Espacio sobre el enlace */
+  font-size: 0.9em;
+  color: #555; /* Color de texto secundario */
+}
+
+.auth-link a {
+  color: #6b4fbb; /* Color primario */
+  text-decoration: none;
+  font-weight: 600; /* Mismo peso que botones */
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: #563d9a; /* Color primario oscurecido */
+    text-decoration: underline;
+  }
+}
+
+
+/* --- Media Queries (Ajustes para pantallas pequeñas) --- */
+@media (max-width: 576px) {
+  .auth-card {
+    padding: 2rem 1.5rem; /* Reducir padding en móviles */
+  }
+
+  .auth-card mat-card-title {
+    font-size: 1.5rem; /* Reducir tamaño de título */
+  }
+
+  /* Ajustar padding de botones si es necesario (heredado de .btn) */
+  /* Styles for button.mat-raised-button.btn.btn-primary are already defined elsewhere */
+
+  .error-message,
+  .success-message,
+  .auth-link {
+    font-size: 0.85em; /* Reducir un poco el texto de mensajes y enlace */
+  }
+}

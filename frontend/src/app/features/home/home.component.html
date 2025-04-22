@@ -1,1 +1,29 @@
-<p>home works!</p>
+<div class="home-container">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Mi Espacio</mat-card-title>
+        <mat-card-subtitle>Bienvenido a tu gestor documental</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p>
+          ¡Has iniciado sesión correctamente!
+        </p>
+        <p>
+          Desde aquí podrás gestionar tus documentos, crear carpetas y mucho más.
+        </p>
+        <div class="document-management-placeholder">
+           <h4>Mis Documentos Recientes</h4>
+           <ul>
+              <li>Factura_Abril_2025.pdf</li>
+              <li>Contrato_Proveedor_X.docx</li>
+              <li>Presentacion_Resultados_Q1.pptx</li>
+           </ul>
+           <button mat-flat-button color="primary">Subir Nuevo Documento</button>
+           </div>
+  
+      </mat-card-content>
+      <mat-card-actions align="end">
+        <button mat-raised-button color="warn" (click)="logout()">Cerrar Sesión</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>

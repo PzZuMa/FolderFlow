@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card'; // Opcional para estilo
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; // Opcional para feedback
+import { Title } from '@angular/platform-browser'; // Para cambiar el título de la página
 
 import { AuthService } from '../../../core/services/auth.service';
 
@@ -24,9 +25,13 @@ import { AuthService } from '../../../core/services/auth.service';
     MatProgressSpinnerModule
   ],
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
+  constructor(private titleService: Title) {
+    // Cambiar el título de la página al cargar el componente
+    this.titleService.setTitle('Iniciar sesión | FolderFlow');
+  }
   loginForm!: FormGroup; // Usamos '!' para indicar que se inicializará en ngOnInit
   isLoading = false;
   errorMessage: string | null = null;
@@ -59,8 +64,8 @@ export class LoginComponent implements OnInit {
       next: (response) => {
         this.isLoading = false;
         console.log('Login exitoso, respuesta:', response);
-        // Redirigir al dashboard o a donde sea necesario
-        this.router.navigate(['/dashboard']);
+        // Redirigir al home o a donde sea necesario
+        this.router.navigate(['/home']);
       },
       error: (error) => {
         this.isLoading = false;
