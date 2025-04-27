@@ -11,24 +11,38 @@
   }
   
   .landing-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.5rem 3rem;
-    border-bottom: 1px solid #eee;
-  
-    .logo img {
-      height: 35px;
+  display: flex;
+  // Eliminamos justify-content: space-between; para controlar el espacio manualmente
+  align-items: center; // Mantenemos la alineación vertical
+  padding: 1rem 3rem; // Mantenemos el padding general
+  border-bottom: 1px solid #eee;
+
+  .logo {
+    // El logo se queda a la izquierda por defecto
+    // Añadimos flex-shrink: 0 para que no se encoja si falta espacio
+    flex-shrink: 0;
+    img {
+      // Tus estilos de logo (altura, etc.)
+      height: 35px; // O el valor que hayas ajustado
+      width: auto;
       cursor: pointer;
+      vertical-align: middle;
     }
-  
-    .navigation ul {
+  }
+
+  .navigation {
+    // *** AJUSTE CLAVE 1: Empujar la navegación hacia la derecha ***
+    margin-left: auto; // Esto ocupa todo el espacio disponible a su izquierda
+
+    ul {
       list-style: none;
       display: flex;
-      gap: 2rem;
+      // *** AJUSTE CLAVE 2: Invertir el orden visual de los elementos ***
+      flex-direction: row-reverse; // Los items se mostrarán de derecha a izquierda
+      gap: 1.5rem; // <-- AJUSTE OPCIONAL: Reducir el espacio entre enlaces si 2rem es mucho
       margin: 0;
       padding: 0;
-  
+
       li a {
         text-decoration: none;
         color: #333;
@@ -38,12 +52,16 @@
         }
       }
     }
-  
-    .actions {
-      display: flex;
-      gap: 1rem;
-    }
   }
+
+  .actions {
+    display: flex;
+    align-items: center; // Alinear botones verticalmente
+    gap: 1rem; // Espacio entre los propios botones de acción
+    // *** AJUSTE CLAVE 3: Añadir espacio entre la navegación y las acciones ***
+    margin-left: 2rem; // <-- Ajusta este valor para acercar/alejar los botones de la navegación
+  }
+}
   
   .btn {
     padding: 0.75rem 1.5rem;
@@ -92,7 +110,10 @@
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    padding: 4rem 6rem;
+    padding-left: 6rem;
+    padding-right: 1rem;
+    padding-top: 4rem;
+    padding-bottom: 4rem;
   
     h1 {
       font-size: 3.5rem;
@@ -111,11 +132,7 @@
   .hero-visual {
     flex: 1;
     background-color: #f8f7ff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     position: relative;
-    padding: 4rem;
     overflow: hidden;
   
     &::before {
@@ -127,13 +144,13 @@
       opacity: 0.5;
     }
   
-    .visual-icon-container {
-        z-index: 1;
-        img {
-          max-width: 250px;
-          height: auto;
-        }
-     }
+    
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   }
   
   @media (max-width: 992px) {

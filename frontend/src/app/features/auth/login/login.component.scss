@@ -1,0 +1,193 @@
+// Variables (las mismas que en register.component.scss)
+$primary-color: #6b4fbb;
+$primary-hover: #5936b1;
+$bg-page: #f4f6fa;
+$card-bg: #ffffff;
+$text-color: #2c3e50;
+$text-muted: #6c757d; // Color para labels/placeholders
+$error-color: #ef1800; // Rojo brillante para errores
+$success-color: #27ae60;
+$input-border-color: #ced4da;
+$input-focus-border-color: mix($primary-color, $card-bg, 25%); // Tinte del color primario
+$input-invalid-border-color: $error-color;
+
+// Contenedor principal de la página
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: $bg-page;
+  padding: 1rem;
+  font-family: sans-serif; // Asegurar fuente
+}
+
+// Tarjeta de autenticación
+.auth-card {
+  background-color: $card-bg;
+  color: $text-color;
+  // Ajustamos el padding: 2.5rem arriba/abajo, 3rem (o más) a izq/der
+  padding: 2.5rem 3rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+  width: 100%;
+  max-width: 420px;
+  box-sizing: border-box; // Buena práctica añadirlo aquí también
+}
+
+// Título
+.titulo {
+  text-align: center;
+  font-weight: 600; // Un poco menos grueso que 'bold'
+  font-size: 1.7rem; // Ligeramente más grande
+  color: $primary-color;
+  margin-bottom: 2rem; // Más espacio después del título
+}
+
+// Estructura para cada campo del formulario (label + input + error)
+.form-field {
+  width: 100%;
+  margin-bottom: 1.25rem; // Espacio entre campos
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: $text-muted; // Color más suave para label
+  }
+}
+
+// Estilo del input estándar
+.form-input {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.75rem 1rem; // Buen padding interno
+  font-size: 1rem;
+  line-height: 1.5;
+  color: $text-color;
+  background-color: $card-bg;
+  background-clip: padding-box;
+  border: 1px solid $input-border-color;
+  border-radius: 8px; // Bordes redondeados consistentes
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+  &::placeholder {
+    color: $text-muted;
+    opacity: 0.7;
+  }
+
+  &:focus {
+    color: $text-color;
+    background-color: $card-bg;
+    border-color: $input-focus-border-color;
+    outline: 0;
+    // Sombra sutil al enfocar, usando el color primario
+    box-shadow: 0 0 0 0.2rem rgba($primary-color, 0.15);
+  }
+
+  // Estilo específico para inputs inválidos que han sido tocados/modificados
+  &.is-invalid {
+    border-color: $input-invalid-border-color;
+
+    &:focus {
+      // Sombra roja al enfocar un input inválido
+      box-shadow: 0 0 0 0.2rem rgba($error-color, 0.15);
+    }
+  }
+}
+
+// Mensaje de error debajo de cada campo
+.field-error-message {
+  color: $error-color;
+  font-size: 0.85rem; // Pequeño
+  margin-top: 0.4rem; // Espacio sobre el mensaje de error
+  // text-align: right; // Opcional: alinear a la derecha
+}
+
+// Contenedores para mensajes generales (éxito/error) debajo del formulario
+.success-message-container,
+.error-message-container {
+  margin-top: 1rem; // Espacio sobre los mensajes generales
+  padding: 0.75rem;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.success-message-container {
+  background-color: mix($success-color, $card-bg, 10%); // Fondo verde muy pálido
+  color: $success-color;
+  border: 1px solid mix($success-color, $card-bg, 25%);
+}
+
+.error-message-container {
+   background-color: mix($error-color, $card-bg, 8%); // Fondo rojo muy pálido
+   color: $error-color;
+   border: 1px solid mix($error-color, $card-bg, 20%);
+}
+
+// Contenedor del botón
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem; // Más espacio sobre el botón
+
+  button {
+    background-color: $primary-color;
+    color: #fff;
+    border: none; // Asegurar que no haya borde por defecto
+    border-radius: 8px;
+    padding: 0.8rem 1.8rem; // Ligeramente más grande
+    font-size: 1rem; // Tamaño de fuente estándar
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+
+    &:hover:not(:disabled) { // Aplicar hover solo si no está deshabilitado
+      background-color: $primary-hover;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// Footer con enlace a la otra página de autenticación
+.auth-footer {
+  text-align: center;
+  margin-top: 1.5rem; // Espacio sobre el footer
+  font-size: 0.9rem;
+  color: $text-muted; // Color suave para el texto
+
+  .auth-link {
+    color: $primary-color;
+    text-decoration: none;
+    font-weight: 600; // Un poco más de énfasis
+
+    &:hover {
+      text-decoration: underline;
+      color: $primary-hover;
+    }
+  }
+}
+
+// Media Query para ajustar en pantallas pequeñas
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 2rem 1.5rem;
+    box-shadow: none; // Quitar sombra en móviles si se prefiere
+  }
+
+  .titulo {
+    font-size: 1.5rem; // Reducir título
+  }
+
+  .button-container button {
+    width: 100%; // Botón ocupa todo el ancho
+  }
+}

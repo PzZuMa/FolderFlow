@@ -1,8 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../../core/services/auth.service'; // Importa AuthService
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
+import { AuthService } from '../../core/services/auth.service';
 import { CommonModule } from '@angular/common';
 import { Title } from '@angular/platform-browser';
 
@@ -10,18 +8,17 @@ import { Title } from '@angular/platform-browser';
   selector: 'app-home',
   standalone: true,
   imports: [
-    CommonModule,
-    MatButtonModule,
-    MatCardModule
+    CommonModule
   ],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
   constructor(private titleService: Title) {
     // Cambiar el título de la página al cargar el componente
     this.titleService.setTitle('Home | FolderFlow');
   }
+  
   // Inyectamos AuthService y Router
   private authService = inject(AuthService);
   private router = inject(Router);
@@ -33,14 +30,8 @@ export class HomeComponent implements OnInit {
     console.log('Usuario desconectado.');
   }
 
-  
   ngOnInit(): void {
-    throw new Error('Method not implemented.');
+    // Aquí podríamos verificar la autenticación o cargar datos del usuario
+    // Por ejemplo: verificar si hay un token válido, obtener datos del perfil, etc.
   }
-
-  // Podrías obtener datos del usuario aquí si los necesitas mostrar
-  // userName: string | null = null;
-  // ngOnInit() {
-  //   // Si guardaste datos del usuario en AuthService o localStorage al hacer login...
-  // }
 }

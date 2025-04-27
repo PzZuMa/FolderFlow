@@ -15,7 +15,7 @@ import { Title } from '@angular/platform-browser'; // Para cambiar el título de
     MatCardModule
   ],
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css']
+  styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent {
   constructor(private titleService: Title) {

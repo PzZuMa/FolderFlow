@@ -1,29 +1,28 @@
-<div class="home-container">
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title>Mi Espacio</mat-card-title>
-        <mat-card-subtitle>Bienvenido a tu gestor documental</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <p>
-          ¡Has iniciado sesión correctamente!
-        </p>
-        <p>
-          Desde aquí podrás gestionar tus documentos, crear carpetas y mucho más.
-        </p>
-        <div class="document-management-placeholder">
-           <h4>Mis Documentos Recientes</h4>
-           <ul>
-              <li>Factura_Abril_2025.pdf</li>
-              <li>Contrato_Proveedor_X.docx</li>
-              <li>Presentacion_Resultados_Q1.pptx</li>
-           </ul>
-           <button mat-flat-button color="primary">Subir Nuevo Documento</button>
-           </div>
-  
-      </mat-card-content>
-      <mat-card-actions align="end">
-        <button mat-raised-button color="warn" (click)="logout()">Cerrar Sesión</button>
-      </mat-card-actions>
-    </mat-card>
+<div class="auth-container">
+  <div class="auth-card home-card">
+    <h2 class="titulo">MI ESPACIO</h2>
+    <div class="home-subtitle">Bienvenido a tu gestor documental</div>
+
+    <div class="home-content-section">
+      <p>¡Has iniciado sesión correctamente!</p>
+      <p>Desde aquí podrás gestionar tus documentos, crear carpetas y mucho más.</p>
+    </div>
+
+    <div class="document-section">
+      <h3 class="section-title">Mis Documentos Recientes</h3>
+      <ul class="document-list">
+        <li>Factura_Abril_2025.pdf</li>
+        <li>Contrato_Proveedor_X.docx</li>
+        <li>Presentacion_Resultados_Q1.pptx</li>
+      </ul>
+      
+      <div class="button-container">
+        <button class="primary-button">Subir Nuevo Documento</button>
+      </div>
+    </div>
+
+    <div class="logout-container">
+      <button class="logout-button" (click)="logout()">Cerrar Sesión</button>
+    </div>
   </div>
+</div>

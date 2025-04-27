@@ -2,23 +2,20 @@
   <header class="landing-header">
     <div class="logo">
       <!-- Puedes usar un <img> o un icono de Angular Material si lo prefieres -->
-      <img src="../../../assets/logo-removebg-preview.png" alt="Folder Flow Logo">
+      <img src="/assets/logo-removebg-preview.png" alt="Folder Flow Logo">
       <!-- O un icono: <mat-icon svgIcon="folder-upload"></mat-icon> -->
     </div>
     <nav class="navigation">
       <ul>
-        <li><a href="#">Tarifas</a></li>
-        <li><a href="#">Contacto</a></li>
-        <li><a href="#">Quiénes somos</a></li>
+        <li><a href="#">TARIFAS</a></li>
+        <li><a href="#">CONTACTO</a></li>
+        <li><a href="#">QUIENES SOMOS</a></li>
       </ul>
     </nav>
     <div class="actions">
       <!-- Usa routerLink si navegan a rutas internas de Angular -->
-      <button class="btn btn-secondary" [routerLink]="['/login']">Iniciar sesión</button>
-      <button class="btn btn-primary" [routerLink]="['/register']">Registrarse</button>
-      <!-- O usa <a href="/login"> si son enlaces normales -->
-      <!-- <a href="/login" class="btn btn-secondary">Iniciar sesión</a> -->
-      <!-- <a href="/register" class="btn btn-primary">Registrarse</a> -->
+      <button class="btn btn-secondary" [routerLink]="['/login']">INICIAR SESIÓN</button>
+      <button class="btn btn-primary" [routerLink]="['/register']">REGISTRARSE</button>
     </div>
   </header>
 
@@ -26,15 +23,11 @@
     <div class="hero-content">
       <h1>FOLDER FLOW</h1>
       <p>Tu oficina digital, organizada.</p>
-      <!-- <a href="/register" class="btn btn-primary btn-cta">Comenzar</a> -->
+      <button class="btn btn-primary btn-cta" [routerLink]="['/register']">COMENZAR</button>
     </div>
+    
     <div class="hero-visual">
-      <!-- El fondo con patrón se aplica con CSS -->
-      <div class="visual-icon-container">
-         <!-- Puedes usar un <img> o un icono -->
-         <img src="assets/icons/folder-upload-large.svg" alt="Gestión Documental">
-         <!-- O un icono: <mat-icon svgIcon="folder-upload-large"></mat-icon> -->
-      </div>
+      <img src="/assets/banner.png" alt="Gestión Documental">
     </div>
   </main>
 </div>

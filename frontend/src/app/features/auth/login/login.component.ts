@@ -1,40 +1,31 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common'; // Importar CommonModule
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card'; // Opcional para estilo
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; // Opcional para feedback
-import { Title } from '@angular/platform-browser'; // Para cambiar el título de la página
-
+import { CommonModule } from '@angular/common';
+import { Title } from '@angular/platform-browser';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
-  standalone: true, // Componente standalone
+  standalone: true,
   imports: [
-    CommonModule, // Necesario para ngIf, ngFor, etc.
-    ReactiveFormsModule, // Para formularios reactivos
-    RouterLink, // Para enlaces [routerLink]
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatCardModule,
-    MatProgressSpinnerModule
+    CommonModule,
+    ReactiveFormsModule,
+    RouterLink
   ],
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
   constructor(private titleService: Title) {
     // Cambiar el título de la página al cargar el componente
     this.titleService.setTitle('Iniciar sesión | FolderFlow');
   }
-  loginForm!: FormGroup; // Usamos '!' para indicar que se inicializará en ngOnInit
+  
+  loginForm!: FormGroup;
   isLoading = false;
   errorMessage: string | null = null;
+  submitted = false;
 
   // Inyección de dependencias moderna con inject()
   private fb = inject(FormBuilder);
@@ -43,16 +34,16 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
-      // Definir controles del formulario con validadores
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
   onSubmit(): void {
+    this.submitted = true;
+    
     if (this.loginForm.invalid) {
-      // Marcar todos los campos como 'touched' para mostrar errores
-      this.loginForm.markAllAsTouched();
+      console.log('Formulario inválido, mostrando errores.');
       return;
     }
 
@@ -75,7 +66,7 @@ export class LoginComponent implements OnInit {
     });
   }
 
-   // Helper para acceder fácilmente a los controles en la plantilla
-   get email() { return this.loginForm.get('email'); }
-   get password() { return this.loginForm.get('password'); }
+  // Helper para acceder fácilmente a los controles en la plantilla
+  get email() { return this.loginForm.get('email'); }
+  get password() { return this.loginForm.get('password'); }
 }

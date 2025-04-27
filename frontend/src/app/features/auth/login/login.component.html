@@ -1,45 +1,52 @@
-<mat-card class="login-card">
-    <mat-card-header>
-      <mat-card-title>Iniciar Sesión</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Email</mat-label>
-          <input matInput formControlName="email" type="email" placeholder="tu@email.com" required>
-          <mat-error *ngIf="email?.hasError('required')">
-            El email es obligatorio.
-          </mat-error>
-          <mat-error *ngIf="email?.hasError('email')">
-            Introduce un formato de email válido.
-          </mat-error>
-        </mat-form-field>
-  
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Contraseña</mat-label>
-          <input matInput formControlName="password" type="password" required>
-           <mat-error *ngIf="password?.hasError('required')">
-             La contraseña es obligatoria.
-           </mat-error>
-            <mat-error *ngIf="password?.hasError('minlength')">
-              La contraseña debe tener al menos 6 caracteres.
-            </mat-error>
-        </mat-form-field>
-  
-        <div *ngIf="errorMessage && !isLoading" class="error-message">
-          {{ errorMessage }}
+<div class="auth-container">
+  <div class="auth-card">
+    <h2 class="titulo">INICIAR SESIÓN</h2>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+      <div class="form-field">
+        <label for="emailInput">Email</label>
+        <input type="email"
+               id="emailInput"
+               class="form-input"
+               formControlName="email"
+               required
+               aria-describedby="emailError"
+               [class.is-invalid]="submitted && email?.invalid">
+        <div id="emailError" *ngIf="submitted && email?.invalid" class="field-error-message">
+          <div *ngIf="email?.hasError('required')">El email es obligatorio.</div>
+          <div *ngIf="email?.hasError('email')">Introduce un formato de email válido.</div>
         </div>
-  
-        <div class="button-container">
-            <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid || isLoading">
-              <span *ngIf="!isLoading">Entrar</span>
-              <mat-spinner diameter="20" *ngIf="isLoading"></mat-spinner>
-            </button>
-         </div>
-  
-      </form>
-       <div class="register-link">
-          ¿No tienes cuenta? <a routerLink="/register">Regístrate aquí</a>
+      </div>
+
+      <div class="form-field">
+        <label for="passwordInput">Contraseña</label>
+        <input type="password"
+               id="passwordInput"
+               class="form-input"
+               formControlName="password"
+               required
+               aria-describedby="passwordError"
+               [class.is-invalid]="submitted && password?.invalid">
+        <div id="passwordError" *ngIf="submitted && password?.invalid" class="field-error-message">
+          <div *ngIf="password?.hasError('required')">La contraseña es obligatoria.</div>
+          <div *ngIf="password?.hasError('minlength')">La contraseña debe tener al menos 6 caracteres.</div>
         </div>
-    </mat-card-content>
-  </mat-card>
+      </div>
+
+      <div *ngIf="errorMessage && !isLoading" class="error-message-container">
+        <div class="error-message">{{ errorMessage }}</div>
+      </div>
+
+      <div class="button-container">
+        <button type="submit" [disabled]="isLoading">
+          <span *ngIf="!isLoading">Entrar</span>
+          <span *ngIf="isLoading">Cargando...</span>
+        </button>
+      </div>
+    </form>
+
+    <div class="auth-footer">
+      ¿No tienes cuenta? <a routerLink="/register" class="auth-link">Regístrate aquí</a>
+    </div>
+  </div>
+</div>
