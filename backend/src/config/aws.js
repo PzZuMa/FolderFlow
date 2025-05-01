@@ -10,7 +10,7 @@ const s3Client = new S3Client({
 });
 
 const region_name = process.env.AWS_REGION;
-const bucketName = process.env.S3_BUCKET_NAME;
+const bucketName = process.env.AWS_S3_BUCKET_NAME;
 console.log(`🔧 Intentando configurar cliente AWS S3 para la región: ${region_name || 'NO ESPECIFICADA'} y el bucket: ${bucketName || 'NO ESPECIFICADO'}`);
 const presignedUrlExpiration = parseInt(process.env.PRESIGNED_URL_EXPIRATION || '3600', 10); // Default 1 hora
 
