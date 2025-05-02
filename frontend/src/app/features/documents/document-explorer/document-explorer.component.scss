@@ -1,0 +1,112 @@
+.explorer-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%; // O ajusta según tu layout
+  }
+  
+  .toolbar {
+    display: flex;
+    align-items: center;
+  }
+  
+  .breadcrumb-container {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap; // Evita que se rompa en líneas pequeñas
+    overflow-x: auto; // Permite scroll horizontal si no cabe
+    white-space: nowrap; // Evita que los nombres se partan
+    margin-right: 16px; // Espacio antes de los botones de acción
+  }
+  
+  .breadcrumb-button {
+    min-width: auto; // Ajustar tamaño
+    padding: 0 4px; // Menos padding
+    font-size: 0.9em; // Un poco más pequeño
+    &:disabled {
+      opacity: 1; // Que el último no parezca deshabilitado
+      font-weight: bold; // Destacar el último
+    }
+  }
+  
+  .breadcrumb-separator {
+    font-size: 1.2em;
+    margin: 0 2px;
+    vertical-align: middle;
+  }
+  
+  
+  .toolbar-spacer {
+    flex: 1 1 auto; // Ocupa el espacio restante
+  }
+  
+  .upload-section {
+      padding: 8px 16px;
+      border-bottom: 1px solid rgba(0,0,0,0.12); // Separador visual
+  }
+  
+  .upload-item {
+    height: auto !important; // Permitir altura variable
+    padding-top: 8px;
+    padding-bottom: 8px;
+  
+    .upload-details {
+      font-size: 0.85em;
+      color: rgba(0, 0, 0, 0.6);
+      white-space: normal; // Permitir wrap si el error es largo
+    }
+  
+    .upload-progress-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px !important; // Más delgada
+    }
+  
+    .error-message {
+        color: red; // O usa theme.warn
+        font-weight: bold;
+    }
+  }
+  
+  .upload-success .upload-title {
+      color: green; // O usa theme.success
+  }
+  
+  
+  .content-area {
+    flex: 1; // Ocupa el espacio restante
+    overflow-y: auto; // Scroll si el contenido es largo
+  }
+  
+  .list-item {
+    cursor: pointer;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05); // Línea sutil entre items
+  
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+  
+    // Espaciador para empujar los botones a la derecha
+    .item-spacer {
+        flex: 1 1 auto;
+    }
+  
+    // Evitar que el click en el botón de menú propague al item
+    button[mat-icon-button] {
+        flex-shrink: 0; // Evitar que se encoja
+    }
+  }
+  
+  // Estilos para snackbars (opcional, poner en styles.scss global)
+  /*
+  .snackbar-success {
+    background-color: #4CAF50; // Verde
+    color: white;
+  }
+  
+  .snackbar-error {
+    background-color: #F44336; // Rojo
+    color: white;
+  }
+  */

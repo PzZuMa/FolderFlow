@@ -1,28 +1,46 @@
+// src/app/app.routes.ts
 import { Routes } from '@angular/router';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterComponent } from './features/auth/register/register.component';
-import { DashboardComponent } from './features/dashboard/dashboard.component'; // Página pública
-import { HomeComponent } from './features/home/home.component';           // Nueva página protegida
-import { authGuard } from './core/guards/auth.guard'; // El guard se usará para /home
+import { DashboardComponent } from './features/dashboard/dashboard.component'; // Pública
+import { authGuard } from './core/guards/auth.guard';
+import { MainLayoutComponent } from './layout/main-layout/main-layout.component'; // <<<--- El Layout Principal
+// Importa los componentes de contenido que irán DENTRO del layout
+import { HomeComponent } from './features/home/home.component'; // <<<--- Para el contenido 3+3
+import { DocumentExplorerComponent } from './features/documents/document-explorer/document-explorer.component';
 
 export const routes: Routes = [
   // Rutas públicas
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'dashboard', component: DashboardComponent }, // Dashboard ahora es público
+  { path: 'dashboard', component: DashboardComponent },
 
-  // Ruta protegida (nueva)
+  // --- Sección Protegida usando el Layout ---
   {
-    path: 'home', // La ruta para usuarios autenticados
-    component: HomeComponent,
-    canActivate: [authGuard] // Protegida por el guard
+    path: 'app',                       // <<<--- Path base para usuarios logueados
+    component: MainLayoutComponent,    // <<<--- Usa el Layout como contenedor
+    canActivate: [authGuard],          // <<<--- Protege todo bajo /app
+    children: [                        // <<<--- Rutas que se mostrarán en el <router-outlet> del Layout
+      {
+        path: 'home',                  // <<<--- Ruta para la vista de inicio (3+3 items) -> /app/home
+        component: HomeComponent, // <<<--- Componente específico para esa vista
+      },
+      {
+        path: 'documents',             // <<<--- Ruta para el explorador -> /app/documents
+        component: DocumentExplorerComponent,
+      },
+      // --- Añade aquí otras rutas protegidas ---
+      // { path: 'settings', component: SettingsComponent },
+      // --- Fin otras rutas ---
+      {
+        path: '', redirectTo: 'home', pathMatch: 'full' // Redirige /app a /app/home por defecto
+      }
+    ]
   },
 
-  // Redirección por defecto: va al dashboard público
+  // Redirección por defecto si no estás logueado o vas a '/'
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
 
-  // Ruta comodín: redirige al dashboard público si la ruta no existe
-  { path: '**', redirectTo: '/dashboard' }
-  // Alternativa: crear un componente NotFoundComponent y redirigir aquí
-  // { path: '**', component: NotFoundComponent }
+  // Ruta comodín
+  { path: '**', redirectTo: '/dashboard' },
 ];

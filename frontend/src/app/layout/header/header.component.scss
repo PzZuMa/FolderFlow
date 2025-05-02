@@ -1,0 +1,28 @@
+.app-header {
+    display: flex;
+    align-items: center;
+  }
+  
+  .logo-container {
+    margin-left: 16px;
+    /* Estilos para tu logo */
+    .logo {
+      height: 40px; // Ajusta según tu logo
+    }
+    span {
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+  }
+  
+  .header-spacer {
+    flex: 1 1 auto; // Ocupa el espacio restante
+  }
+  
+  .profile-image {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer;
+  }

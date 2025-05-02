@@ -1,0 +1,55 @@
+:host {
+  display: block;
+  height: 100%;
+  background-color: #f4f4f4; // O var(--app-sidebar-background, #f4f4f4) si defines una variable
+  border-right: 1px solid rgba(0,0,0,0.12);
+  overflow: hidden; // <<--- Cambiar overflow-x a overflow general
+  width: 240px; // Ancho expandido por defecto
+  flex-shrink: 0; // Asegura que no se encoja por el contenido flex padre
+  transition: width 0.3s ease-in-out; // <<--- Asegura la transición en width
+}
+  
+.sidebar-container {
+  height: 100%;
+  padding-top: 16px;
+  // overflow: hidden; // Quita el overflow de aquí si lo pusiste
+}
+
+// Estilos cuando está colapsado
+:host(.collapsed) {
+  width: 60px; // Ancho colapsado (solo iconos)
+}
+
+.nav-text {
+  margin-left: 16px; // Espacio entre icono y texto
+  white-space: nowrap; // Evita que el texto se rompa
+  opacity: 1;
+  transition: opacity 0.2s ease-in-out;
+}
+
+:host(.collapsed) .nav-text {
+  opacity: 0; // Oculta el texto suavemente
+  width: 0; // Evita que ocupe espacio invisible
+  overflow: hidden;
+}
+
+.mat-mdc-list-item {
+  color: var(--app-secondary-text-color); // Usa la variable para texto secundario/normal
+
+  .mat-icon {
+    color: var(--app-secondary-text-color); // O un gris específico si prefieres
+  }
+}
+
+.active-link {
+   background-color: rgba(0, 0, 0, 0.08); // O define una variable para el fondo activo
+   border-left: 4px solid var(--app-primary-color); // <<<--- Usa la variable CSS
+   // color: var(--app-primary-color); // El color del texto/icono se hereda abajo
+
+  .mat-icon, span { // Aplica el color primario al icono y al texto
+    color: var(--app-primary-color); // <<<--- Usa la variable CSS
+  }
+  span {
+    font-weight: bold;
+  }
+}
