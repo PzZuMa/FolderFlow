@@ -1,72 +1,12 @@
-// 1. Importar el módulo de Material SASS PRIMERO
-@use '@angular/material' as mat;
-
-// 2. Incluir los estilos core DESPUÉS de @use y ANTES de definir temas
-@include mat.core();
-
-// 3. Definir paletas (AHORA deberían funcionar las funciones)
-$my-primary: mat.define-palette(mat.$indigo-palette);
-$my-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
-// $my-warn: mat.define-palette(mat.$red-palette); // Opcional: paleta de advertencia
-
-// 4. Definir el tema usando las paletas
-$my-theme: mat.define-light-theme((
-  color: (
-    primary: $my-primary,
-    accent: $my-accent,
-    // warn: $my-warn, // Descomenta si definiste $my-warn
-  ),
-  typography: mat.define-typography-config(),
-  density: 0,
-));
-
-// 5. Aplicar el tema a los componentes
-@include mat.all-component-themes($my-theme);
-
-:root { // O aplica a 'body' o a una clase contenedora específica de tu app
-    // Obtener colores del tema usando las funciones de Material SASS
-    // La sintaxis #{...} es necesaria para interpolar el resultado de la función SASS en un valor CSS
-    --app-primary-color: #{mat.get-theme-color($my-theme, primary)};
-    --app-accent-color: #{mat.get-theme-color($my-theme, accent)};
-    --app-warn-color: #{mat.get-theme-color($my-theme, warn)};
-  
-    // También puedes obtener los colores de contraste (para texto sobre fondos de color)
-    --app-primary-contrast-color: #{mat.get-theme-color($my-theme, primary, default-contrast)};
-    --app-accent-contrast-color: #{mat.get-theme-color($my-theme, accent, default-contrast)};
-    --app-warn-contrast-color: #{mat.get-theme-color($my-theme, warn, default-contrast)};
-  
-    // Colores de texto estándar (puedes definirlos directamente o desde la config de tipografía)
-    --app-text-color: rgba(0, 0, 0, 0.87);
-    --app-secondary-text-color: rgba(0, 0, 0, 0.6);
-    --app-disabled-text-color: rgba(0, 0, 0, 0.38);
-    --app-divider-color: rgba(0, 0, 0, 0.12);
-    --app-background-color: #fafafa; // Fondo general
-    --app-card-background-color: white;
+html, body {
+    height: 100%;
+    overflow: hidden; // <<<--- Evita el scrollbar de la página entera
+    margin: 0;       // <<<--- Quita márgenes por defecto
   }
-
-// --- Estilos globales adicionales ---
-html, body { height: 100%; }
-body {
-  margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
-  // Color de texto base para tema claro
-  color: rgba(0, 0, 0, 0.87);
-  // Color de fondo base (opcional, a menudo blanco por defecto)
-  // background-color: #fafafa;
-  color: var(--app-text-color);
-    background-color: var(--app-background-color);
-}
-
-// Clases personalizadas para snackbar (opcional)
-.snackbar-success {
-  --mdc-snackbar-container-color: #4CAF50; // Verde (ajusta según tu paleta)
-  --mdc-snackbar-supporting-text-color: white;
-  // Para el botón de acción si lo tienes
-  // --mdc-text-button-label-text-color: white;
-}
-
-.snackbar-error {
-  --mdc-snackbar-container-color: #f44336; // Rojo (ajusta según tu paleta)
-  --mdc-snackbar-supporting-text-color: white;
-   // --mdc-text-button-label-text-color: white;
-}
+  
+  body {
+    // font-family y color ya deberían estar aquí
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    color: rgba(0, 0, 0, 0.87); // Color base del tema claro
+    // El background ya debería venir de tu tema o de la variable --app-background-color si la definiste
+  }
