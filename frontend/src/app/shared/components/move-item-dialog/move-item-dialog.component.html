@@ -1,0 +1,59 @@
+<!-- src/app/shared/components/dialogs/move-item-dialog/move-item-dialog.component.html -->
+<h2 mat-dialog-title>Mover "{{ data.itemToMove.name }}" a:</h2>
+
+<!-- Mini Toolbar para Breadcrumbs del Diálogo -->
+<mat-toolbar class="dialog-toolbar">
+  <div class="dialog-breadcrumb-container">
+    <ng-container *ngFor="let crumb of dialogBreadcrumbs; let isLast = last">
+      <button mat-button class="breadcrumb-button"
+              (click)="selectBreadcrumbInDialog(crumb._id)"
+              [disabled]="isLast"
+              type="button"> <!-- Evita submit si está en un form -->
+        <mat-icon *ngIf="crumb.name === 'Raíz'">home</mat-icon>
+        <span class="crumb-name">{{ crumb.name }}</span>
+      </button>
+      <mat-icon class="breadcrumb-separator" *ngIf="!isLast">chevron_right</mat-icon>
+    </ng-container>
+  </div>
+</mat-toolbar>
+
+<mat-dialog-content class="dialog-content">
+
+  <!-- Indicador de Carga -->
+  <div *ngIf="isLoading" class="loading-indicator">
+    <mat-progress-spinner diameter="40"></mat-progress-spinner>
+  </div>
+
+  <!-- Mensaje de Error -->
+   <div *ngIf="errorMessage && !isLoading" class="error-message">
+       <mat-icon color="warn">error</mat-icon>
+       <span>{{ errorMessage }}</span>
+   </div>
+
+  <!-- Lista de Carpetas en el Nivel Actual del Diálogo -->
+  <mat-list *ngIf="!isLoading && !errorMessage">
+    <mat-list-item *ngFor="let folder of foldersInDialog"
+                   class="folder-list-item"
+                   (click)="selectFolderInDialog(folder._id)"
+                   matTooltip="Abrir carpeta {{folder.name}}">
+      <mat-icon matListItemIcon>folder</mat-icon>
+      <span matListItemTitle>{{ folder.name }}</span>
+    </mat-list-item>
+
+    <!-- Mensaje si no hay subcarpetas -->
+    <p *ngIf="foldersInDialog.length === 0 && !isLoading" class="empty-folder-message">
+      No hay subcarpetas aquí.
+    </p>
+  </mat-list>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <!-- Botón Mover Aquí: Deshabilitado si no es un movimiento válido -->
+  <button mat-flat-button color="primary"
+          (click)="onMoveHere()"
+          [disabled]="!isMoveAllowed()">
+          Mover Aquí
+  </button>
+</mat-dialog-actions>

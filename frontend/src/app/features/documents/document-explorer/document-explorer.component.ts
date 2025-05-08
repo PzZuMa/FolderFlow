@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatListModule } from '@angular/material/list';
@@ -12,13 +12,14 @@ import { MatMenuModule } from '@angular/material/menu'; // Para menú contextual
 import { Observable, forkJoin, of, Subject, EMPTY } from 'rxjs';
 import { catchError, finalize, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { HttpResponse } from '@angular/common/http';
-
-
 import { Folder, Document, UploadStatus } from '../../../core/models'; // Importa todas
 import { FolderService } from '../../../core/services/folder.service';
 import { DocumentService } from '../../../core/services/document.service';
 import { CreateFolderDialogComponent } from '../../../shared/components/create-folder-dialog/create-folder-dialog.component';
 import { ConfirmationDialogComponent, ConfirmationDialogData } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
+import { MatCard, MatCardModule } from '@angular/material/card';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MoveItemDialogComponent, MoveItemDialogData, MoveItemDialogResult } from '../../../shared/components/move-item-dialog/move-item-dialog.component';
 
 @Component({
   selector: 'app-document-explorer',
@@ -33,7 +34,9 @@ import { ConfirmationDialogComponent, ConfirmationDialogData } from '../../../sh
     MatDialogModule,
     MatProgressBarModule,
     MatSnackBarModule,
-    MatMenuModule
+    MatMenuModule, // Para menú contextual opcional
+    MatCardModule,
+    MatTooltipModule 
   ],
   templateUrl: './document-explorer.component.html',
   styleUrls: ['./document-explorer.component.scss'],
@@ -119,6 +122,36 @@ export class DocumentExplorerComponent implements OnInit {
     this.loadContents(targetId);
   }
 
+  openMoveDialog(item: Folder | Document, itemType: 'folder' | 'document'): void {
+    console.log(`Abriendo diálogo para mover ${itemType}: ${item.name}`);
+
+    const dialogData: MoveItemDialogData = {
+        itemToMove: item,
+        itemType: itemType,
+        currentFolderId: this.currentFolderId // Pasamos la carpeta actual del EXPLORER
+    };
+
+    const dialogRef = this.dialog.open<MoveItemDialogComponent, MoveItemDialogData, MoveItemDialogResult>(
+        MoveItemDialogComponent, // <<< El componente de diálogo
+        {
+            width: '500px', // Ancho del diálogo
+            data: dialogData, // <<< Los datos que necesita el diálogo
+            disableClose: true // Evita cerrar haciendo clic fuera
+        }
+    );
+
+    dialogRef.afterClosed().pipe(takeUntil(this.destroy$)).subscribe(result => {
+        // 'result' será de tipo MoveItemDialogResult | undefined
+        if (result && result.destinationFolderId !== undefined) {
+            // El usuario hizo clic en "Mover Aquí" y no canceló
+            console.log(`Mover ${itemType} ${item._id} a carpeta destino: ${result.destinationFolderId}`);
+            this.moveItem(item, itemType, result.destinationFolderId); // Llama a la función (aún placeholder) que hará la llamada API
+        } else {
+            console.log('Diálogo de mover cerrado sin confirmar.');
+        }
+    });
+}
+
   // --- Creación de Carpeta ---
   openCreateFolderDialog(): void {
     const dialogRef = this.dialog.open(CreateFolderDialogComponent, {
@@ -178,59 +211,80 @@ export class DocumentExplorerComponent implements OnInit {
   }
 
   private startUploadProcess(upload: UploadStatus): void {
-      upload.status = 'pending'; // Estado inicial mientras se obtiene URL
-      this.cdRef.markForCheck();
-
-      this.documentService.requestUploadUrl(upload.file.name, upload.file.type, this.currentFolderId)
-        .pipe(
-            takeUntil(this.destroy$),
+    upload.status = 'pending'; // Estado inicial mientras se obtiene URL
+    this.cdRef.markForCheck();
+  
+    // Paso 1: Solicitar URL prefirmada
+    this.documentService.requestUploadUrl(upload.file.name, upload.file.type, this.currentFolderId)
+      .pipe(
+        takeUntil(this.destroy$),
+        catchError(err => {
+          console.error('Error getting upload URL:', err);
+          upload.status = 'error';
+          upload.error = 'No se pudo obtener la URL de subida.';
+          this.cdRef.markForCheck();
+          return EMPTY;
+        }),
+        // Paso 2: Subir a S3 con la URL obtenida
+        switchMap(response => {
+          upload.status = 'uploading';
+          upload.s3Key = response.s3Key; // Guardar s3Key para la confirmación
+          this.cdRef.markForCheck();
+          
+          // Devolver el observable de la subida a S3
+          return this.documentService.uploadFileToS3(response.signedUrl, upload.file).pipe(
+            // Manejar errores específicos de la subida a S3
             catchError(err => {
-                console.error('Error getting upload URL:', err);
-                upload.status = 'error';
-                upload.error = 'No se pudo obtener la URL de subida.';
-                this.cdRef.markForCheck();
-                return EMPTY;
-            }),
-            switchMap(response => {
-                upload.status = 'uploading';
-                upload.s3Key = response.s3Key; // Guardar s3Key para la confirmación
-                this.cdRef.markForCheck();
-                // Devolver el observable de la subida a S3
-                return this.documentService.uploadFileToS3(response.signedUrl, upload.file);
-            }),
-            catchError(err => { // Error durante la subida a S3
-                console.error('Error uploading to S3:', err);
-                upload.status = 'error';
-                upload.error = 'Error durante la subida del archivo.';
-                 // Podrías intentar limpiar el objeto en S3 aquí si tienes la key, pero es complejo
-                this.cdRef.markForCheck();
-                return EMPTY;
+              console.error('Error uploading to S3:', err);
+              upload.status = 'error';
+              upload.error = 'Error durante la subida del archivo a S3.';
+              this.cdRef.markForCheck();
+              return EMPTY;
             })
-        )
-        .subscribe({
-            next: (event) => {
-                if (typeof event === 'number') {
-                    upload.progress = event; // Actualizar progreso
-                } else if (event instanceof HttpResponse) {
-                    // Subida a S3 completada (HttpResponse de S3)
-                    upload.status = 'confirming'; // Cambiar estado a confirmando
-                    upload.progress = 100; // Asegurar 100%
-                    this.cdRef.markForCheck();
-                    // Llamar a confirmar la subida en nuestro backend
-                    this.confirmUploadBackend(upload);
-                }
-                this.cdRef.markForCheck(); // Actualizar progreso en la UI
-            },
-            error: (err) => { // Manejado en los catchError anteriores, pero por si acaso
-                console.error('Unexpected error in upload subscribe:', err);
-                if (upload.status !== 'error') { // Evitar doble seteo
-                  upload.status = 'error';
-                  upload.error = 'Error inesperado durante la subida.';
-                  this.cdRef.markForCheck();
-                }
-            }
-        });
+          );
+        })
+      )
+      .subscribe({
+        next: (event) => {
+          if (typeof event === 'number') {
+            // Actualizar el porcentaje de progreso
+            upload.progress = event;
+            this.cdRef.markForCheck();
+          } 
+          else if (event instanceof HttpResponse) {
+            // Subida a S3 completada exitosamente
+            upload.status = 'confirming';
+            upload.progress = 100;
+            this.cdRef.markForCheck();
+            
+            // Paso 3: Confirmar la subida en nuestro backend
+            this.confirmUploadBackend(upload);
+          }
+        },
+        error: (err) => {
+          // Este error solo ocurre si hay un problema no capturado en los catchError anteriores
+          console.error('Unexpected error in upload process:', err);
+          if (upload.status !== 'error') { // Evitar doble seteo
+            upload.status = 'error';
+            upload.error = 'Error inesperado durante el proceso de subida.';
+            this.cdRef.markForCheck();
+          }
+        }
+      });
   }
+
+  private moveItem(item: Folder | Document, itemType: 'folder' | 'document', destinationFolderId: string | null): void {
+    console.log(`Ejecutando movimiento de ${itemType} ${item._id} a carpeta ${destinationFolderId}`);
+    this.showError(`Mover ${item.name} aún no implementado.`); // Mensaje temporal
+    // --- Lógica Futura ---
+    // this.isLoading = true; this.cdRef.markForCheck();
+    // const moveObservable = itemType === 'folder'
+    //    ? this.folderService.moveFolder(item._id, destinationFolderId) // Necesitas crear folderService.moveFolder en frontend y backend
+    //    : this.documentService.moveDocument(item._id, destinationFolderId); // Necesitas crear documentService.moveDocument en frontend y backend
+    // moveObservable.pipe(...)
+    //   .subscribe(() => { this.showSuccess('Movido con éxito'); this.loadContents(this.currentFolderId); });
+    // --- Fin Lógica Futura ---
+}
 
   private confirmUploadBackend(upload: UploadStatus): void {
       if (!upload.s3Key) {

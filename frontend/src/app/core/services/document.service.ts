@@ -1,9 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams, HttpRequest, HttpEventType, HttpResponse, HttpHeaders } from '@angular/common/http';
-import { Observable, Subject, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { Observable, Subject, throwError, from, of } from 'rxjs';
+import { catchError, finalize, map, switchMap } from 'rxjs/operators';
 import { Document, PresignedUrlResponse, PresignedDownloadUrlResponse } from '../models/';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../environments/environment.development';
+import * as crc32 from 'crc-32'; // Asegúrate de instalar crc-32
+import { Buffer } from 'buffer'; // Asegúrate de instalar buffer
+
 
 @Injectable({
   providedIn: 'root'
@@ -33,36 +36,59 @@ export class DocumentService {
 
   // --- Subir archivo directamente a S3 ---
   uploadFileToS3(signedUrl: string, file: File): Observable<number | HttpResponse<any>> {
-      const req = new HttpRequest('PUT', signedUrl, file, {
-          reportProgress: true,
-          headers: new HttpHeaders({ 'Content-Type': file.type }) // ¡IMPORTANTE!
-          // No añadir 'Authorization' aquí
-      });
+    // Crear un subject para controlar el flujo y poder informar del progreso
+    const progress$ = new Subject<number | HttpResponse<any>>();
+    
+    // Preparar la petición con los headers adecuados
+    const headers = new HttpHeaders({ 
+      'Content-Type': file.type,
+      // No incluir más headers ya que pueden causar problemas con la firma
+    });
+    
+    const req = new HttpRequest('PUT', signedUrl, file, {
+      reportProgress: true,
+      headers: headers
+    });
 
-      const progress = new Subject<number | HttpResponse<any>>();
-
-      this.http.request(req).subscribe(
-          event => {
-              if (event.type === HttpEventType.UploadProgress && event.total) {
-                  const percentDone = Math.round(100 * event.loaded / event.total);
-                  progress.next(percentDone);
-              } else if (event instanceof HttpResponse) {
-                  if (event.status >= 200 && event.status < 300) {
-                    progress.next(event); // Enviar la respuesta completa en éxito
-                    progress.complete();
-                  } else {
-                    progress.error(event); // Propagar como error si S3 devuelve error
-                  }
-              }
-          },
-          error => {
-              console.error('S3 Upload Error:', error);
-              progress.error(error);
+    // Realizar la petición
+    const subscription = this.http.request(req).subscribe({
+      next: (event) => {
+        if (event.type === HttpEventType.UploadProgress && event.total) {
+          // Calcular y emitir el progreso
+          const percentDone = Math.round(100 * event.loaded / event.total);
+          progress$.next(percentDone);
+        } else if (event instanceof HttpResponse) {
+          // Comprobar si la respuesta es satisfactoria (códigos 200-299)
+          if (event.status >= 200 && event.status < 300) {
+            // Emitir la respuesta completa para indicar éxito
+            progress$.next(event);
+            progress$.complete(); // Completar el observable para indicar finalización
+          } else {
+            // Error en la respuesta de S3
+            progress$.error(new Error(`Error de S3: ${event.status} ${event.statusText}`));
           }
-      );
-      return progress.asObservable();
-  }
+        }
+      },
+      error: (error) => {
+        // Capturar cualquier error en la petición HTTP
+        console.error('Error en la subida a S3:', error);
+        progress$.error(error);
+      },
+      complete: () => {
+        // Este callback se ejecuta si la petición HTTP completa sin emitir HttpResponse
+        // No deberíamos llegar aquí en operaciones PUT normales, pero por si acaso
+        console.log('Subida completada (sin respuesta HTTP)');
+        // No hacemos progress$.complete() aquí para evitar doble completado
+      }
+    });
 
+    // Devolver el observable y asegurarse de que la suscripción se limpia cuando se completa
+    return progress$.asObservable().pipe(
+      finalize(() => {
+        subscription.unsubscribe(); // Limpiar la suscripción al HTTP request
+      })
+    );
+  }
 
   // Confirmar subida y guardar metadatos
   confirmUpload(s3Key: string, name: string, mimeType: string, size: number, folderId: string | null): Observable<Document> {

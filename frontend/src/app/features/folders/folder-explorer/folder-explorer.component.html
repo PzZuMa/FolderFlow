@@ -36,42 +36,36 @@
   <!-- Contenido Principal (Grid de Tarjetas) -->
   <div class="content-area">
     <div *ngIf="!isLoading" class="grid-container">
-      <!-- Documentos -->
-      <mat-card *ngFor="let doc of documents" class="grid-item document-card" [matTooltip]="doc.name">
-          <!-- ❌ QUITAMOS (click)="downloadFile(doc)" DE AQUÍ ❌ -->
-          <mat-card-content>
-              <mat-icon class="item-icon">{{ getIconForMimeType(doc.mimeType) }}</mat-icon>
-              <span class="item-name">{{ doc.name }}</span>
-              <span class="item-details">{{ formatBytes(doc.size) }} | {{ doc.updatedAt | date:'shortDate' }}</span>
-          </mat-card-content>
+
+      <!-- Carpetas -->
+      <mat-card *ngFor="let folder of folders" class="grid-item folder-card" (click)="navigateToFolder(folder._id)" [matTooltip]="'Abrir carpeta ' + folder.name">
+         <mat-card-content>
+             <mat-icon class="item-icon">folder</mat-icon>
+             <span class="item-name">{{ folder.name }}</span>
+             <!-- No hay detalles extra para carpetas aquí -->
+         </mat-card-content>
          <!-- Botón de menú para acciones -->
-         <button mat-icon-button [matMenuTriggerFor]="itemMenuDoc" (click)="$event.stopPropagation()" class="item-menu-button" aria-label="Acciones de documento">
+          <button mat-icon-button [matMenuTriggerFor]="itemMenuFolder" (click)="$event.stopPropagation()" class="item-menu-button" aria-label="Acciones de carpeta">
              <mat-icon>more_vert</mat-icon>
-         </button>
-         <!-- Menú PARA DOCUMENTOS -->
-         <mat-menu #itemMenuDoc="matMenu">
-             <button mat-menu-item (click)="downloadFile(doc)"> <!-- Descarga desde menú -->
-                <mat-icon>download</mat-icon>
-                <span>Descargar</span>
-             </button>
-             <!-- ✅ AÑADIR OPCIÓN MOVER ✅ -->
-              <button mat-menu-item (click)="openMoveDialog(doc, 'document')">
+          </button>
+          <!-- Menú PARA CARPETAS -->
+          <mat-menu #itemMenuFolder="matMenu">
+              <button mat-menu-item (click)="navigateToFolder(folder._id)">
+                <mat-icon>open_in_new</mat-icon>
+                <span>Abrir</span>
+              </button>
+              <!-- ✅ AÑADIR OPCIÓN MOVER ✅ -->
+              <button mat-menu-item (click)="openMoveDialog(folder, 'folder')">
                   <mat-icon>drive_file_move</mat-icon>
                   <span>Mover a...</span>
               </button>
              <mat-divider></mat-divider>
-             <button mat-menu-item (click)="openDeleteConfirmation(doc, 'document')" color="warn">
+             <button mat-menu-item (click)="openDeleteConfirmation(folder, 'folder')" color="warn">
                 <mat-icon>delete</mat-icon>
                 <span>Eliminar</span>
              </button>
-             <!-- Opción futura para abrir editor -->
-             <!-- <button mat-menu-item (click)="openInEditor(doc)">
-                 <mat-icon>edit_note</mat-icon>
-                 <span>Abrir en editor</span>
-             </button> -->
          </mat-menu>
       </mat-card>
-
     </div>
 
     <!-- Mensaje si está vacío (sin cambios) -->
@@ -85,9 +79,9 @@
   <!-- Input oculto para subida (sin cambios) -->
   <input type="file" hidden #fileInput multiple (change)="onFileSelected($event)">
 
-  <!-- Botón Flotante (FAB) para Subir Archivo (sin cambios) -->
-  <button mat-fab color="primary" class="upload-fab" (click)="triggerFileInputClick()" matTooltip="Subir archivo" aria-label="Subir archivo">
-    <mat-icon>upload</mat-icon> <!-- Icono más adecuado para FAB -->
-  </button>
-
+  <!-- FAB (Botón Flotante) - AÑADIR PARA ACCIONES PRINCIPALES -->
+  <div class="fab-container">
+    <button mat-fab color="accent" class="create-folder-fab" (click)="openCreateFolderDialog()" matTooltip="Nueva Carpeta" aria-label="Crear nueva carpeta">
+        <mat-icon>create_new_folder</mat-icon>
+    </button>
 </div>

@@ -18,24 +18,28 @@ export const handleCreateFolder = async (req, res) => {
 };
 
 // --- Listar Contenido ---
-export const handleListContent = async (req, res) => {
+export const handleListContent = async (req, res, next) => { // Añade 'next' si usas manejo de errores global
   try {
     const userId = req.user.id;
-    // Obtener parentId de los query params (/?parentId=...) o usar null si no se provee
-    const parentId = req.query.parentId || null;
+    const parentId = req.query.parentId === 'null' ? null : (req.query.parentId || null); // Manejo más robusto
 
-    // Validar que parentId, si existe, sea un ObjectId válido (opcional pero recomendado)
-    // const mongoose = require('mongoose'); // Importar mongoose si no está global
-    // if (parentId && !mongoose.Types.ObjectId.isValid(parentId)) {
-    //    return res.status(400).json({ message: 'El ID de la carpeta padre no es válido.' });
-    // }
+    const content = await folderService.listFolderContent(parentId, userId);
 
+    // --- CAMBIO AQUÍ ---
+    // Asumiendo que 'content' es el objeto { folders: [...] }
+    // Enviamos SOLAMENTE el array que está dentro de la propiedad 'folders'
+    // Si no existe 'folders' o no es un array, envía array vacío para seguridad.
+    res.status(200).json(Array.isArray(content?.folders) ? content.folders : []);
+    // --- FIN CAMBIO ---
 
-    const content = await folderService.listFolderContent(parentId === 'null' ? null : parentId, userId); // Convertir 'null' string a null
-    res.status(200).json(content);
   } catch (error) {
     console.error('Error listing folder content:', error);
-    res.status(500).json({ message: error.message || 'Error interno del servidor' });
+    // Pasa el error al manejador global si lo tienes
+    if (next) {
+         next(error);
+    } else {
+        res.status(500).json({ message: error.message || 'Error interno del servidor' });
+    }
   }
 };
 

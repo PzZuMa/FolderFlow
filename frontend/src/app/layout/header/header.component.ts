@@ -24,9 +24,8 @@ export class HeaderComponent {
   private router = inject(Router);
 
   // Idealmente, obtendrías la info del usuario (imagen, nombre) del AuthService
-  // Ejemplo: userName = this.authService.getCurrentUserName();
-  // Ejemplo: userProfileImageUrl = this.authService.getCurrentUserProfileImage();
-  userProfileImageUrl = 'assets/images/default-profile.png'; // Placeholder
+  // userName = this.authService.getCurrentUserName();
+  // userProfileImageUrl = this.authService.getCurrentUserProfileImage();
 
   toggleSidebar() {
     this.sidebarToggle.emit();

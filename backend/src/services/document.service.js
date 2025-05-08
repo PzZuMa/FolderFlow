@@ -21,6 +21,7 @@ async function generateUploadUrl(userId, filename, mimeType, folderId = null) {
         ? `${userId}/${folderId}/${uniqueSuffix}`
         : `${userId}/root/${uniqueSuffix}`;
 
+
     const putCommand = new PutObjectCommand({
         Bucket: bucketName,
         Key: s3Key,

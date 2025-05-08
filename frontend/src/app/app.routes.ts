@@ -8,6 +8,7 @@ import { MainLayoutComponent } from './layout/main-layout/main-layout.component'
 // Importa los componentes de contenido que irán DENTRO del layout
 import { HomeComponent } from './features/home/home.component'; // <<<--- Para el contenido 3+3
 import { DocumentExplorerComponent } from './features/documents/document-explorer/document-explorer.component';
+import { FolderExplorerComponent } from './features/folders/folder-explorer/folder-explorer.component';
 
 export const routes: Routes = [
   // Rutas públicas
@@ -31,6 +32,9 @@ export const routes: Routes = [
       },
       // --- Añade aquí otras rutas protegidas ---
       // { path: 'settings', component: SettingsComponent },
+      { path: 'folders',
+        component: FolderExplorerComponent
+      }, // <<< NUEVA RUTA
       // --- Fin otras rutas ---
       {
         path: '', redirectTo: 'home', pathMatch: 'full' // Redirige /app a /app/home por defecto

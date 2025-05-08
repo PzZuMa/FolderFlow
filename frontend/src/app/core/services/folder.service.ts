@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { switchMap, map, catchError, concatMap, reduce } from 'rxjs/operators';
 import { Folder } from '../models/folder.model';
-import { environment } from '../../../environments/environment'; // Asegúrate que exista environment
+import { environment } from '../../../environments/environment.development'; // Asegúrate que exista environment
 
 @Injectable({
   providedIn: 'root'
