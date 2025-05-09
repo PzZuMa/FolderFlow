@@ -92,3 +92,8 @@ export const deleteFolder = async (folderId, userId) => {
   // Puedes devolver un mensaje de éxito o algún identificador
   return { message: 'Carpeta eliminada con éxito.' };
 };
+
+export const getFolderById = async (folderId, userId) => {
+  const folder = await Folder.findOne({ _id: folderId, ownerId: userId });
+  return folder; // Devuelve la carpeta o null si no se encuentra/no pertenece
+};

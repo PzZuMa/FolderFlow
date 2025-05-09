@@ -1,49 +1,300 @@
+// src/app/features/folder-explorer/folder-explorer.component.scss
+@use '@angular/material' as mat; // Importar para acceso a variables de tema si es necesario
 
+// --- Contenedor General ---
 .explorer-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative; // Para el FAB
+  background-color: var(--app-background-color); // Fondo general
+}
+
+// --- Toolbar Interna (ya la tenías) ---
+.internal-toolbar {
+  min-height: 56px;
+  background-color: var(--app-card-background-color);
+  color: var(--app-text-color);
+  border-bottom: 1px solid var(--app-divider-color);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  flex-shrink: 0;
+  padding: 0 8px; // Ajustar padding para el botón de atrás
+
+  button[mat-icon-button] { // Botón de flecha atrás
+    color: var(--app-secondary-text-color);
+    margin-right: 4px; // Espacio si no hay separador
+    &:hover {
+        background-color: rgba(0,0,0,0.04);
+    }
+  }
+
+  .toolbar-separator {
+      width: 1px;
+      height: 24px;
+      background-color: var(--app-divider-color);
+      margin: 0 8px; // Espacio alrededor del separador
+  }
+
+  // Contenedor de Breadcrumbs
+  .breadcrumb-display-container {
     display: flex;
-    flex-direction: column;
-    height: 100%;
-    position: relative; // Para posicionar los FABs
-    background-color: var(--app-background-color);
+    align-items: center;
+    overflow-x: auto; // Scroll si son muchos breadcrumbs
+    white-space: nowrap;
+    flex-grow: 1; // Para que ocupe espacio antes del spacer
+
+    .breadcrumb-home-icon {
+        color: var(--app-secondary-text-color);
+        margin-right: 6px; // Espacio después del icono home
+        font-size: 20px; // Ajustar tamaño
+        height: 20px;
+        width: 20px;
+        cursor: pointer;
+    }
+
+    .breadcrumb-button {
+      min-width: auto; // Para que no sean muy anchos
+      padding: 0 6px; // Padding horizontal
+      font-size: 0.95em;
+      color: var(--app-secondary-text-color);
+      font-weight: 400;
+      line-height: 36px; // Alinear con altura de botones icono
+      height: 36px;
+
+      &:hover:not(:disabled) {
+        background-color: rgba(0,0,0,0.04);
+        color: var(--app-primary-color); // Opcional: cambiar color en hover
+      }
+      &:disabled { // El último breadcrumb (carpeta actual)
+        color: var(--app-text-color); // Texto más oscuro
+        font-weight: 500; // Ligeramente más bold
+        opacity: 1; // Asegurar que no se vea deshabilitado
+        cursor: default;
+      }
+    }
+    .breadcrumb-separator {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      margin: 0 0px; // Menos espacio entre separador y botón
+      color: var(--app-secondary-text-color);
+      vertical-align: middle;
+    }
+
+    .toolbar-title {
+      font-size: 1.1em; // Ajusta según necesidad
+      font-weight: 500;
+      color: var(--app-text-color);
+      margin-left: 8px; // Espacio si no hay botón de atrás
+    }
+
+    button[mat-icon-button] { // Esto afectará a todos los icon buttons en la toolbar
+      margin-left: 8px; // Añade un pequeño margen a la izquierda de los botones de acción
+      &:first-of-type { // Excepto el primero si es el de "atrás"
+        // Podrías necesitar una clase específica si el botón de atrás tiene lógica diferente
+      }
   }
-  
-  // --- ❌ ELIMINAR ESTILOS TOOLBAR ❌ ---
-  /*
-  .toolbar { ... }
-  .breadcrumb-container { ... }
-  // ... etc ...
-  */
-  
-  // --- Estilos Upload Section (Sin cambios) ---
-  .upload-section { /* ... */ }
-  .upload-items-container { /* ... */ }
-  .upload-item { /* ... */ }
-  
-  // --- Estilos Content Area & List (Sin cambios) ---
-  .content-area {
-    flex: 1;
-    overflow-y: auto;
-    // Quitamos el padding si queremos que la lista toque los bordes
-    // padding: 16px;
   }
-  // Ajustar padding de mat-list si quitamos el de content-area
-  mat-list {
-     padding-top: 0 !important;
+
+  .toolbar-spacer { // Espacio para empujar acciones (si las hubiera) a la derecha
+    // flex: 1 1 auto; // Ya no es necesario si el breadcrumb container usa flex-grow
   }
-  .list-item { /* ... */ }
-  // ... (otros estilos de la lista)
-  
-  // --- ✅ AÑADIR ESTILOS PARA FABs ✅ ---
-  .fab-container {
-      position: absolute; // Posición fija relativa a .explorer-container
-      bottom: 24px;
-      right: 24px;
-      z-index: 50;
-      display: flex;
-      flex-direction: column; // Apilar botones verticalmente
-      gap: 16px; // Espacio entre botones
+}
+
+// --- Sección de Subidas ---
+.upload-section {
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--app-divider-color);
+  background-color: var(--app-card-background-color); // Fondo blanco para la sección
+  flex-shrink: 0;
+  h4 {
+      margin: 0 0 8px 0;
+      font-size: 0.9em;
+      font-weight: 500;
+      color: var(--app-secondary-text-color);
   }
-  
-  // Estilos opcionales si quieres diferenciar los FABs
-  .upload-fab { }
-  .create-folder-fab { }
+}
+.upload-items-container {
+    // Contenedor para los items individuales, puedes añadir max-height y overflow si son muchos
+    // max-height: 150px;
+    // overflow-y: auto;
+}
+.upload-item {
+  display: flex;
+  align-items: center;
+  padding: 4px 0;
+  gap: 12px;
+
+  .upload-icon {
+     color: var(--app-secondary-text-color);
+     flex-shrink: 0;
+  }
+  .upload-info {
+    flex-grow: 1;
+    min-width: 0;
+    .upload-title {
+        display: block;
+        font-size: 0.85em;
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .upload-details {
+        font-size: 0.75em;
+        color: var(--app-secondary-text-color);
+        .error-message {
+            color: var(--app-warn-color);
+            font-weight: bold;
+        }
+    }
+    .upload-progress-bar {
+        height: 3px !important;
+        margin-top: 2px;
+    }
+  }
+}
+
+
+// --- Área de Contenido y Grid ---
+.content-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); // Ajusta minmax según prefieras
+  gap: 16px;
+}
+
+// --- Estilos Tarjetas (Grid Items) ---
+.grid-item {
+  height: 150px; // Altura fija para las tarjetas
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; // Alinear al inicio para que el texto no se corte abajo si es mucho
+  text-align: center;
+  cursor: pointer;
+  position: relative; // Para el botón de menú
+  padding: 0; // Quitar padding de mat-card, lo manejamos en mat-card-content
+
+  // Ripple effect y hover
+  // La directiva mat-ripple se puede añadir a mat-card para mejor efecto
+  transition: box-shadow 0.2s ease-in-out;
+  &:hover {
+    @include mat.elevation(4); // Helper de elevación de Material
+  }
+
+  // Contenido interno de la tarjeta
+  mat-card-content {
+     padding: 16px 8px 8px 8px !important; // Padding interno
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     justify-content: flex-start; // Alinear al inicio
+     flex-grow: 1; // Para que ocupe el espacio
+     width: 100%;
+     box-sizing: border-box;
+     overflow: hidden; // Evitar que el contenido desborde la tarjeta
+  }
+
+  .item-icon {
+    font-size: 56px; // Icono grande
+    width: 56px;
+    height: 56px;
+    margin-bottom: 8px;
+    color: var(--app-secondary-text-color); // Color base
+  }
+
+  // Estilo específico para tarjetas de carpeta
+  &.folder-card .item-icon {
+      color: #ffca28; // Amarillo/naranja para carpetas (ejemplo de Google Drive)
+  }
+  // Puedes añadir más aquí para tipos de documentos si este componente los mostrara
+  // &.document-card.pdf .item-icon { color: #DB4437; } // Rojo PDF
+  // &.document-card.image .item-icon { color: #4CAF50; } // Verde Imagen
+
+  .item-name {
+    font-size: 0.9em;
+    font-weight: 500;
+    color: var(--app-text-color);
+    line-height: 1.3;
+    max-height: calc(1.3em * 2); // Aproximadamente 2 líneas
+    overflow: hidden;
+    text-overflow: ellipsis;
+    // Técnica de ellipsis multilínea
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    word-break: break-all; // Para palabras muy largas
+    margin-top: 4px;
+    padding: 0 4px; // Pequeño padding lateral para el nombre
+  }
+
+   .item-details { // Para documentos (si se añadieran de nuevo)
+       font-size: 0.75em;
+       color: var(--app-secondary-text-color);
+       margin-top: 6px;
+       white-space: nowrap;
+   }
+
+  // Botón de menú en la esquina
+  .item-menu-button {
+    position: absolute;
+    top: 0px; // Ajusta según tu preferencia
+    right: 0px; // Ajusta según tu preferencia
+    color: var(--app-secondary-text-color); // Discreto
+    // Aumentar área de click
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
+    .mat-icon { font-size: 20px; height: 20px; width: 20px; }
+  }
+}
+
+// --- Empty State ---
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  height: 100%; // Para que ocupe el espacio si el grid está vacío
+  text-align: center;
+  color: var(--app-secondary-text-color);
+
+  .empty-icon {
+    font-size: 72px; // Icono grande
+    width: 72px;
+    height: 72px;
+    margin-bottom: 16px;
+  }
+  span {
+    font-size: 1.2em;
+    margin-bottom: 16px;
+  }
+  // Estilo para el botón en estado vacío (si lo usas)
+  // button[mat-stroked-button] { ... }
+}
+
+// --- FABs (Botones Flotantes de Acción) ---
+.fab-container {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  z-index: 50; // Asegura que estén por encima
+  display: flex;
+  flex-direction: column; // Apilar si hay varios
+  gap: 16px; // Espacio entre FABs
+}
+
+// Estilos individuales para los FABs
+.upload-fab, .create-folder-fab {
+  // El color se define con color="primary" o color="accent" en el HTML
+  .mat-icon {
+      transform: scale(1.2); // Icono un poco más grande dentro del FAB
+  }
+}

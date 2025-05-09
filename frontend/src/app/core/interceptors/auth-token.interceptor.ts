@@ -29,13 +29,13 @@ export const authTokenInterceptor: HttpInterceptorFn = (
         Authorization: `Bearer ${authToken}`
       }
     });
-    console.log('Interceptor: Añadiendo token a API local:', req.url); // Log específico
+    // console.log('Interceptor: Añadiendo token a API local:', req.url); // Log específico
     return next(authReq); // Pasa la petición clonada con token
   }
 
   // Si es una URL de S3, pasa la petición SIN modificar (SIN token)
   if (isS3Url) {
-    console.log('Interceptor: Omitiendo token para URL de S3:', req.url); // Log específico
+    // console.log('Interceptor: Omitiendo token para URL de S3:', req.url); // Log específico
     return next(req); // Pasa la petición original
   }
 
@@ -43,6 +43,6 @@ export const authTokenInterceptor: HttpInterceptorFn = (
   // (que no es S3 y no es nuestra API), pasa la petición original.
   // Esto cubre las llamadas a /login y /register si no tienen token,
   // y cualquier otra llamada externa.
-  console.log('Interceptor: Petición sin token o externa (no S3):', req.url); // Log general
+  // console.log('Interceptor: Petición sin token o externa (no S3):', req.url); // Log general
   return next(req); // Pasa la petición original
 };

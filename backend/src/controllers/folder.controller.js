@@ -64,3 +64,18 @@ export const handleDeleteFolder = async (req, res) => {
        .json({ message: error.message || 'Error interno del servidor' });
   }
 };
+
+export const handleGetFolderDetails = async (req, res) => {
+  try {
+    const userId = req.user.id; // Del middleware protect
+    const { folderId } = req.params;
+    const folder = await folderService.getFolderById(folderId, userId); // Necesitarás este servicio
+    if (!folder) {
+      return res.status(404).json({ message: 'Carpeta no encontrada o no te pertenece.' });
+    }
+    res.status(200).json(folder);
+  } catch (error) {
+    console.error('Error fetching folder details:', error);
+    res.status(500).json({ message: error.message || 'Error interno del servidor' });
+  }
+};

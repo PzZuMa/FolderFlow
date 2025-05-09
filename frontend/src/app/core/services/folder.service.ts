@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
-import { switchMap, map, catchError, concatMap, reduce } from 'rxjs/operators';
+import { switchMap, map, catchError, concatMap, reduce, timeout } from 'rxjs/operators';
 import { Folder } from '../models/folder.model';
 import { environment } from '../../../environments/environment.development'; // Asegúrate que exista environment
 
@@ -39,38 +39,58 @@ export class FolderService {
     return this.http.delete(`${this.apiUrl}/${folderId}`);
   }
 
-  // --- Lógica para Breadcrumbs ---
-  getBreadcrumbs(folderId: string | null): Observable<Folder[]> {
-    if (!folderId) {
-      return of([{ _id: '', name: 'Raíz', parentId: null, ownerId: '' }]); // Objeto 'Raíz' virtual
-    }
-
-    return this.buildBreadcrumbPath(folderId).pipe(
-      map(path => [
-        { _id: '', name: 'Raíz', parentId: null, ownerId: '' }, // Añadir raíz al inicio
-        ...path.reverse() // Revertir para tener Raíz > CarpetaA > CarpetaB
-      ])
-    );
+  // Método mejorado para obtener breadcrumbs, más robusto ante errores
+getBreadcrumbs(folderId: string | null): Observable<Folder[]> {
+  // Caso especial: la raíz
+  if (folderId === null || folderId === '' || folderId === undefined) {
+    return of([{ _id: '', name: 'Mis Carpetas', parentId: null, ownerId: '' }]);
   }
 
-  private buildBreadcrumbPath(folderId: string | null): Observable<Folder[]> {
-      if (!folderId) {
-          return of([]); // Caso base: llegamos a la raíz (o más allá)
+  // Para cualquier carpeta que no sea la raíz, construir el camino completo
+  return this.buildBreadcrumbPath(folderId).pipe(
+    map(path => {
+      // Añadir el elemento raíz al principio
+      const rootCrumb: Folder = { _id: '', name: 'Mis Carpetas', parentId: null, ownerId: '' };
+      
+      // Si el path está vacío (posiblemente por un error), devolver solo la raíz
+      if (!path || path.length === 0) {
+        return [rootCrumb];
       }
+      
+      // Caso normal: raíz + path invertido (de raíz hacia abajo)
+      return [rootCrumb, ...path.reverse()];
+    }),
+    // Asegurar que siempre devolvemos algo (al menos la raíz) incluso en caso de error
+    catchError(error => {
+      console.error('Error in getBreadcrumbs:', error);
+      return of([{ _id: '', name: 'Mis Carpetas', parentId: null, ownerId: '' }]);
+    })
+  );
+}
 
-      return this.getFolderDetails(folderId).pipe(
-          switchMap(folder => {
-              // Llamada recursiva para el padre
-              return this.buildBreadcrumbPath(folder.parentId).pipe(
-                  map(parentPath => [...parentPath, folder]) // Añadir la carpeta actual al path
-              );
-          }),
-          catchError(err => {
-              console.error("Error fetching breadcrumb segment:", err);
-              // Si no se encuentra una carpeta (ej. borrada), detener la cadena
-              return of([]);
-          })
-      );
+// Método auxiliar mejorado
+private buildBreadcrumbPath(folderId: string | null): Observable<Folder[]> {
+  // Caso base: llegamos a la raíz o hay un error
+  if (!folderId || folderId === '') {
+    return of([]);
   }
+
+  return this.getFolderDetails(folderId).pipe(
+    switchMap(folder => {
+      // Continuar construyendo el path recursivamente con el padre
+      return this.buildBreadcrumbPath(folder.parentId).pipe(
+        map(parentPath => [...parentPath, folder])
+      );
+    }),
+    // Manejo robusto de errores
+    catchError(err => {
+      console.error("Error fetching breadcrumb segment:", err);
+      // Si no se puede encontrar una carpeta, detener la cadena aquí
+      return of([]);
+    }),
+    // Timeout para evitar recursión infinita
+    timeout(10000)
+  );
+}
 
 }

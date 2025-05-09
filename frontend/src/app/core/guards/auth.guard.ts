@@ -9,7 +9,8 @@ export const authGuard: CanActivateFn = (route, state) => {
 
   // Versión Síncrona (más simple, usa el estado actual)
   if (authService.isLoggedIn) { // Usamos el getter síncrono
-      return true;
+    console.log('AuthGuard: Usuario logueado, acceso permitido a', state.url);
+    return true;
   } else {
       // Redirigir a la página de login
       console.log('AuthGuard: Usuario no logueado, redirigiendo a /dashboard');

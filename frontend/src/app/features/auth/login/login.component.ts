@@ -56,7 +56,7 @@ export class LoginComponent implements OnInit {
         this.isLoading = false;
         console.log('Login exitoso, respuesta:', response);
         // Redirigir al home o a donde sea necesario
-        this.router.navigate(['/app']);
+        this.router.navigate(['/home']);
       },
       error: (error) => {
         this.isLoading = false;

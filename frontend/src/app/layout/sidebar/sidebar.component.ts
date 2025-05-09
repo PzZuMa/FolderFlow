@@ -24,9 +24,9 @@ export class SidebarComponent {
 
   // Define tus items de menú
   menuItems = [
-    { label: 'Inicio', icon: 'home', route: '/app/home' },
-    { label: 'Mis Documentos', icon: 'folder_open', route: '/app/documents' },
-    { label: 'Mis Carpetas', icon: 'folder', route: '/app/folders' },
+    { label: 'Inicio', icon: 'home', route: '/home' },
+    { label: 'Mis Documentos', icon: 'folder_open', route: '/documents' },
+    { label: 'Mis Carpetas', icon: 'folder', route: '/folders' },
     // { label: 'Compartidos', icon: 'people', route: '/app/shared' }, // Ejemplo
     // { label: 'Papelera', icon: 'delete', route: '/app/trash' }, // Ejemplo
     // { label: 'Ajustes', icon: 'settings', route: '/app/settings' }, // Ejemplo

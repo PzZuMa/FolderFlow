@@ -3,7 +3,8 @@ import { protect } from '../middleware/auth.middleware.js'; // Importa tu middle
 import {
   handleCreateFolder,
   handleListContent,
-  handleDeleteFolder
+  handleDeleteFolder,
+  handleGetFolderDetails
 } from '../controllers/folder.controller.js'; // Importa los controladores
 
 const router = express.Router();
@@ -23,6 +24,11 @@ router.post('/', handleCreateFolder);
 // Nota: Se usa GET / en lugar de /root o /?parentId=... para simplificar
 //       El controlador ya maneja la ausencia de parentId para obtener la raíz.
 router.get('/', handleListContent);
+
+// GET /api/folders/:folderId - Listar contenido de una carpeta específica
+// Params: /api/folders/ID_Carpeta
+router.get('/:folderId', handleGetFolderDetails); // Si necesitas esta ruta, descomentar y ajustar el controlador
+
 
 // DELETE /api/folders/:folderId - Eliminar una carpeta
 // Params: /api/folders/ID_De_La_Carpeta_A_Eliminar
