@@ -23,9 +23,9 @@ export class HeaderComponent {
   private authService = inject(AuthService); // Inyecta AuthService
   private router = inject(Router);
 
-  // Idealmente, obtendrías la info del usuario (imagen, nombre) del AuthService
-  // userName = this.authService.getCurrentUserName();
-  // userProfileImageUrl = this.authService.getCurrentUserProfileImage();
+  // Cambiado para coincidir con el nombre del archivo en assets/images
+  userProfileImageUrl = '/assets/images/pfp-default.png';
+  snackBar: any;
 
   toggleSidebar() {
     this.sidebarToggle.emit();
@@ -39,5 +39,16 @@ export class HeaderComponent {
   navigateToSettings() {
     // this.router.navigate(['/app/settings']); // Navega a la página de ajustes si la tienes
     console.log('Navegar a Ajustes');
+    this.showError('Funcionalidad no disponible en esta versión');
+  }
+
+  private showSuccess(message: string): void {
+    this.snackBar.open(message, 'Cerrar', { duration: 3000, panelClass: ['snackbar-success'] });
+  }
+  private showError(message: string): void {
+    this.snackBar.open(message, 'Cerrar', { duration: 3000, panelClass: ['snackbar-error'] });
+  }
+  private showInfo(message: string): void {
+    this.snackBar.open(message, 'Cerrar', { duration: 3000, panelClass: ['snackbar-info'] });
   }
 }

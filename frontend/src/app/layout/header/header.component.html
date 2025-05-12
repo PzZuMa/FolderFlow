@@ -4,15 +4,13 @@
     </button>
   
     <div class="logo-container">
-      <!-- <img src="assets/images/logo.png" alt="Logo" class="logo"> -->
-      <span>Mi SGD</span> <!-- O tu logo -->
+      <span>Mi SGD</span>
     </div>
   
-    <span class="header-spacer"></span> <!-- Empuja elementos a la derecha -->
+    <span class="header-spacer"></span>
   
-    <button mat-icon-button [matMenuTriggerFor]="userMenu" aria-label="User menu">
-      <img src="/frontend/src/assets/default-profile-account-unknown-icon-black-silhouette-free-vector.jpg" alt="Perfil" class="profile-image">
-      <!-- O usa un icono si no tienes imagen: <mat-icon>person</mat-icon> -->
+    <button mat-icon-button [matMenuTriggerFor]="userMenu" aria-label="User menu" class="profile-button">
+      <mat-icon class="profile-icon">account_circle</mat-icon>
     </button>
   
     <mat-menu #userMenu="matMenu">
@@ -25,5 +23,4 @@
         <span>Cerrar Sesión</span>
       </button>
     </mat-menu>
-  
-  </mat-toolbar>
+</mat-toolbar>

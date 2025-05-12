@@ -11,6 +11,7 @@
 }
 
 // --- Toolbar Interna (ya la tenías) ---
+// --- Toolbar Interna ---
 .internal-toolbar {
   min-height: 56px;
   background-color: var(--app-card-background-color);
@@ -18,11 +19,14 @@
   border-bottom: 1px solid var(--app-divider-color);
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
   flex-shrink: 0;
-  padding: 0 8px; // Ajustar padding para el botón de atrás
+  padding: 0 8px;
+  display: flex; // Asegurar que sea flexbox
+  align-items: center; // Alinear verticalmente
 
-  button[mat-icon-button] { // Botón de flecha atrás
+  button[mat-icon-button] { 
     color: var(--app-secondary-text-color);
-    margin-right: 4px; // Espacio si no hay separador
+    margin-right: 4px;
+    flex-shrink: 0; // Evitar que se comprima
     &:hover {
         background-color: rgba(0,0,0,0.04);
     }
@@ -32,72 +36,99 @@
       width: 1px;
       height: 24px;
       background-color: var(--app-divider-color);
-      margin: 0 8px; // Espacio alrededor del separador
+      margin: 0 8px;
+      flex-shrink: 0; // Evitar que se comprima
   }
 
   // Contenedor de Breadcrumbs
   .breadcrumb-display-container {
     display: flex;
     align-items: center;
-    overflow-x: auto; // Scroll si son muchos breadcrumbs
-    white-space: nowrap;
-    flex-grow: 1; // Para que ocupe espacio antes del spacer
+    flex: 1; // Ocupar el espacio disponible
+    min-width: 0; // Importante: permitir que se comprima
+    overflow: hidden; // Ocultar el overflow
+    position: relative; // Para el efecto de difuminado
 
-    .breadcrumb-home-icon {
-        color: var(--app-secondary-text-color);
-        margin-right: 6px; // Espacio después del icono home
-        font-size: 20px; // Ajustar tamaño
-        height: 20px;
-        width: 20px;
-        cursor: pointer;
+    // Efecto de difuminado al final si hay scroll
+    &::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 30px;
+      background: linear-gradient(to right, transparent, var(--app-card-background-color));
+      pointer-events: none; // No interferir con clicks
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    // Mostrar el difuminado cuando hay scroll
+    &.has-scroll::after {
+      opacity: 1;
+    }
+
+    // Wrapper interno scrolleable
+    .breadcrumb-scroll-wrapper {
+      display: flex;
+      align-items: center;
+      overflow-x: auto;
+      white-space: nowrap;
+      scroll-behavior: smooth;
+      padding-right: 10px; // Espacio para que el último item no quede pegado
+      
+      // Ocultar scrollbar en diferentes navegadores
+      scrollbar-width: none; // Firefox
+      -ms-overflow-style: none; // IE y Edge
+      &::-webkit-scrollbar { // Chrome, Safari y Opera
+        display: none;
+      }
     }
 
     .breadcrumb-button {
-      min-width: auto; // Para que no sean muy anchos
-      padding: 0 6px; // Padding horizontal
+      min-width: auto;
+      padding: 0 8px; // Un poco más de padding
       font-size: 0.95em;
       color: var(--app-secondary-text-color);
       font-weight: 400;
-      line-height: 36px; // Alinear con altura de botones icono
+      line-height: 36px;
       height: 36px;
+      flex-shrink: 0; // Evitar que se compriman
+      text-overflow: ellipsis;
+      max-width: 200px; // Limitar el ancho máximo de cada breadcrumb
+      overflow: hidden;
 
       &:hover:not(:disabled) {
         background-color: rgba(0,0,0,0.04);
-        color: var(--app-primary-color); // Opcional: cambiar color en hover
+        color: var(--app-primary-color);
       }
-      &:disabled { // El último breadcrumb (carpeta actual)
-        color: var(--app-text-color); // Texto más oscuro
-        font-weight: 500; // Ligeramente más bold
-        opacity: 1; // Asegurar que no se vea deshabilitado
+      &:disabled { 
+        color: var(--app-text-color);
+        font-weight: 500;
+        opacity: 1;
         cursor: default;
       }
     }
+    
     .breadcrumb-separator {
       font-size: 20px;
       width: 20px;
       height: 20px;
-      margin: 0 0px; // Menos espacio entre separador y botón
+      margin: 0 4px; // Un poco más de espacio
       color: var(--app-secondary-text-color);
       vertical-align: middle;
+      flex-shrink: 0; // Evitar que se comprima
     }
 
     .toolbar-title {
-      font-size: 1.1em; // Ajusta según necesidad
+      font-size: 1.1em;
       font-weight: 500;
       color: var(--app-text-color);
-      margin-left: 8px; // Espacio si no hay botón de atrás
+      margin-left: 8px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
-
-    button[mat-icon-button] { // Esto afectará a todos los icon buttons en la toolbar
-      margin-left: 8px; // Añade un pequeño margen a la izquierda de los botones de acción
-      &:first-of-type { // Excepto el primero si es el de "atrás"
-        // Podrías necesitar una clase específica si el botón de atrás tiene lógica diferente
-      }
-  }
-  }
-
-  .toolbar-spacer { // Espacio para empujar acciones (si las hubiera) a la derecha
-    // flex: 1 1 auto; // Ya no es necesario si el breadcrumb container usa flex-grow
   }
 }
 
@@ -114,11 +145,7 @@
       color: var(--app-secondary-text-color);
   }
 }
-.upload-items-container {
-    // Contenedor para los items individuales, puedes añadir max-height y overflow si son muchos
-    // max-height: 150px;
-    // overflow-y: auto;
-}
+
 .upload-item {
   display: flex;
   align-items: center;
@@ -227,7 +254,6 @@
     text-overflow: ellipsis;
     // Técnica de ellipsis multilínea
     display: -webkit-box;
-    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     word-break: break-all; // Para palabras muy largas
     margin-top: 4px;

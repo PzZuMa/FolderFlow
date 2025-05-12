@@ -1,55 +1,118 @@
 :host {
   display: block;
   height: 100%;
-  background-color: #f4f4f4; // O var(--app-sidebar-background, #f4f4f4) si defines una variable
-  border-right: 1px solid rgba(0,0,0,0.12);
-  overflow: hidden; // <<--- Cambiar overflow-x a overflow general
-  width: 240px; // Ancho expandido por defecto
-  flex-shrink: 0; // Asegura que no se encoja por el contenido flex padre
-  transition: width 0.3s ease-in-out; // <<--- Asegura la transición en width
+  background-color: #f4f4f4;
+  overflow: hidden;
+  width: 240px;
+  flex-shrink: 0;
+  transition: width 0.3s ease-in-out;
 }
-  
+
+:host(.collapsed) {
+  width: 75px; // Ajustado para coincidir con el botón del header
+}
+
 .sidebar-container {
   height: 100%;
-  padding-top: 16px;
-  // overflow: hidden; // Quita el overflow de aquí si lo pusiste
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 16px; // Padding general para el container
 }
 
-// Estilos cuando está colapsado
-:host(.collapsed) {
-  width: 60px; // Ancho colapsado (solo iconos)
-}
-
-.nav-text {
-  margin-left: 16px; // Espacio entre icono y texto
-  white-space: nowrap; // Evita que el texto se rompa
-  opacity: 1;
-  transition: opacity 0.2s ease-in-out;
-}
-
-:host(.collapsed) .nav-text {
-  opacity: 0; // Oculta el texto suavemente
-  width: 0; // Evita que ocupe espacio invisible
+.nav-item {
+  margin: 12px 0; // Margen vertical entre items
+  border-radius: 4px; // Bordes redondeados
+  transition: all 0.3s ease-in-out;
   overflow: hidden;
 }
 
-.mat-mdc-list-item {
-  color: var(--app-secondary-text-color); // Usa la variable para texto secundario/normal
+// Hover effect contenido dentro del item
+.nav-item:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
 
+.nav-text {
+  white-space: nowrap;
+  opacity: 1;
+  transition: opacity 0.2s ease-in-out;
+  margin-left: 12px; // Espacio entre icono y texto
+}
+
+:host(.collapsed) .nav-text {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  margin-left: 0;
+}
+
+// Estilos del mat-list-item
+.mat-mdc-list-item {
+  color: var(--app-secondary-text-color, #6c757d);
+  border-radius: 4px;
+  min-height: 40px; // Altura mínima consistente
+  
   .mat-icon {
-    color: var(--app-secondary-text-color); // O un gris específico si prefieres
+    color: var(--app-secondary-text-color, #6c757d);
+    margin-right: 0; // Resetear margen
   }
 }
 
-.active-link {
-   background-color: rgba(0, 0, 0, 0.08); // O define una variable para el fondo activo
-   border-left: 4px solid var(--app-primary-color); // <<<--- Usa la variable CSS
-   // color: var(--app-primary-color); // El color del texto/icono se hereda abajo
+// Ajustar el item cuando está colapsado
+:host(.collapsed) .mat-mdc-list-item {
+  padding: 0 !important;
+  
+  ::ng-deep .mdc-list-item__content {
+    padding: 0 !important;
+    justify-content: center !important;
+    width: 100%;
+  }
+  
+  ::ng-deep .mat-mdc-list-item-unscoped-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 0;
+  }
+  
+  // Centrar específicamente el icono
+  mat-icon {
+    margin-left: 10px !important;
+    padding: 0 !important;
+  }
+}
 
-  .mat-icon, span { // Aplica el color primario al icono y al texto
-    color: var(--app-primary-color); // <<<--- Usa la variable CSS
+// Estilo para el item activo
+.active-link {
+  background-color: rgba(118, 71, 169, 0.08); // Fondo del color primario con transparencia
+  
+  .mat-icon, 
+  .nav-text {
+    color: var(--app-primary-color, #7647a9);
   }
-  span {
-    font-weight: bold;
+  
+  .nav-text {
+    font-weight: 500;
   }
+}
+
+// Hover effect para active-link
+.active-link:hover {
+  background-color: rgba(118, 71, 169, 0.12);
+}
+
+// Eliminamos el hover del mat-list-item para evitar conflictos
+.mat-mdc-list-item:hover {
+  background-color: transparent !important;
+}
+
+// Asegurar que el contenido no se desborde
+.mat-mdc-list-item-content {
+  overflow: hidden;
+}
+
+// Ajustar el ripple para que no se salga del container
+.mat-mdc-list-item .mat-ripple {
+  border-radius: 4px;
+  overflow: hidden;
 }

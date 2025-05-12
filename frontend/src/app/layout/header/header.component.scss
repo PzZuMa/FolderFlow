@@ -1,28 +1,76 @@
 .app-header {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
+  height: 64px;
+}
+
+.logo-container {
+  margin-left: 16px;
+  display: flex;
+  align-items: center;
+  
+  span {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: white;
+  }
+}
+
+.header-spacer {
+  flex: 1 1 auto;
+}
+
+// Botón del menú hamburguesa
+.mat-icon-button {
+  mat-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+  }
+}
+
+// Botón de perfil específico
+.profile-button {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
   }
   
-  .logo-container {
-    margin-left: 16px;
-    /* Estilos para tu logo */
-    .logo {
-      height: 40px; // Ajusta según tu logo
+  .profile-icon {
+    font-size: 40px !important;
+    width: 40px !important;
+    height: 40px !important;
+    line-height: 40px !important;
+    color: white;
+    transition: opacity 0.2s ease-in-out;
+  }
+  
+  &:hover .profile-icon {
+    opacity: 0.9;
+  }
+}
+
+// Arreglar el tamaño del icono de menú para que no sea tan grande
+mat-toolbar {
+  .mat-icon-button {
+    &:first-child { // Botón del menú hamburguesa
+      mat-icon {
+        font-size: 24px;
+      }
     }
-    span {
-      font-size: 1.2em;
-      font-weight: bold;
-    }
   }
+}
+
+// Asegurar que el menú desplegable se vea bien
+.mat-menu-item {
+  display: flex;
+  align-items: center;
   
-  .header-spacer {
-    flex: 1 1 auto; // Ocupa el espacio restante
+  mat-icon {
+    margin-right: 8px;
   }
-  
-  .profile-image {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    object-fit: cover;
-    cursor: pointer;
-  }
+}

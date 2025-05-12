@@ -1,14 +1,11 @@
 <div class="main-layout-container">
-    <!-- El Header escucha el evento del botón toggle -->
-    <app-header (sidebarToggle)="toggleSidebar()"></app-header>
-  
-    <div class="content-wrapper">
-      <!-- El Sidebar recibe el estado colapsado -->
-      <app-sidebar [isCollapsed]="isSidebarCollapsed"></app-sidebar>
-  
-      <!-- Área principal donde se renderizan las rutas hijas -->
-      <main class="main-content-area" [class.collapsed-sidebar]="isSidebarCollapsed">
-        <router-outlet></router-outlet> <!-- Aquí van HomeDashboard, DocumentExplorer, etc. -->
-      </main>
-    </div>
+  <app-header (sidebarToggle)="toggleSidebar()"></app-header>
+
+  <div class="content-wrapper">
+    <app-sidebar [isCollapsed]="isSidebarCollapsed"></app-sidebar>
+
+    <main class="main-content-area" [class.collapsed-sidebar]="isSidebarCollapsed">
+      <router-outlet></router-outlet>
+    </main>
   </div>
+</div>
