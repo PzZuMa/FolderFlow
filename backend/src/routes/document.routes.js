@@ -15,6 +15,9 @@ router.post('/confirm-upload', documentController.confirmUpload);
 router.get('/', documentController.listUserDocuments);
 router.get('/:documentId/download-url', documentController.getDownloadUrl);
 router.delete('/:documentId', documentController.deleteUserDocument);
+router.get('/all', documentController.getAllUserDocuments);
+router.patch('/:documentId/move', documentController.moveUserDocument);
+
 
 // Exportación por defecto del router
 export default router;

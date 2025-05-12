@@ -79,3 +79,21 @@ export const handleGetFolderDetails = async (req, res) => {
     res.status(500).json({ message: error.message || 'Error interno del servidor' });
   }
 };
+
+export const moveUserFolder = async(req, res, next) => {
+    try {
+        const userId = req.user.id;
+        const { folderId } = req.params; // ID de la carpeta a mover
+        const { destinationParentId } = req.body; // ID de la carpeta padre destino (puede ser null)
+
+        // Validación básica del input
+        if (destinationParentId === undefined) { // Permitir null, pero no undefined
+            return res.status(400).json({ message: 'destinationParentId is required (can be null for root).' });
+        }
+
+        const movedFolder = await folderService.moveFolder(userId, folderId, destinationParentId);
+        res.status(200).json(movedFolder);
+    } catch (error) {
+        next(error);
+    }
+};

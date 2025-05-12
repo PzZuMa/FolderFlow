@@ -75,6 +75,18 @@ async function confirmUploadAndSaveMetadata(userId, s3Key, name, mimeType, size,
     }
 }
 
+async function listAllUserDocuments(userId) {
+    const query = { ownerId: userId }; // Solo filtra por dueño
+    try {
+        const documents = await Document.find(query).sort({ updatedAt: -1 }); // Ordenar por más reciente globalmente
+        console.log(`BACKEND: listAllUserDocuments for user ${userId} found ${documents.length} documents.`);
+        return documents;
+    } catch (error) {
+        console.error("Error listing all user documents:", error);
+        throw new Error("Could not list all user documents");
+    }
+}
+
 /**
  * Lista los documentos de un usuario, opcionalmente filtrados por carpeta.
  */
@@ -147,6 +159,30 @@ async function deleteDocument(userId, documentId) {
     }
 }
 
+async function moveDocument(userId, documentIdToMove, destinationFolderId) {
+    const documentToMove = await Document.findOne({ _id: documentIdToMove, ownerId: userId });
+    if (!documentToMove) {
+        const err = new Error('Document to move not found or access denied');
+        err.statusCode = 404;
+        throw err;
+    }
+
+    // Validar que la carpeta destino exista y pertenezca al usuario (si no es la raíz)
+    if (destinationFolderId) {
+        const destinationFolder = await Folder.findOne({ _id: destinationFolderId, ownerId: userId });
+        if (!destinationFolder) {
+            const err = new Error('Destination folder not found or access denied');
+            err.statusCode = 404;
+            throw err;
+        }
+    }
+
+    documentToMove.folderId = destinationFolderId; // null para mover a la raíz
+    await documentToMove.save();
+    console.log(`Document ${documentIdToMove} moved to folder ${destinationFolderId} by user ${userId}`);
+    return documentToMove;
+}
+
 // Exportar funciones individualmente (exportación nombrada)
 export {
     generateUploadUrl,
@@ -154,4 +190,6 @@ export {
     listDocuments,
     generateDownloadUrl,
     deleteDocument,
+    listAllUserDocuments,
+    moveDocument,
 };

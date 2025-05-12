@@ -37,7 +37,7 @@ export const routes: Routes = [
       },
       // --- Fin otras rutas ---
       {
-        path: '', redirectTo: 'home', pathMatch: 'full' // Redirige /app a /app/home por defecto
+        path: '', redirectTo: 'dashboard', pathMatch: 'full' // Redirige /app a /app/home por defecto
       }
     ]
   },

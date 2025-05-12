@@ -83,6 +83,33 @@ async function deleteUserDocument(req, res, next) {
     }
 }
 
+async function getAllUserDocuments(req, res, next) {
+    try {
+        const userId = req.user.id;
+        const documents = await documentService.listAllUserDocuments(userId);
+        res.status(200).json(documents);
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function moveUserDocument(req, res, next) {
+    try {
+        const userId = req.user.id;
+        const { documentId } = req.params; // ID del documento a mover
+        const { destinationFolderId } = req.body; // ID de la carpeta destino (puede ser null)
+
+        if (destinationFolderId === undefined) {
+             return res.status(400).json({ message: 'destinationFolderId is required (can be null for root).' });
+        }
+
+        const movedDocument = await documentService.moveDocument(userId, documentId, destinationFolderId);
+        res.status(200).json(movedDocument);
+    } catch (error) {
+        next(error);
+    }
+}
+
 // Exportación nombrada de todas las funciones del controlador
 export {
     getUploadUrl,
@@ -90,4 +117,6 @@ export {
     listUserDocuments,
     getDownloadUrl,
     deleteUserDocument,
+    getAllUserDocuments,
+    moveUserDocument,
 };

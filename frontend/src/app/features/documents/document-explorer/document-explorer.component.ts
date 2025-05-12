@@ -69,7 +69,7 @@ export class DocumentExplorerComponent implements OnInit {
     // });
 
     // O si no usas parámetros de ruta, carga la raíz inicialmente
-    this.loadContents(null);
+    this.loadAllDocuments();
   }
 
   ngOnDestroy(): void {
@@ -77,49 +77,26 @@ export class DocumentExplorerComponent implements OnInit {
     this.destroy$.complete();
   }
 
-  loadContents(folderId: string | null): void {
+  loadAllDocuments(): void {
     this.isLoading = true;
-    this.currentFolderId = folderId;
-    this.uploads = []; // Limpiar subidas pendientes al navegar
-    this.cdRef.markForCheck(); // Marcar para detección de cambios
+    this.uploads = []; // Limpiar subidas pendientes
+    this.cdRef.markForCheck();
 
-    forkJoin({
-      folders: this.folderService.getFolders(folderId),
-      documents: this.documentService.getDocuments(folderId),
-      breadcrumbs: this.folderService.getBreadcrumbs(folderId)
-    }).pipe(
+    this.documentService.getAllUserDocuments().pipe( // <<< LLAMAR AL NUEVO MÉTODO DEL SERVICIO
       takeUntil(this.destroy$),
       catchError(error => {
-        console.error('Error loading contents:', error);
-        this.showError('Error al cargar el contenido de la carpeta.');
-        return of({ folders: [], documents: [], breadcrumbs: [] }); // Valor por defecto en error
+        console.error('Error loading all documents:', error);
+        this.showError('Error al cargar los documentos.');
+        return of([]); // Devolver array vacío en error
       }),
       finalize(() => {
         this.isLoading = false;
-        this.cdRef.markForCheck(); // Marcar para detección de cambios
+        this.cdRef.markForCheck();
       })
-    ).subscribe(result => {
-      this.folders = result.folders;
-      this.documents = result.documents;
-      // Asegurarse que breadcrumbs tenga el item 'Raíz' si no viene del servicio
-      this.breadcrumbs = result.breadcrumbs.length > 0
-                         ? result.breadcrumbs
-                         : [{ _id: '', name: 'Raíz', parentId: null, ownerId: '' }];
-
-      this.cdRef.markForCheck(); // Marcar para detección de cambios
+    ).subscribe(docs => {
+      this.documents = docs;
+      this.cdRef.markForCheck();
     });
-  }
-
-  navigateToFolder(folderId: string): void {
-     // Si usas rutas: this.router.navigate(['/app/folders', folderId]);
-     // Si no usas rutas:
-     this.loadContents(folderId);
-  }
-
-  navigateToBreadcrumb(folderId: string | null): void {
-    // El id de 'Raíz' es '' en mi implementación, el servicio lo maneja como null
-    const targetId = folderId === '' ? null : folderId;
-    this.loadContents(targetId);
   }
 
   openMoveDialog(item: Folder | Document, itemType: 'folder' | 'document'): void {
@@ -151,36 +128,6 @@ export class DocumentExplorerComponent implements OnInit {
         }
     });
 }
-
-  // --- Creación de Carpeta ---
-  openCreateFolderDialog(): void {
-    const dialogRef = this.dialog.open(CreateFolderDialogComponent, {
-      width: '400px'
-    });
-
-    dialogRef.afterClosed().pipe(takeUntil(this.destroy$)).subscribe(folderName => {
-      if (folderName) {
-        this.isLoading = true;
-        this.cdRef.markForCheck();
-        this.folderService.createFolder(folderName, this.currentFolderId)
-          .pipe(
-            catchError(err => {
-              console.error('Error creating folder:', err);
-              this.showError(`Error al crear la carpeta: ${err.error?.message || err.message}`);
-              return EMPTY; // No continuar si hay error
-            }),
-            finalize(() => {
-              this.isLoading = false;
-              this.cdRef.markForCheck();
-            })
-          )
-          .subscribe(() => {
-            this.showSuccess('Carpeta creada exitosamente.');
-            this.loadContents(this.currentFolderId); // Recargar
-          });
-      }
-    });
-  }
 
   // --- Subida de Archivos ---
   triggerFileInputClick(): void {
@@ -274,16 +221,36 @@ export class DocumentExplorerComponent implements OnInit {
   }
 
   private moveItem(item: Folder | Document, itemType: 'folder' | 'document', destinationFolderId: string | null): void {
-    console.log(`Ejecutando movimiento de ${itemType} ${item._id} a carpeta ${destinationFolderId}`);
-    this.showError(`Mover ${item.name} aún no implementado.`); // Mensaje temporal
-    // --- Lógica Futura ---
-    // this.isLoading = true; this.cdRef.markForCheck();
-    // const moveObservable = itemType === 'folder'
-    //    ? this.folderService.moveFolder(item._id, destinationFolderId) // Necesitas crear folderService.moveFolder en frontend y backend
-    //    : this.documentService.moveDocument(item._id, destinationFolderId); // Necesitas crear documentService.moveDocument en frontend y backend
-    // moveObservable.pipe(...)
-    //   .subscribe(() => { this.showSuccess('Movido con éxito'); this.loadContents(this.currentFolderId); });
-    // --- Fin Lógica Futura ---
+    console.log(`Ejecutando movimiento de ${itemType} ${item._id} a carpeta destino: ${destinationFolderId}`);
+    this.isLoading = true; // Mostrar indicador de carga
+    this.cdRef.markForCheck();
+
+    let moveObservable: Observable<Folder | Document>;
+
+    if (itemType === 'folder') {
+        moveObservable = this.folderService.moveFolder(item._id, destinationFolderId);
+    } else {
+        moveObservable = this.documentService.moveDocument(item._id, destinationFolderId);
+    }
+
+    moveObservable.pipe(
+        takeUntil(this.destroy$),
+        catchError(err => {
+            console.error(`Error moving ${itemType}:`, err);
+            this.showError(err.error?.message || `Error al mover ${itemType === 'folder' ? 'la carpeta' : 'el archivo'}.`);
+            return EMPTY; // Detener el flujo en caso de error
+        }),
+        finalize(() => {
+            this.isLoading = false;
+            this.cdRef.markForCheck();
+        })
+    ).subscribe(() => {
+        this.showSuccess(`'${item.name}' movido con éxito.`);
+        // Recargar el contenido de la carpeta actual para reflejar el cambio
+        // (el item ya no debería estar aquí si se movió a otro sitio)
+        // Si se movió a una subcarpeta de la actual, no se verá el cambio inmediato hasta navegar allí.
+        this.loadAllDocuments();
+    });
 }
 
   private confirmUploadBackend(upload: UploadStatus): void {
@@ -316,7 +283,7 @@ export class DocumentExplorerComponent implements OnInit {
           this.showSuccess(`'${upload.file.name}' subido correctamente.`);
           // Podríamos quitar la subida exitosa de la lista después de un tiempo
           // O recargar todo, aunque puede ser pesado si hay muchas subidas
-          this.loadContents(this.currentFolderId); // Recargar contenido para ver el nuevo archivo
+          this.loadAllDocuments(); // Recargar contenido para ver el nuevo archivo
       });
   }
 
@@ -388,7 +355,7 @@ export class DocumentExplorerComponent implements OnInit {
       })
     ).subscribe(() => {
       this.showSuccess(`${itemType === 'folder' ? 'Carpeta' : 'Archivo'} eliminado correctamente.`);
-      this.loadContents(this.currentFolderId); // Recargar
+      this.loadAllDocuments(); // Recargar
     });
   }
 

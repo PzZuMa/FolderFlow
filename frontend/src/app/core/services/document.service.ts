@@ -110,4 +110,13 @@ export class DocumentService {
   deleteDocument(documentId: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${documentId}`);
   }
+
+  getAllUserDocuments(): Observable<Document[]> {
+  return this.http.get<Document[]>(`${this.apiUrl}/all`);
+}
+
+moveDocument(documentId: string, destinationFolderId: string | null): Observable<Document> {
+  const url = `${this.apiUrl}/${documentId}/move`;
+  return this.http.patch<Document>(url, { destinationFolderId });
+}
 }

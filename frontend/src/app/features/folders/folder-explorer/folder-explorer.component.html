@@ -1,5 +1,4 @@
 <div class="explorer-container">
-
   <mat-toolbar class="internal-toolbar">
     <button mat-icon-button
             *ngIf="currentFolderId !== null"
@@ -10,32 +9,23 @@
     </button>
     <span *ngIf="currentFolderId !== null" class="toolbar-separator"></span>
 
-    <!-- Breadcrumb Mejorado -->
     <div class="breadcrumb-display-container">
-      <!-- Caso 1: Estamos en un nivel inferior (mostramos breadcrumbs) -->
-      <ng-container *ngIf="breadcrumbs.length > 0">
-        <ng-container *ngFor="let crumb of breadcrumbs; let isLast = last; let isFirst = first">
-          <!-- Icono de Home solo para el primer elemento (raíz) -->
-          <mat-icon *ngIf="isFirst && isRootId(crumb._id)"
-                    class="breadcrumb-home-icon"
-                    (click)="navigateToBreadcrumb(null)"
-                    matTooltip="Ir a Mis Carpetas">home</mat-icon>
-          
-          <!-- Botón del breadcrumb -->
+      <ng-container *ngIf="currentFolderId !== null && breadcrumbs.length > 0">
+        <ng-container *ngFor="let crumb of breadcrumbs; let isLast = last; let isFirst = first">  
+
           <button mat-button class="breadcrumb-button"
+                  *ngIf="!(isFirst && isRootId(crumb._id) && breadcrumbs.length === 1)"
                   (click)="navigateToBreadcrumb(isRootId(crumb._id) ? null : crumb._id)"
-                  [disabled]="isLast" 
-                  [matTooltip]="'Ir a ' + crumb.name">
+                  [disabled]="isLast"
+                  [matTooltip]="isLast ? '' : ('Ir a ' + crumb.name)"
+                  type="button">
             {{ crumb.name }}
           </button>
-          
-          <!-- Separador (solo si no es el último) -->
           <mat-icon class="breadcrumb-separator" *ngIf="!isLast">chevron_right</mat-icon>
         </ng-container>
       </ng-container>
-      
-      <!-- Caso 2: Estamos en la raíz (y no tenemos breadcrumbs) -->
-      <span *ngIf="breadcrumbs.length === 0" class="toolbar-title">
+
+      <span *ngIf="currentFolderId === null || (currentFolderId !== null && breadcrumbs.length === 0)" class="toolbar-title">
         {{ currentFolderNameDisplay }}
       </span>
     </div>
@@ -89,7 +79,7 @@
       </mat-card>
 
       <ng-container *ngIf="currentFolderId !== null">
-          <mat-card *ngFor="let document of documents" class="grid-item document-card" (click)="downloadFile(document)" [matTooltip]="'Descargar ' + document.name">
+          <mat-card *ngFor="let document of documents" class="grid-item document-card" [matTooltip]="document.name">
               <mat-card-content>
                   <mat-icon class="item-icon">{{ getIconForMimeType(document.mimeType) }}</mat-icon>
                   <span class="item-name">{{ document.name }}</span>

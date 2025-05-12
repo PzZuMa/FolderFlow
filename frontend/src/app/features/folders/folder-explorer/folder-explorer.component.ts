@@ -79,22 +79,23 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
   loadContents(folderId: string | null): void {
     this.isLoading = true;
     this.currentFolderId = folderId;
-    this.parentOfCurrentFolderId = null;
     this.uploads = [];
     this.folders = [];
     this.documents = [];
+    // No reseteamos breadcrumbs aquí, esperamos la respuesta del servicio.
     this.cdRef.markForCheck();
-  
+
     forkJoin({
       folders: this.folderService.getFolders(folderId),
       documents: this.documentService.getDocuments(folderId),
-      breadcrumbs: this.folderService.getBreadcrumbs(folderId)
+      breadcrumbs: this.folderService.getBreadcrumbs(folderId) // Confiamos en este servicio para el orden
     }).pipe(
       takeUntil(this.destroy$),
       catchError(error => {
         console.error('Error loading contents:', error);
         this.showError('Error al cargar el contenido.');
-        this.breadcrumbs = [{ _id: null as any, name: 'Error al cargar', parentId: null, ownerId: '' }];
+        // Estado de error para breadcrumbs
+        this.breadcrumbs = [{ _id: null as any, name: 'Error', parentId: null, ownerId: '' }];
         this.parentOfCurrentFolderId = null;
         return of({ folders: [], documents: [], breadcrumbs: this.breadcrumbs });
       }),
@@ -105,29 +106,33 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
     ).subscribe(result => {
       this.folders = result.folders;
       this.documents = result.documents;
-  
+
       if (result.breadcrumbs && result.breadcrumbs.length > 0) {
-        // Verificar y corregir el orden de breadcrumbs si es necesario
-        // Queremos que el primero sea la raíz (Mis Carpetas)
-        const isRootFirst = this.isRootId(result.breadcrumbs[0]?._id);
-        
-        // Si el primer elemento NO ES la raíz, invertir el array
-        this.breadcrumbs = isRootFirst ? result.breadcrumbs : [...result.breadcrumbs].reverse();
-        
-        // Asegurar que la raíz siempre tenga el nombre correcto
+        // ***** CAMBIO IMPORTANTE: Asignar directamente, sin invertir *****
+        this.breadcrumbs = result.breadcrumbs;
+
+        // Asegurar que la raíz siempre tenga el nombre correcto si es el primer elemento
+        // y si su ID es reconocido como raíz por isRootId.
+        // Esto es importante si el servicio devuelve un nombre genérico para la raíz
+        // o si quieres forzar un nombre específico.
         if (this.breadcrumbs.length > 0 && this.isRootId(this.breadcrumbs[0]?._id)) {
-          this.breadcrumbs[0].name = 'Mis Carpetas';
+          this.breadcrumbs[0].name = 'Mis Carpetas'; // Nombre deseado para la raíz
         }
-  
+
         // Determinar el ID del padre para el botón "atrás"
-        if (this.currentFolderId === null) {
+        // Esta lógica ahora debería funcionar correctamente si los breadcrumbs están en orden.
+        if (this.currentFolderId === null) { // Estamos en la raíz (el ID de la carpeta actual es null)
           this.parentOfCurrentFolderId = null;
         } else if (this.breadcrumbs.length > 1) {
           // Si hay más de un breadcrumb, el padre es el penúltimo
+          // El array es [Raíz, ..., Padre, Actual]
+          // El índice del padre es breadcrumbs.length - 2
           const parentIndex = this.breadcrumbs.length - 2;
           const parentCrumb = this.breadcrumbs[parentIndex];
           this.parentOfCurrentFolderId = this.isRootId(parentCrumb._id) ? null : parentCrumb._id;
         } else {
+          // Estamos en una carpeta (currentFolderId no es null), pero solo hay un breadcrumb.
+          // Esto implicaría que es una carpeta de primer nivel, y su padre es la raíz.
           this.parentOfCurrentFolderId = null;
         }
       } else {
@@ -136,7 +141,8 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
         this.parentOfCurrentFolderId = null;
       }
       
-      console.debug('Breadcrumbs actuales:', this.breadcrumbs.map(b => b.name).join(' > '));
+      console.debug('Breadcrumbs (Componente):', this.breadcrumbs.map(b => `${b.name} (${b._id || 'root'})`).join(' > '));
+      console.debug('Parent ID para "Atrás":', this.parentOfCurrentFolderId);
       this.cdRef.markForCheck();
     });
   }
@@ -445,9 +451,37 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
   }
   
   private moveItem(item: Folder | Document, itemType: 'folder' | 'document', destinationFolderId: string | null): void {
-    console.log(`Ejecutando movimiento de ${itemType} ${item._id} a carpeta ${destinationFolderId}`);
-    this.showError(`Mover ${item.name} aún no implementado.`); 
-  }
+    console.log(`Ejecutando movimiento de ${itemType} ${item._id} a carpeta destino: ${destinationFolderId}`);
+    this.isLoading = true; // Mostrar indicador de carga
+    this.cdRef.markForCheck();
+
+    let moveObservable: Observable<Folder | Document>;
+
+    if (itemType === 'folder') {
+        moveObservable = this.folderService.moveFolder(item._id, destinationFolderId);
+    } else {
+        moveObservable = this.documentService.moveDocument(item._id, destinationFolderId);
+    }
+
+    moveObservable.pipe(
+        takeUntil(this.destroy$),
+        catchError(err => {
+            console.error(`Error moving ${itemType}:`, err);
+            this.showError(err.error?.message || `Error al mover ${itemType === 'folder' ? 'la carpeta' : 'el archivo'}.`);
+            return EMPTY; // Detener el flujo en caso de error
+        }),
+        finalize(() => {
+            this.isLoading = false;
+            this.cdRef.markForCheck();
+        })
+    ).subscribe(() => {
+        this.showSuccess(`'${item.name}' movido con éxito.`);
+        // Recargar el contenido de la carpeta actual para reflejar el cambio
+        // (el item ya no debería estar aquí si se movió a otro sitio)
+        // Si se movió a una subcarpeta de la actual, no se verá el cambio inmediato hasta navegar allí.
+        this.loadContents(this.currentFolderId);
+    });
+}
 
   getIconForMimeType(mimeType: string): string {
     if (mimeType.startsWith('image/')) return 'image';

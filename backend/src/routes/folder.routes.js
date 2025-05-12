@@ -4,7 +4,8 @@ import {
   handleCreateFolder,
   handleListContent,
   handleDeleteFolder,
-  handleGetFolderDetails
+  handleGetFolderDetails,
+  moveUserFolder,
 } from '../controllers/folder.controller.js'; // Importa los controladores
 
 const router = express.Router();
@@ -33,5 +34,8 @@ router.get('/:folderId', handleGetFolderDetails); // Si necesitas esta ruta, des
 // DELETE /api/folders/:folderId - Eliminar una carpeta
 // Params: /api/folders/ID_De_La_Carpeta_A_Eliminar
 router.delete('/:folderId', handleDeleteFolder);
+
+router.patch('/:folderId/move', moveUserFolder);
+
 
 export default router; // Exportar el router configurado
