@@ -1,19 +1,18 @@
 <div class="landing-container">
   <header class="landing-header">
     <div class="logo">
-      <!-- Puedes usar un <img> o un icono de Angular Material si lo prefieres -->
-      <img src="/assets/logo-removebg-preview.png" alt="Folder Flow Logo">
-      <!-- O un icono: <mat-icon svgIcon="folder-upload"></mat-icon> -->
+      <img src="assets/logo-removebg-preview.png" alt="Folder Flow Logo">
     </div>
+    
     <nav class="navigation">
       <ul>
-        <li><a href="#">TARIFAS</a></li>
-        <li><a href="#">CONTACTO</a></li>
-        <li><a href="#">QUIENES SOMOS</a></li>
+        <li><a href="">QUIÉNES SOMOS</a></li>
+        <li><a href="">CONTACTO</a></li>
+        <li><a href="">TARIFAS</a></li>
       </ul>
     </nav>
+    
     <div class="actions">
-      <!-- Usa routerLink si navegan a rutas internas de Angular -->
       <button class="btn btn-secondary" [routerLink]="['/login']">INICIAR SESIÓN</button>
       <button class="btn btn-primary" [routerLink]="['/register']">REGISTRARSE</button>
     </div>
@@ -22,13 +21,14 @@
   <main class="hero-section">
     <div class="hero-content">
       <h1>FOLDER FLOW</h1>
-      <p>Tu oficina digital, organizada.</p>
-      <button class="btn btn-primary btn-cta" [routerLink]="['/register']">COMENZAR</button>
+      <p>Tu oficina digital, organizada y segura</p>
+      <button class="btn btn-primary btn-cta" [routerLink]="['/register']">
+        COMENZAR GRATIS
+      </button>
     </div>
     
     <div class="hero-visual">
-      <img src="/assets/banner.png" alt="Gestión Documental">
+      <img src="assets/banner.png" alt="Gestión Documental">
     </div>
   </main>
 </div>
-    

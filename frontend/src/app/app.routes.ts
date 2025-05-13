@@ -1,4 +1,3 @@
-// src/app/app.routes.ts
 import { Routes } from '@angular/router';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterComponent } from './features/auth/register/register.component';
@@ -23,21 +22,23 @@ export const routes: Routes = [
     canActivate: [authGuard],          // <<<--- Protege todo bajo /app
     children: [                        // <<<--- Rutas que se mostrarán en el <router-outlet> del Layout
       {
-        path: 'home',                  // <<<--- Ruta para la vista de inicio (3+3 items) -> /app/home
-        component: HomeComponent, // <<<--- Componente específico para esa vista
+        path: 'home',                  // <<<--- Ruta para la vista de inicio (3+3 items) -> /home
+        component: HomeComponent,
       },
       {
-        path: 'documents',             // <<<--- Ruta para el explorador -> /app/documents
+        path: 'documents',             // <<<--- Ruta para el explorador -> /documents
         component: DocumentExplorerComponent,
+      },
+      {
+        path: 'folders',               // <<<--- Ruta para las carpetas -> /folders
+        component: FolderExplorerComponent
       },
       // --- Añade aquí otras rutas protegidas ---
       // { path: 'settings', component: SettingsComponent },
-      { path: 'folders',
-        component: FolderExplorerComponent
-      },
+      
       // --- Fin otras rutas ---
       {
-        path: '', redirectTo: 'dashboard', pathMatch: 'full' // Redirige /app a /app/home por defecto
+        path: '', redirectTo: 'home', pathMatch: 'full' // Redirige a /home si ya está autenticado
       }
     ]
   },

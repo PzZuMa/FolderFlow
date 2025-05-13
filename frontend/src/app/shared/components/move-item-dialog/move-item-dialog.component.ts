@@ -1,18 +1,19 @@
 // src/app/shared/components/dialogs/move-item-dialog/move-item-dialog.component.ts
 import { Component, OnInit, inject, Inject, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatToolbarModule } from '@angular/material/toolbar'; // Para la mini-toolbar del diálogo
-import { Observable, Subject, forkJoin, of } from 'rxjs';
+import { EMPTY, Observable, Subject, forkJoin, of } from 'rxjs';
 import { catchError, takeUntil, finalize } from 'rxjs/operators';
 
 import { Folder, Document } from '../../../core/models'; // Ajusta ruta a tus modelos
 import { FolderService } from '../../../core/services/folder.service'; // Ajusta ruta
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { CreateFolderDialogComponent } from '../create-folder-dialog/create-folder-dialog.component';
 
 // Interfaz para los datos que recibe el diálogo
 export interface MoveItemDialogData {
@@ -50,6 +51,7 @@ export class MoveItemDialogComponent implements OnInit, OnDestroy {
   private folderService = inject(FolderService);
   private cdRef = inject(ChangeDetectorRef);
   private destroy$ = new Subject<void>();
+  private dialog: MatDialog = inject(MatDialog);
 
   // --- Estado Interno del Diálogo ---
   isLoading = false;
@@ -57,6 +59,8 @@ export class MoveItemDialogComponent implements OnInit, OnDestroy {
   foldersInDialog: Folder[] = [];
   dialogBreadcrumbs: Folder[] = []; // Breadcrumbs DENTRO del diálogo
   errorMessage: string | null = null;
+  // Removed duplicate declaration of 'dialog'
+  snackBar: any;
 
   ngOnInit(): void {
     this.loadDialogContents(null); // Empezar en la raíz del diálogo
@@ -133,6 +137,42 @@ export class MoveItemDialogComponent implements OnInit, OnDestroy {
     };
     this.dialogRef.close(result); // Cerrar y devolver el ID de destino
   }
+
+  openCreateFolderInDialog(): void {
+    const createDialogRef = this.dialog.open(CreateFolderDialogComponent, {
+      width: '400px',
+      // No pasar datos aquí, el diálogo de crear es simple
+    });
+
+    createDialogRef.afterClosed().pipe(takeUntil(this.destroy$)).subscribe((folderName: string) => {
+      if (folderName) {
+        this.isLoading = true; // Podrías tener un spinner más pequeño y localizado
+        this.cdRef.markForCheck();
+        // Crear la carpeta DENTRO de la carpeta actualmente visible en el diálogo de mover
+        this.folderService.createFolder(folderName, this.dialogCurrentFolderId)
+          .pipe(
+            takeUntil(this.destroy$),
+            catchError(err => {
+              console.error('Error creating folder in dialog:', err);
+              this.snackBar.open(`Error al crear la carpeta: ${err.error?.message || err.message}`, 'Cerrar', { duration: 3000 });
+              return EMPTY;
+            }),
+            finalize(() => {
+              this.isLoading = false;
+              this.cdRef.markForCheck();
+            })
+          )
+          .subscribe((newFolder) => {
+            // this.snackBar.open(`Carpeta "${newFolder.name}" creada.`, 'Cerrar', { duration: 2000 });
+            // Recargar el contenido del diálogo para mostrar la nueva carpeta
+            this.foldersInDialog = [...this.foldersInDialog, newFolder];
+            this.cdRef.markForCheck();
+          });
+      }
+    });
+  }
+
+  
 
   /**
    * Cancela la operación.

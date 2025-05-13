@@ -1,6 +1,9 @@
 <div class="auth-container">
+  <a href="/dashboard" class="back-to-dashboard">Volver al Dashboard</a>
+  
   <div class="auth-card">
     <h2 class="titulo">INICIAR SESIÓN</h2>
+    <p class="subtitle">Bienvenido de vuelta a FolderFlow</p>
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
       <div class="form-field">
@@ -9,6 +12,7 @@
                id="emailInput"
                class="form-input"
                formControlName="email"
+               placeholder="ejemplo@empresa.com"
                required
                aria-describedby="emailError"
                [class.is-invalid]="submitted && email?.invalid">
@@ -24,6 +28,7 @@
                id="passwordInput"
                class="form-input"
                formControlName="password"
+               placeholder="Ingresa tu contraseña"
                required
                aria-describedby="passwordError"
                [class.is-invalid]="submitted && password?.invalid">
@@ -39,8 +44,8 @@
 
       <div class="button-container">
         <button type="submit" [disabled]="isLoading">
-          <span *ngIf="!isLoading">Entrar</span>
-          <span *ngIf="isLoading">Cargando...</span>
+          <span *ngIf="isLoading" class="loading-spinner"></span>
+          <span>{{ isLoading ? 'Iniciando sesión...' : 'Entrar' }}</span>
         </button>
       </div>
     </form>

@@ -1,15 +1,18 @@
 <div class="auth-container">
+  <a href="/dashboard" class="back-to-dashboard">Volver al Dashboard</a>
+  
   <div class="auth-card">
     <h2 class="titulo">CREAR CUENTA</h2>
+    <p class="subtitle">Únete a FolderFlow para gestionar tus documentos</p>
 
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate>
-
       <div class="form-field">
         <label for="nameInput">Nombre</label>
         <input type="text"
                id="nameInput"
                class="form-input"
                formControlName="name"
+               placeholder="Ingresa tu nombre completo"
                required
                aria-describedby="nameError"
                [class.is-invalid]="submitted && name?.invalid">
@@ -24,6 +27,7 @@
                id="emailInput"
                class="form-input"
                formControlName="email"
+               placeholder="ejemplo@empresa.com"
                required
                aria-describedby="emailError"
                [class.is-invalid]="submitted && email?.invalid">
@@ -39,6 +43,7 @@
                id="passwordInput"
                class="form-input"
                formControlName="password"
+               placeholder="Mínimo 6 caracteres"
                required
                aria-describedby="passwordError"
                [class.is-invalid]="submitted && password?.invalid">
@@ -58,8 +63,8 @@
 
       <div class="button-container">
         <button type="submit" [disabled]="isLoading">
-          <span *ngIf="!isLoading">Registrarse</span>
-          <span *ngIf="isLoading">Cargando...</span>
+          <span *ngIf="isLoading" class="loading-spinner"></span>
+          <span>{{ isLoading ? 'Creando cuenta...' : 'Registrarse' }}</span>
         </button>
       </div>
     </form>

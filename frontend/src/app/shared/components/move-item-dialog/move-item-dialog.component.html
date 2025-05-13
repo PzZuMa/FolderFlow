@@ -15,6 +15,9 @@
       <mat-icon class="breadcrumb-separator" *ngIf="!isLast">chevron_right</mat-icon>
     </ng-container>
   </div>
+  <button mat-icon-button (click)="openCreateFolderInDialog()" matTooltip="Crear nueva carpeta aquí" type="button">
+    <mat-icon>create_new_folder</mat-icon>
+  </button>
 </mat-toolbar>
 
 <mat-dialog-content class="dialog-content">

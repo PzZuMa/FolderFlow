@@ -11,15 +11,14 @@
   
   .dialog-breadcrumb-container {
     display: flex;
-    align-items: center;
-    overflow-x: auto; // Scroll si no caben
-    white-space: nowrap;
-    width: 100%;
+  align-items: center;
+  white-space: nowrap;
+  width: 100%;
   
     .breadcrumb-button {
       min-width: auto;
       padding: 0 4px;
-      font-size: 0.9em;
+      font-size: 0.8em;
       color: var(--app-secondary-text-color);
   
       &:hover:not(:disabled) {

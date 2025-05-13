@@ -98,7 +98,7 @@ export const getFolderById = async (folderId, userId) => {
   return folder; // Devuelve la carpeta o null si no se encuentra/no pertenece
 };
 
-async function moveFolder(userId, folderIdToMove, destinationParentId) {
+export const moveFolder = async (userId, folderIdToMove, destinationParentId) => {
     const folderToMove = await Folder.findOne({ _id: folderIdToMove, ownerId: userId });
     if (!folderToMove) {
         const err = new Error('Folder to move not found or access denied');

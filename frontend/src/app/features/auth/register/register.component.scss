@@ -1,15 +1,25 @@
-// Variables (las mismas que proporcionaste)
+// Variables
 $primary-color: #6b4fbb;
 $primary-hover: #5936b1;
-$bg-page: #f4f6fa;
+$primary-light: rgba(107, 79, 187, 0.1);
+$secondary-color: #5e6c84;
+$bg-page: #f0f3f7;
+$bg-gradient: linear-gradient(135deg, $bg-page 0%, darken($bg-page, 3%) 100%);
 $card-bg: #ffffff;
 $text-color: #2c3e50;
-$text-muted: #6c757d; // Color para labels/placeholders
-$error-color: #ef1800; // Rojo brillante para errores
+$text-muted: #6c757d;
+$error-color: #e74c3c;
 $success-color: #27ae60;
-$input-border-color: #ced4da;
-$input-focus-border-color: mix($primary-color, $card-bg, 25%); // Tinte del color primario
+$input-border-color: #e1e4e8;
+$input-focus-border-color: $primary-color;
 $input-invalid-border-color: $error-color;
+$box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+$box-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.12);
+
+// Reset y estilos base
+* {
+  box-sizing: border-box;
+}
 
 // Contenedor principal de la página
 .auth-container {
@@ -17,83 +27,152 @@ $input-invalid-border-color: $error-color;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: $bg-page;
+  background: $bg-gradient;
   padding: 1rem;
-  font-family: sans-serif; // Asegurar fuente
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  position: relative;
+  
+  // Patrón de fondo sutil
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+      radial-gradient(circle at 20% 80%, rgba($primary-color, 0.03) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba($primary-color, 0.04) 0%, transparent 50%);
+    pointer-events: none;
+  }
 }
 
 // Tarjeta de autenticación
 .auth-card {
   background-color: $card-bg;
-  color: $text-color;
-  // Ajustamos el padding: 2.5rem arriba/abajo, 3rem (o más) a izq/der
-  padding: 2.5rem 3rem;
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+  padding: 3rem;
+  border-radius: 16px;
+  box-shadow: $box-shadow;
   width: 100%;
-  max-width: 420px;
-  box-sizing: border-box; // Buena práctica añadirlo aquí también
+  max-width: 440px;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $box-shadow-hover;
+  }
+}
+
+// Botón de volver al dashboard
+.back-to-dashboard {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  color: $secondary-color;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  background-color: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  
+  &:hover {
+    background-color: $card-bg;
+    border-color: $input-border-color;
+    color: $primary-color;
+    transform: translateX(-2px);
+  }
+  
+  // Icono de flecha
+  &::before {
+    content: '←';
+    font-size: 1.2rem;
+    transition: transform 0.2s ease;
+  }
+  
+  &:hover::before {
+    transform: translateX(-3px);
+  }
 }
 
 // Título
 .titulo {
   text-align: center;
-  font-weight: 600; // Un poco menos grueso que 'bold'
-  font-size: 1.7rem; // Ligeramente más grande
-  color: $primary-color;
-  margin-bottom: 2rem; // Más espacio después del título
+  font-weight: 700;
+  font-size: 1.8rem;
+  color: $text-color;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
 }
 
-// Estructura para cada campo del formulario (label + input + error)
+// Subtítulo
+.subtitle {
+  text-align: center;
+  color: $text-muted;
+  font-size: 0.95rem;
+  margin-bottom: 2.5rem;
+}
+
+// Estructura para cada campo del formulario
 .form-field {
   width: 100%;
-  margin-bottom: 1.25rem; // Espacio entre campos
+  margin-bottom: 1.5rem;
+  position: relative;
 
   label {
     display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
+    margin-bottom: 0.6rem;
+    font-weight: 600;
     font-size: 0.9rem;
-    color: $text-muted; // Color más suave para label
+    color: $text-color;
+    letter-spacing: -0.01em;
   }
 }
 
 // Estilo del input estándar
 .form-input {
   display: block;
-  box-sizing: border-box;
   width: 100%;
-  padding: 0.75rem 1rem; // Buen padding interno
+  padding: 0.9rem 1.1rem;
   font-size: 1rem;
   line-height: 1.5;
   color: $text-color;
   background-color: $card-bg;
-  background-clip: padding-box;
-  border: 1px solid $input-border-color;
-  border-radius: 8px; // Bordes redondeados consistentes
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  border: 2px solid $input-border-color;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  font-family: inherit;
 
   &::placeholder {
-    color: $text-muted;
-    opacity: 0.7;
+    color: lighten($text-muted, 10%);
+  }
+
+  &:hover {
+    border-color: darken($input-border-color, 10%);
   }
 
   &:focus {
-    color: $text-color;
-    background-color: $card-bg;
     border-color: $input-focus-border-color;
     outline: 0;
-    // Sombra sutil al enfocar, usando el color primario
-    box-shadow: 0 0 0 0.2rem rgba($primary-color, 0.15);
+    box-shadow: 0 0 0 3px $primary-light;
+    background-color: lighten($bg-page, 5%);
   }
 
-  // Estilo específico para inputs inválidos que han sido tocados/modificados
+  // Estilo específico para inputs inválidos
   &.is-invalid {
     border-color: $input-invalid-border-color;
 
     &:focus {
-      // Sombra roja al enfocar un input inválido
-      box-shadow: 0 0 0 0.2rem rgba($error-color, 0.15);
+      box-shadow: 0 0 0 3px rgba($error-color, 0.1);
     }
   }
 }
@@ -101,53 +180,99 @@ $input-invalid-border-color: $error-color;
 // Mensaje de error debajo de cada campo
 .field-error-message {
   color: $error-color;
-  font-size: 0.85rem; // Pequeño
-  margin-top: 0.4rem; // Espacio sobre el mensaje de error
-  // text-align: right; // Opcional: alinear a la derecha
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  
+  &::before {
+    content: '⚠';
+    font-size: 0.9rem;
+  }
 }
 
-// Contenedores para mensajes generales (éxito/error) debajo del formulario
+// Contenedores para mensajes generales
 .success-message-container,
 .error-message-container {
-  margin-top: 1rem; // Espacio sobre los mensajes generales
-  padding: 0.75rem;
-  border-radius: 6px;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border-radius: 10px;
   text-align: center;
   font-size: 0.9rem;
   font-weight: 500;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .success-message-container {
-  background-color: mix($success-color, $card-bg, 10%); // Fondo verde muy pálido
-  color: $success-color;
-  border: 1px solid mix($success-color, $card-bg, 25%);
+  background-color: rgba($success-color, 0.1);
+  color: darken($success-color, 10%);
+  border: 1px solid rgba($success-color, 0.2);
 }
 
 .error-message-container {
-   background-color: mix($error-color, $card-bg, 8%); // Fondo rojo muy pálido
-   color: $error-color;
-   border: 1px solid mix($error-color, $card-bg, 20%);
+  background-color: rgba($error-color, 0.1);
+  color: darken($error-color, 10%);
+  border: 1px solid rgba($error-color, 0.2);
 }
 
 // Contenedor del botón
 .button-container {
   display: flex;
   justify-content: center;
-  margin-top: 2rem; // Más espacio sobre el botón
+  margin-top: 2rem;
 
   button {
     background-color: $primary-color;
     color: #fff;
-    border: none; // Asegurar que no haya borde por defecto
-    border-radius: 8px;
-    padding: 0.8rem 1.8rem; // Ligeramente más grande
-    font-size: 1rem; // Tamaño de fuente estándar
+    border: none;
+    border-radius: 10px;
+    padding: 1rem 2rem;
+    font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.2s ease, opacity 0.2s ease;
+    transition: all 0.2s ease;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s ease, height 0.6s ease;
+    }
 
-    &:hover:not(:disabled) { // Aplicar hover solo si no está deshabilitado
+    &:hover:not(:disabled) {
       background-color: $primary-hover;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+      
+      &::before {
+        width: 600px;
+        height: 600px;
+      }
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
     }
 
     &:disabled {
@@ -157,37 +282,80 @@ $input-invalid-border-color: $error-color;
   }
 }
 
-// Footer con enlace a la otra página de autenticación
+// Footer con enlace a la otra página
 .auth-footer {
   text-align: center;
-  margin-top: 1.5rem; // Espacio sobre el footer
+  margin-top: 2rem;
   font-size: 0.9rem;
-  color: $text-muted; // Color suave para el texto
+  color: $text-muted;
 
   .auth-link {
     color: $primary-color;
     text-decoration: none;
-    font-weight: 600; // Un poco más de énfasis
+    font-weight: 600;
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -2px;
+      left: 50%;
+      background-color: $primary-color;
+      transition: all 0.2s ease;
+      transform: translateX(-50%);
+    }
 
     &:hover {
-      text-decoration: underline;
       color: $primary-hover;
+      
+      &::after {
+        width: 100%;
+      }
     }
   }
 }
 
-// Media Query para ajustar en pantallas pequeñas
+// Animación de carga
+.loading-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-right: 0.5rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// Media Query para pantallas pequeñas
 @media (max-width: 480px) {
+  .auth-container {
+    padding: 0.5rem;
+  }
+  
   .auth-card {
     padding: 2rem 1.5rem;
-    box-shadow: none; // Quitar sombra en móviles si se prefiere
+    border-radius: 12px;
+  }
+
+  .back-to-dashboard {
+    top: 1rem;
+    left: 1rem;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
   }
 
   .titulo {
-    font-size: 1.5rem; // Reducir título
+    font-size: 1.5rem;
   }
 
   .button-container button {
-    width: 100%; // Botón ocupa todo el ancho
+    padding: 0.9rem 1.5rem;
   }
 }

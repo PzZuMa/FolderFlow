@@ -1,54 +1,107 @@
+// Variables - Mantenemos las mismas de los formularios para consistencia
+$primary-color: #6b4fbb;
+$primary-hover: #5936b1;
+$primary-light: rgba(107, 79, 187, 0.1);
+$secondary-color: #5e6c84;
+$bg-page: #f0f3f7;
+$bg-gradient: linear-gradient(135deg, $bg-page 0%, darken($bg-page, 3%) 100%);
+$card-bg: #ffffff;
+$text-color: #2c3e50;
+$text-muted: #6c757d;
+$header-height: 80px;
+$box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+$box-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.12);
+
+// Reset y fuentes
+* {
+  box-sizing: border-box;
+}
+
 :host {
-    display: block;
-  }
-  
-  .landing-container {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    background-color: #ffffff;
-    font-family: sans-serif;
-  }
-  
-  .landing-header {
+  display: block;
+}
+
+.landing-container {
+  min-height: 100vh;
   display: flex;
-  // Eliminamos justify-content: space-between; para controlar el espacio manualmente
-  align-items: center; // Mantenemos la alineación vertical
-  padding: 1rem 3rem; // Mantenemos el padding general
-  border-bottom: 1px solid #eee;
+  flex-direction: column;
+  background-color: $card-bg;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+// Header con navegación
+.landing-header {
+  display: flex;
+  align-items: center;
+  padding: 1rem 3rem;
+  height: $header-height;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  }
 
   .logo {
-    // El logo se queda a la izquierda por defecto
-    // Añadimos flex-shrink: 0 para que no se encoja si falta espacio
     flex-shrink: 0;
+    
     img {
-      // Tus estilos de logo (altura, etc.)
-      height: 35px; // O el valor que hayas ajustado
+      height: 40px;
       width: auto;
       cursor: pointer;
       vertical-align: middle;
+      transition: transform 0.2s ease;
+      
+      &:hover {
+        transform: scale(1.05);
+      }
     }
   }
 
   .navigation {
-    // *** AJUSTE CLAVE 1: Empujar la navegación hacia la derecha ***
-    margin-left: auto; // Esto ocupa todo el espacio disponible a su izquierda
-
+    margin-left: auto;
+    
     ul {
       list-style: none;
       display: flex;
-      // *** AJUSTE CLAVE 2: Invertir el orden visual de los elementos ***
-      flex-direction: row-reverse; // Los items se mostrarán de derecha a izquierda
-      gap: 1.5rem; // <-- AJUSTE OPCIONAL: Reducir el espacio entre enlaces si 2rem es mucho
+      flex-direction: row-reverse;
+      gap: 2rem;
       margin: 0;
       padding: 0;
 
       li a {
         text-decoration: none;
-        color: #333;
+        color: $text-color;
         font-weight: 500;
+        font-size: 0.95rem;
+        position: relative;
+        transition: color 0.2s ease;
+        letter-spacing: -0.01em;
+
+        &::after {
+          content: '';
+          position: absolute;
+          width: 0;
+          height: 2px;
+          bottom: -5px;
+          left: 50%;
+          background-color: $primary-color;
+          transition: all 0.3s ease;
+          transform: translateX(-50%);
+        }
+
         &:hover {
-          color: #6b4fbb;
+          color: $primary-color;
+          
+          &::after {
+            width: 100%;
+          }
         }
       }
     }
@@ -56,150 +109,317 @@
 
   .actions {
     display: flex;
-    align-items: center; // Alinear botones verticalmente
-    gap: 1rem; // Espacio entre los propios botones de acción
-    // *** AJUSTE CLAVE 3: Añadir espacio entre la navegación y las acciones ***
-    margin-left: 2rem; // <-- Ajusta este valor para acercar/alejar los botones de la navegación
+    align-items: center;
+    gap: 1rem;
+    margin-left: 2.5rem;
   }
 }
-  
-  .btn {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    text-decoration: none;
-    display: inline-block;
-    text-align: center;
-    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-  
-    &.btn-primary {
-      background-color: #6b4fbb;
-      color: #fff;
-      &:hover {
-        background-color: darken(#6b4fbb, 10%);
-      }
-    }
-  
-    &.btn-secondary {
-      background-color: #ffffff;
-      color: #6b4fbb;
-      border: 1px solid #6b4fbb;
-       &:hover {
-        background-color: #f0ebff;
-      }
-    }
-  
-    &.btn-cta {
-      padding: 1rem 2rem;
-      font-size: 1.1rem;
-    }
-  }
-  
-  .hero-section {
-    flex-grow: 1;
-    display: flex;
-    align-items: stretch;
-    min-height: calc(100vh - 80px);
-  }
-  
-  .hero-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    padding-left: 6rem;
-    padding-right: 1rem;
-    padding-top: 4rem;
-    padding-bottom: 4rem;
-  
-    h1 {
-      font-size: 3.5rem;
-      font-weight: bold;
-      color: #333;
-      margin-bottom: 0.5rem;
-    }
-  
-    p {
-      font-size: 1.25rem;
-      color: #555;
-      margin-bottom: 2rem;
-    }
-  }
-  
-  .hero-visual {
-    flex: 1;
-    background-color: #f8f7ff;
-    position: relative;
-    overflow: hidden;
-  
+
+// Estilos de botones (consistentes con login/register)
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  font-family: inherit;
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+
+  &.btn-primary {
+    background-color: $primary-color;
+    color: #fff;
+    
     &::before {
       content: '';
       position: absolute;
-      inset: 0;
-      background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M10 10 H90 V90 H10 Z" fill="none" stroke="rgba(107, 79, 187, 0.1)" stroke-width="1"/></svg>');
-      background-size: 50px 50px;
-      opacity: 0.5;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      transform: translate(-50%, -50%);
+      transition: width 0.4s ease, height 0.4s ease;
     }
-  
+
+    &:hover {
+      background-color: $primary-hover;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+      
+      &::before {
+        width: 300px;
+        height: 300px;
+      }
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  &.btn-secondary {
+    background-color: rgba($primary-color, 0.08);
+    color: $primary-color;
+    border: 2px solid transparent;
+    position: relative;
     
+    &:hover {
+      background-color: rgba($primary-color, 0.12);
+      border-color: $primary-color;
+      transform: translateY(-1px);
+    }
+  }
+
+  &.btn-cta {
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    box-shadow: 0 4px 16px rgba($primary-color, 0.2);
+    
+    &:hover {
+      box-shadow: 0 6px 24px rgba($primary-color, 0.3);
+    }
+  }
+}
+
+// Sección hero principal
+.hero-section {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  min-height: calc(100vh - #{$header-height});
+  background: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  // padding: 3rem 3rem 3rem 3rem;
+  padding-left: 6rem;
+  padding-bottom: 6rem;
+  position: relative;
+  z-index: 1;
+  
+  h1 {
+    font-size: 4rem;
+    font-weight: 800;
+    color: $text-color;
+    margin-bottom: 1rem;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    animation: slideInLeft 0.8s ease;
+  }
+
+  p {
+    font-size: 1.5rem;
+    color: $text-muted;
+    margin-bottom: 2.5rem;
+    font-weight: 400;
+    animation: slideInLeft 0.8s ease 0.2s both;
+  }
+
+  .btn-cta {
+    animation: slideInLeft 0.8s ease 0.4s both;
+  }
+}
+
+.hero-visual {
+  flex: 1;
+  background: $bg-gradient;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  
+  // Patrón decorativo de fondo
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: 
+      radial-gradient(circle at 20% 50%, rgba($primary-color, 0.05) 0%, transparent 60%),
+      radial-gradient(circle at 80% 80%, rgba($primary-color, 0.03) 0%, transparent 60%);
+    opacity: 0.8;
+    pointer-events: none;
+  }
+
+  // Patrón de líneas diagonales sutiles
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: 
+      repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 25px,
+        rgba($primary-color, 0.02) 25px,
+        rgba($primary-color, 0.02) 26px
+      );
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    object-fit: contain;
+    position: relative;
+    z-index: 1;
+    filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.1));
+    animation: fadeInScale 1s ease 0.3s both;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// Responsive design
+@media (max-width: 992px) {
+  .hero-section {
+    flex-direction: column;
+  }
+
+  .hero-content {
+    padding: 3rem;
+    text-align: center;
+    align-items: center;
+
+    h1 {
+      font-size: 3rem;
+    }
+
+    p {
+      font-size: 1.25rem;
+    }
+  }
+
+  .hero-visual {
+    min-height: 400px;
+    padding: 2rem;
+
     img {
-      display: block;
       width: 100%;
-      height: 100%;
-      object-fit: cover;
+      max-width: 500px;
     }
   }
-  
-  @media (max-width: 992px) {
-    .hero-section {
-      flex-direction: column;
-    }
-    .hero-content, .hero-visual {
-      flex: none;
-      width: 100%;
-      padding: 3rem;
-      text-align: center;
-      align-items: center;
-    }
-    .hero-visual {
-      min-height: 300px;
-    }
-    .landing-header {
-      padding: 1rem 1.5rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
+
+  .landing-header {
+    padding: 1rem 1.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+
     .navigation {
-        order: 3;
-        width: 100%;
-        margin-top: 1rem;
-        ul {
-            justify-content: center;
-            gap: 1.5rem;
-        }
+      order: 3;
+      width: 100%;
+      margin-top: 1rem;
+      margin-left: 0;
+
+      ul {
+        justify-content: center;
+        flex-direction: row;
+        gap: 1.5rem;
+      }
     }
-   .actions {
-       margin-top: 0.5rem;
-   }
-  
+
+    .actions {
+      margin-top: 0.5rem;
+      margin-left: 0;
+    }
   }
-  
-  @media (max-width: 576px) {
-     .landing-header .navigation ul {
-        gap: 1rem;
-        font-size: 0.9rem;
-     }
-     .actions .btn {
-         padding: 0.5rem 1rem;
-         font-size: 0.9rem;
-     }
-     .hero-content h1 {
-         font-size: 2.5rem;
-     }
-     .hero-content p {
-         font-size: 1rem;
-     }
+}
+
+@media (max-width: 576px) {
+  .landing-header {
+    .navigation ul {
+      gap: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .actions .btn {
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+    }
   }
+
+  .hero-content {
+    padding: 2rem 1.5rem;
+
+    h1 {
+      font-size: 2rem;
+    }
+
+    p {
+      font-size: 1.1rem;
+    }
+
+    .btn-cta {
+      padding: 0.8rem 1.8rem;
+      font-size: 1rem;
+    }
+  }
+
+  .hero-visual {
+    min-height: 300px;
+  }
+}
+
+// Animación para el scroll del header
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.landing-header {
+  animation: slideDown 0.6s ease;
+}
+
+// Efectos adicionales para mejorar la interactividad
+.logo img,
+.btn,
+.navigation a {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}

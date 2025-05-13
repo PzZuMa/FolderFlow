@@ -19,19 +19,28 @@ import { CommonModule } from '@angular/common';
     MatButtonModule
   ],
   template: `
-    <h2 mat-dialog-title>Crear Nueva Carpeta</h2>
+    <h2 mat-dialog-title>Crear nueva carpeta</h2>
     <mat-dialog-content>
-      <mat-form-field appearance="outline" class="full-width">
+      <!-- ✅ AÑADIR ESTILO CON MARGEN SUPERIOR AL FORM-FIELD ✅ -->
+      <mat-form-field appearance="outline" class="full-width" style="margin-top: 16px;">
         <mat-label>Nombre de la carpeta</mat-label>
         <input matInput [(ngModel)]="folderName" cdkFocusInitial>
       </mat-form-field>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
       <button mat-button (click)="onCancel()">Cancelar</button>
-      <button mat-flat-button color="primary" [disabled]="!folderName.trim()" (click)="onCreate()">Crear</button>
+      <button mat-flat-button color="primary" 
+              [disabled]="!folderName || !folderName.trim()" 
+              (click)="onCreate()">Crear</button>
     </mat-dialog-actions>
   `,
-  styles: ['.full-width { width: 100%; }']
+  styles: [
+    `
+    .full-width { 
+      width: 100%; 
+    }
+    `
+  ]
 })
 export class CreateFolderDialogComponent {
   folderName: string = '';
