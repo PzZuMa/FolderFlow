@@ -1,0 +1,248 @@
+// Variables - Consistentes con el resto de componentes
+$primary-color: #6b4fbb;
+$primary-hover: #5936b1;
+$primary-light: rgba(107, 79, 187, 0.1);
+$secondary-color: #5e6c84;
+$bg-page: #f0f3f7;
+$bg-gradient: linear-gradient(135deg, $bg-page 0%, darken($bg-page, 3%) 100%);
+$card-bg: #ffffff;
+$text-color: #2c3e50;
+$text-muted: #6c757d;
+$header-height: 80px;
+$box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+$box-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.12);
+
+// Header con navegación
+.landing-header {
+  display: flex;
+  align-items: center;
+  padding: 0 2rem;
+  height: $header-height;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  }
+
+  .logo {
+    flex-shrink: 0;
+    
+    img {
+      height: 40px;
+      width: auto;
+      cursor: pointer;
+      vertical-align: middle;
+      transition: transform 0.2s ease;
+      
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
+  }
+
+  .navigation {
+  margin-left: auto;
+  
+  ul {
+    list-style: none;
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 2rem;
+    margin: 0;
+    padding: 0;
+
+    li a {
+      text-decoration: none;
+      color: $text-color;
+      font-weight: 500;
+      font-size: 0.95rem;
+      position: relative;
+      transition: color 0.2s ease;
+      letter-spacing: -0.01em;
+
+      &::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: -5px;
+        left: 50%;
+        background-color: $primary-color;
+        transition: all 0.3s ease;
+        transform: translateX(-50%);
+      }
+
+      &:hover, &.active {
+        color: $primary-color;
+        
+        &::after {
+          width: 100%;
+        }
+      }
+    }
+  }
+}
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-left: 2.5rem;
+  }
+}
+
+// Estilos de botones (consistentes con login/register)
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  font-family: inherit;
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+
+  &.btn-primary {
+    background-color: $primary-color;
+    color: #fff;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      transform: translate(-50%, -50%);
+      transition: width 0.4s ease, height 0.4s ease;
+    }
+
+    &:hover {
+      background-color: $primary-hover;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+      
+      &::before {
+        width: 300px;
+        height: 300px;
+      }
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  &.btn-secondary {
+    background-color: rgba($primary-color, 0.08);
+    color: $primary-color;
+    border: 2px solid transparent;
+    position: relative;
+    
+    &:hover {
+      background-color: rgba($primary-color, 0.12);
+      border-color: $primary-color;
+      transform: translateY(-1px);
+    }
+  }
+
+  &.btn-cta {
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    box-shadow: 0 4px 16px rgba($primary-color, 0.2);
+    
+    &:hover {
+      box-shadow: 0 6px 24px rgba($primary-color, 0.3);
+    }
+  }
+}
+
+// Media queries para responsividad
+@media (max-width: 992px) {
+  .landing-header {
+    padding: 1rem 2rem;
+    
+    .navigation ul {
+      gap: 1.5rem;
+    }
+    
+    .actions {
+      margin-left: 1.5rem;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .landing-header {
+    padding: 1rem 1.5rem;
+    flex-wrap: wrap;
+    height: auto;
+    
+    .logo {
+      margin-right: auto;
+    }
+    
+    .navigation {
+      order: 3;
+      width: 100%;
+      margin: 1rem 0 0;
+      
+      ul {
+        justify-content: center;
+        gap: 1.5rem;
+      }
+    }
+
+    .actions {
+      margin-left: 0;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .landing-header {
+    .navigation ul {
+      gap: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .actions .btn {
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+    }
+  }
+}
+
+// Animación para el scroll del header
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.landing-header {
+  animation: slideDown 0.6s ease;
+}

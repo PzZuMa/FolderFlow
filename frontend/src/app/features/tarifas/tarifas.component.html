@@ -1,0 +1,217 @@
+<div class="tarifas-container">
+
+  <app-public-header></app-public-header>
+
+  <main class="pricing-section">
+    <div class="pricing-header">
+      <h1>Elige el plan perfecto para tu negocio</h1>
+      <p>Simple y transparente. Sin sorpresas ni cargos ocultos.</p>
+    </div>
+
+    <div class="plans-container">
+      <!-- Plan Básico -->
+      <div class="plan-card">
+        <div class="plan-header">
+          <h3>Básico</h3>
+          <p class="plan-description">Ideal para freelancers y pequeños proyectos</p>
+        </div>
+        
+        <div class="plan-price">
+          <span class="currency">$</span>
+          <span class="amount">0</span>
+          <span class="period">/mes</span>
+        </div>
+
+        <ul class="plan-features">
+          <li>
+            <span class="icon">✓</span>
+            5 GB de almacenamiento
+          </li>
+          <li>
+            <span class="icon">✓</span>
+            Hasta 3 usuarios
+          </li>
+          <li>
+            <span class="icon">✓</span>
+            100 documentos al mes
+          </li>
+          <li>
+            <span class="icon">✓</span>
+            Búsqueda básica
+          </li>
+          <li>
+            <span class="icon">✓</span>
+            Soporte por email
+          </li>
+        </ul>
+
+        <button class="btn btn-secondary btn-plan" [routerLink]="['/register']">
+          Comenzar gratis
+        </button>
+      </div>
+
+      <!-- Plan Profesional -->
+      <div class="plan-card featured">
+        <div class="plan-badge">Más popular</div>
+        <div class="plan-header">
+          <h3>Profesional</h3>
+          <p class="plan-description">Para pequeñas empresas en crecimiento</p>
+        </div>
+        
+        <div class="plan-price">
+          <span class="currency">$</span>
+          <span class="amount">29</span>
+          <span class="period">/mes</span>
+        </div>
+
+        <ul class="plan-features">
+          <li>
+            <span class="icon">✓</span>
+            100 GB de almacenamiento
+          </li>
+          <li>
+            <span class="icon">✓</span>
+            Hasta 15 usuarios
+          </li>
+          <li>
+            <span class="icon">✓</span>
+            Documentos ilimitados
+          </li>
+          <li>
+            <span class="icon">✓</span>
+            OCR y búsqueda avanzada
+          </li>
+          <li>
+            <span class="icon">✓</span>
+            Integración con nube
+          </li>
+          <li>
+            <span class="icon">✓</span>
+            Firmas digitales
+          </li>
+          <li>
+            <span class="icon">✓</span>
+            Soporte prioritario
+          </li>
+        </ul>
+
+        <button class="btn btn-primary btn-plan" [routerLink]="['/register']">
+          Empezar ahora
+        </button>
+      </div>
+
+      <!-- Plan Empresarial -->
+      <div class="plan-card">
+        <div class="plan-header">
+          <h3>Empresarial</h3>
+          <p class="plan-description">Solución completa para grandes equipos</p>
+        </div>
+        
+        <div class="plan-price">
+          <span class="currency">$</span>
+          <span class="amount">79</span>
+          <span class="period">/mes</span>
+        </div>
+
+        <ul class="plan-features">
+          <li>
+            <span class="icon">✓</span>
+            Almacenamiento ilimitado
+          </li>
+          <li>
+            <span class="icon">✓</span>
+            Usuarios ilimitados
+          </li>
+          <li>
+            <span class="icon">✓</span>
+            API personalizada
+          </li>
+          <li>
+            <span class="icon">✓</span>
+            Automatización avanzada
+          </li>
+          <li>
+            <span class="icon">✓</span>
+            Auditoría y compliance
+          </li>
+          <li>
+            <span class="icon">✓</span>
+            Flujos de trabajo personalizados
+          </li>
+          <li>
+            <span class="icon">✓</span>
+            Soporte 24/7 dedicado
+          </li>
+          <li>
+            <span class="icon">✓</span>
+            Capacitación incluida
+          </li>
+        </ul>
+
+        <button class="btn btn-secondary btn-plan" [routerLink]="['/contacto']">
+          Contactar ventas
+        </button>
+      </div>
+    </div>
+
+    <!-- Sección de características adicionales -->
+    <div class="features-section">
+      <h2>Todas las características que necesitas</h2>
+      <div class="features-grid">
+        <div class="feature-item">
+          <div class="feature-icon">🔒</div>
+          <h4>Seguridad garantizada</h4>
+          <p>Cifrado de extremo a extremo y cumplimiento GDPR</p>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🌐</div>
+          <h4>Acceso desde cualquier lugar</h4>
+          <p>Trabaja desde cualquier dispositivo con sincronización en tiempo real</p>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🤝</div>
+          <h4>Colaboración en equipo</h4>
+          <p>Comparte, comenta y trabaja en tiempo real con tu equipo</p>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">📊</div>
+          <h4>Análisis detallados</h4>
+          <p>Informes y métricas sobre el uso de documentos</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="faq-section">
+      <h2>Preguntas frecuentes</h2>
+      <div class="faq-container">
+        <div class="faq-item">
+          <h4>¿Puedo cambiar de plan en cualquier momento?</h4>
+          <p>Sí, puedes actualizar o cambiar tu plan cuando lo necesites. Los cambios se aplicarán en el próximo ciclo de facturación.</p>
+        </div>
+        <div class="faq-item">
+          <h4>¿Qué métodos de pago aceptan?</h4>
+          <p>Aceptamos todas las tarjetas principales (Visa, MasterCard, American Express) y transferencias bancarias para planes empresariales.</p>
+        </div>
+        <div class="faq-item">
+          <h4>¿Hay compromiso de permanencia?</h4>
+          <p>No, todos nuestros planes son mensuales sin compromisos. Puedes cancelar en cualquier momento.</p>
+        </div>
+        <div class="faq-item">
+          <h4>¿Qué incluye el soporte?</h4>
+          <p>Todos los planes incluyen soporte por email. Los planes Profesional y Empresarial incluyen soporte prioritario y por chat en vivo.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA Final -->
+    <div class="cta-section">
+      <h2>¿Listo para comenzar?</h2>
+      <p>Prueba Folder Flow gratis por 14 días. Sin tarjeta de crédito.</p>
+      <button class="btn btn-primary btn-cta" [routerLink]="['/register']">
+        COMENZAR PRUEBA GRATUITA
+      </button>
+    </div>
+  </main>
+  <app-footer></app-footer>
+</div>

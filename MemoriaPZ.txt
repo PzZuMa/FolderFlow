@@ -1,0 +1,241 @@
+Pablo Zumaquero de Mateo
+2º DAM
+13/06/2025
+FOLDER FLOW
+INDICE DE CONTENIDO
+1. INTRODUCCIÓN ........................................................................................... 3
+2. OBJETIVOS DEL PROYECTO ........................................................................... 5
+3. DESCRIPCIÓN DEL PROYECTO ...................................................................... 7
+4. TECNOLOGÍAS UTILIZADAS ......................................................................... 10
+1. INTRODUCCIÓN
+En la era de la transformación digital, la gestión eficiente de la información se ha convertido en un pilar fundamental para la competitividad y operatividad de cualquier organización. Sin embargo, para las Pequeñas y Medianas Empresas (PYMEs), implementar soluciones robustas de gestión documental a menudo supone un desafío considerable debido a limitaciones de presupuesto, recursos técnicos o complejidad de las herramientas existentes. La dependencia de archivos físicos o sistemas digitales desorganizados no solo baja la productividad, sino que también incluyen riesgos de seguridad y pérdida de información.
+El presente proyecto aborda esta necesidad desarrollando un Sistema de Gestión Documental (SGD) moderno, eficiente y accesible, específicamente diseñado para las PYMEs. La solución propuesta consiste en una aplicación web intuitiva y potente, construida utilizando tecnologías actuales como Angular para el frontend, Node.js para el backend, MongoDB como base de datos NoSQL flexible, y Amazon Web Services S3 para un almacenamiento de archivos seguro y escalable.
+La elección de estas tecnologías no es casual: Angular permite crear interfaces de usuario dinámicas y responsivas; Node.js ofrece un entorno de ejecución eficiente para la API backend; MongoDB proporciona la flexibilidad necesaria para manejar metadatos documentales diversos; y AWS S3 garantiza una solución de almacenamiento en la nube líder en la industria, con alta disponibilidad y durabilidad.
+Este proyecto no solo busca ofrecer una herramienta funcional, sino también explorar la integración de estas tecnologías para crear una solución completa y profesional. La motivación principal radica en aplicar
+los conocimientos adquiridos durante el ciclo formativo en un proyecto real, relevante para el mercado actual y que aporte un valor tangible a sus potenciales usuarios.
+Esta memoria detallará todo el proceso de desarrollo del proyecto, desde la concepción inicial, el análisis y diseño, la implementación técnica de sus componentes clave, hasta los resultados obtenidos y las posibles líneas de trabajo futuras. Se busca proporcionar una visión clara y completa del trabajo realizado, facilitando su comprensión y evaluación.
+2. OBJETIVOS DEL PROYECTO
+El propósito fundamental de este proyecto es diseñar, desarrollar e implementar un Sistema de Gestión Documental (SGD) basado en la web, orientado a las necesidades específicas de las Pequeñas y Medianas Empresas (PYMEs).
+Objetivo General:
+•
+Desarrollar una aplicación web funcional, segura e intuitiva que permita a las PYMEs gestionar su documentación de forma centralizada, mejorando la eficiencia operativa, la seguridad de la información y la colaboración entre equipos.
+Objetivos Específicos:
+•
+Implementar la gestión integral de documentos:
+−
+Desarrollar funcionalidades CRUD (Crear, Leer, Descargar, Eliminar) para documentos digitales.
+−
+Permitir la organización de documentos mediante una estructura de carpetas jerárquica (creación, navegación, eliminación de carpetas).
+−
+Integrar la subida de archivos al sistema, almacenándolos de forma segura y escalable en AWS S3.
+−
+Posibilitar la gestión de metadatos básicos asociados a cada documento (nombre, tipo, tamaño, fecha de subida/modificación).
+•
+Garantizar el control de acceso y la seguridad:
+−
+Implementar un sistema de autenticación de usuarios seguro basado en JSON Web Tokens (JWT), incluyendo registro y login.
+−
+Establecer un sistema básico de roles (p.ej., Administrador, Usuario) con permisos diferenciados para el acceso a funcionalidades y documentos.
+−
+Asegurar la comunicación mediante HTTPS.
+−
+Utilizar mecanismos de hashing robustos (ej. bcrypt) para el almacenamiento de contraseñas.
+−
+Configurar el cifrado en reposo para los archivos almacenados en AWS S3 (ej. SSE-S3).
+•
+Optimizar la experiencia de usuario (UX):
+−
+Diseñar una interfaz de usuario clara, intuitiva y fácil de usar, utilizando el framework Angular y la librería de componentes Angular Material.
+−
+Implementar una funcionalidad de búsqueda básica que permita localizar documentos por nombre o metadatos.
+−
+Asegurar un diseño responsive que permita una visualización y uso adecuados en distintos tamaños de pantalla (escritorio, tablet).
+•
+Desarrollar una arquitectura moderna y escalable:
+−
+Construir una API RESTful utilizando Node.js (con Express.js) que sirva como backend para la aplicación Angular.
+−
+Diseñar y utilizar una base de datos MongoDB para almacenar la información de usuarios, estructura de carpetas y metadatos de documentos.
+−
+Asegurar una correcta separación de responsabilidades entre el frontend, el backend y los servicios externos (S3).
+3. DESCRIPCIÓN DEL PROYECTO
+En el contexto empresarial actual, marcado por una creciente digitalización, la gestión eficiente y segura de la documentación es un factor crítico para la operatividad y el éxito, especialmente para las Pequeñas y Medianas Empresas (PYMEs). A menudo, estas organizaciones enfrentan desafíos significativos: la dispersión de archivos en múltiples ubicaciones (discos locales, correos electrónicos, servicios básicos de almacenamiento en la nube), la dificultad para localizar información rápidamente, los riesgos asociados a la pérdida de datos o accesos no autorizados, y la ineficiencia derivada de procesos manuales o sistemas obsoletos. La dependencia de archivos físicos sigue siendo una realidad en muchos casos, ocupando espacio valioso y dificultando la colaboración remota.
+El presente proyecto, denominado "Sistema de Gestión Documental (SGD) para PYMEs", aborda directamente estas problemáticas mediante el diseño y desarrollo de una aplicación web integral. El objetivo es proporcionar una solución centralizada, moderna y accesible que permita a las PYMEs organizar, almacenar, proteger y recuperar su información documental de manera estructurada y eficiente, optimizando sus flujos de trabajo internos y fomentando la colaboración.
+La aplicación se concibe como una plataforma Software as a Service (SaaS) intuitiva, accesible a través de cualquier navegador web moderno. Se apoya en un conjunto de tecnologías robustas y actuales: el frontend se desarrolla con Angular (utilizando su versión estable más reciente, como la v19) y la librería de componentes Angular Material para garantizar una interfaz de usuario rica, interactiva y consistente; el backend se construye sobre
+Node.js (probablemente con el framework Express.js), proporcionando una API RESTful eficiente y escalable; la persistencia de datos (usuarios, metadatos de documentos, estructura de carpetas) se gestiona con MongoDB, una base de datos NoSQL elegida por su flexibilidad para manejar esquemas de información variables; y el almacenamiento físico de los archivos se delega a Amazon Web Services S3 (Simple Storage Service), asegurando alta disponibilidad, durabilidad y escalabilidad bajo demanda para los documentos cargados.
+Funcionalidades Detalladas:
+•
+El sistema ofrecerá un conjunto de funcionalidades esenciales para la gestión documental, diseñadas pensando en la usabilidad para usuarios no necesariamente técnicos:
+−
+Autenticación y Gestión de Usuarios:
+−
+Interfaz Principal y Navegación (Dashboard y Explorador):
+−
+Gestión de Documentos y Carpetas (CRUD Completo):
+−
+Búsqueda y Recuperación de documentos.
+Arquitectura y Diseño Técnico:
+•
+La aplicación sigue una arquitectura cliente-servidor desacoplada. El frontend Angular se comunica con el backend Node.js a través de una API RESTful bien definida. Esta separación facilita el desarrollo, las pruebas y el mantenimiento independiente de ambas partes. La elección de S3 para el almacenamiento de archivos separa la carga de almacenamiento de objetos binarios del servidor de aplicaciones y la base de datos, mejorando la escalabilidad y el rendimiento. Se prestará especial atención a la seguridad en todas las capas: validación de entradas, protección contra vulnerabilidades comunes
+(XSS, CSRF si aplica), comunicación segura mediante HTTPS, y
+gestión segura de credenciales y tokens. La documentación de la API se generará utilizando herramientas como Swagger/Open API para facilitar la integración y futuras expansiones.
+Impacto y valor para las PYMEs:
+•
+Este SGD busca ofrecer a las PYMEs una alternativa viable y coste-efectiva frente a soluciones empresariales complejas o la ineficiencia de métodos no estructurados. Al centralizar la documentación, mejorar la seguridad, agilizar la búsqueda y facilitar el acceso (incluso remoto), se espera que la aplicación contribuya a un aumento de la productividad, una reducción de riesgos operativos y una mejora en la colaboración interna.
+•
+En resumen, el proyecto consiste en la creación de una herramienta de gestión documental robusta, segura y fácil de usar, específicamente orientada a las necesidades y recursos de las PYMEs, utilizando tecnologías web modernas y siguiendo buenas prácticas de desarrollo de software.
+4. TECNOLOGÍAS UTILIZADAS
+El desarrollo del Sistema de Gestión Documental (SGD) para PYMEs se ha llevado a cabo utilizando un conjunto de tecnologías, herramientas, lenguajes y servicios modernos, seleccionados cuidadosamente para construir una aplicación web robusta, escalable, segura y mantenible. A continuación, se detallan los componentes tecnológicos clave empleados en el proyecto:
+Lenguajes de programación
+•
+TypeScript
+−
+Descripción: Es el lenguaje principal utilizado para el desarrollo del frontend con Angular. TypeScript es un superconjunto tipado de JavaScript que compila a JavaScript plano. Introduce tipos estáticos opcionales, interfaces, clases y otras características orientadas a objetos.
+−
+Uso en el Proyecto: Permite escribir un código frontend más robusto, predecible y fácil de mantener, detectando errores en tiempo de compilación y mejorando la experiencia de desarrollo con autocompletado avanzado y refactorización segura. Es el lenguaje estándar para el desarrollo con Angular.
+•
+JavaScript (Node.js):
+−
+Descripción: Lenguaje de scripting interpretado, orientado a objetos y basado en prototipos. Es el lenguaje fundamental de la web y el utilizado por el entorno de ejecución Node.js para el backend.
+−
+Uso en el Proyecto: Se utiliza para escribir toda la lógica del servidor (API RESTful, interacción con base de datos, conexión con servicios externos) ejecutándose sobre el entorno Node.js.
+•
+HTML5 (HyperText Markup Language):
+−
+Descripción: Lenguaje de marcado estándar para crear la estructura y el contenido semántico de las páginas web.
+−
+Uso en el Proyecto: Define la estructura de todos los componentes visuales de la aplicación Angular, desde la landing page hasta los elementos internos del dashboard y el explorador de archivos.
+•
+SCSS (Sassy CSS):
+−
+Descripción: Es un preprocesador CSS que extiende la sintaxis de CSS estándar, añadiendo características como variables, anidamiento de selectores, mixins, herencia y funciones. El código SCSS se compila a CSS estándar para que los navegadores puedan interpretarlo.
+−
+Uso en el Proyecto: Se utiliza para escribir los estilos de la aplicación de manera más organizada, modular y mantenible, facilitando la creación de temas y la gestión de estilos complejos. Todos los estilos de los componentes Angular se definen usando SCSS.
+Frontend
+•
+Angular (v19 o última estable):
+−
+Descripción: Framework de desarrollo frontend mantenido por Google, basado en TypeScript, para construir Single Page
+Applications (SPAs) interactivas y eficientes. Sigue una
+arquitectura basada en componentes.
+−
+Uso en el Proyecto: Es el framework principal sobre el que se construye toda la interfaz de usuario. Gestiona la renderización de vistas, el enrutamiento entre páginas (como Landing Page, Login, Dashboard, Explorador de Archivos), la comunicación con la API backend y el manejo del estado de la aplicación cliente. Se optó por la arquitectura de componentes standalone predominante en las versiones recientes.
+•
+Angular Material:
+−
+Descripción: Librería oficial de componentes UI para Angular que implementa las especificaciones de Material Design de Google. Ofrece una amplia gama de componentes preconstruidos, accesibles y personalizables.
+−
+Uso en el Proyecto: Proporciona los bloques de construcción visuales de la interfaz (botones, formularios, tablas, diálogos, barras de navegación, iconos, etc.), acelerando significativamente el desarrollo del UI, asegurando una apariencia consistente y profesional, y cumpliendo con estándares de accesibilidad.
+•
+Angular CLI (Command Line Interface):
+−
+Descripción: Herramienta de línea de comandos esencial para el desarrollo con Angular.
+−
+Uso en el Proyecto: Se utiliza para inicializar el proyecto frontend, generar componentes, servicios, guards, interceptores y otros artefactos de Angular, así como para
+compilar, servir la aplicación en desarrollo (ng serve) y
+construir la versión final para producción (ng build).
+Backend
+•
+Node.js:
+−
+Descripción: Entorno de ejecución de JavaScript del lado del servidor, asíncrono y basado en el motor V8 de Chrome. Permite construir aplicaciones de red escalables.
+−
+Uso en el Proyecto: Es la base sobre la que se ejecuta todo el código del servidor. Gestiona las peticiones HTTP, ejecuta la lógica de negocio y se comunica con la base de datos y otros servicios.
+•
+Express.js:
+−
+Descripción: Framework web minimalista y flexible para Node.js, ampliamente utilizado para construir APIs RESTful.
+−
+Uso en el Proyecto: Simplifica la creación de la API backend, gestionando el enrutamiento de las peticiones HTTP a los controladores correspondientes, el manejo de middleware (como CORS, autenticación JWT, parseo de JSON) y el envío de respuestas al cliente Angular.
+•
+Mongoose:
+−
+Descripción: Librería ODM (Object Data Modeling) para MongoDB y Node.js. Proporciona una solución basada en esquemas para modelar los datos de la aplicación.
+−
+Uso en el Proyecto: Facilita la interacción con la base de datos MongoDB desde el backend Node.js. Se utiliza para definir los esquemas de los modelos (Usuario, Documento,
+Carpeta), validar datos, realizar operaciones CRUD (Crear,
+Leer, Actualizar, Eliminar) y establecer relaciones entre colecciones.
+Base de Datos
+•
+MongoDB:
+−
+Descripción: Base de datos NoSQL orientada a documentos, que almacena datos en formato BSON (similar a JSON). Es conocida por su flexibilidad de esquema, escalabilidad horizontal y buen rendimiento para una amplia variedad de casos de uso.
+−
+Uso en el Proyecto: Almacena toda la información estructurada de la aplicación: detalles de usuarios (excepto contraseñas en claro), la estructura jerárquica de las carpetas y, crucialmente, los metadatos asociados a cada documento físico almacenado en S3 (nombre, tipo, tamaño, propietario, fecha, clave S3, etc.).
+Almacenamiento en la nube y servicios Cloud
+•
+Amazon Web Services (AWS) S3 (Simple Storage Service):
+−
+Descripción: Servicio de almacenamiento de objetos altamente duradero, disponible y escalable ofrecido por AWS.
+−
+Uso en el Proyecto: Es el repositorio principal donde se almacenan físicamente todos los archivos (PDFs, DOCX, imágenes, etc.) subidos por los usuarios. Se utiliza por su fiabilidad, coste-efectividad y capacidad para manejar grandes volúmenes de datos, separando el almacenamiento
+de archivos binarios de la lógica de la aplicación y la base de
+datos de metadatos. Se configuró con cifrado en reposo (SSE-S3).
+•
+Amazon Web Services (AWS) IAM (Identity and Access Management):
+−
+Descripción: Servicio de AWS que permite gestionar de forma segura el acceso a los recursos de AWS.
+−
+Uso en el Proyecto: Se utilizó para crear un usuario programático específico para la aplicación backend, con permisos definidos (inicialmente AmazonS3FullAccess) para interactuar de forma segura con el bucket S3. Las credenciales (Access Key ID y Secret Access Key) de este usuario se gestionan mediante variables de entorno en el backend.
+Autenticación y seguridad
+•
+JSON Web Tokens (JWT):
+−
+Descripción: Estándar abierto (RFC 7519) para crear tokens de acceso basados en JSON que permiten la propagación segura de identidad y permisos.
+−
+Uso en el Proyecto: Se utilizan para gestionar la autenticación stateless entre el frontend y el backend. Tras un inicio de sesión exitoso, el backend genera un JWT firmado que contiene el ID del usuario. El frontend almacena este token y lo envía en la cabecera Authorization (Bearer Token) de cada solicitud posterior a rutas protegidas de la API. El backend verifica la firma del token en cada petición.
+•
+bcrypt:
+−
+Descripción: Librería popular para el hashing adaptativo de contraseñas, basada en el cifrado Blowfish. Es resistente a ataques de fuerza bruta.
+−
+Uso en el Proyecto: Se utiliza en el backend para hashear las contraseñas de los usuarios antes de almacenarlas en la base de datos MongoDB. Al verificar el login, se compara el hash de la contraseña introducida con el hash almacenado usando la función de comparación de bcrypt.
+•
+CORS (Cross-Origin Resource Sharing):
+−
+Descripción: Mecanismo de seguridad implementado por los navegadores que restringe las solicitudes HTTP realizadas desde un dominio diferente al del servidor que sirve el recurso.
+−
+Uso en el Proyecto: Se configura en el backend Express.js (mediante el middleware cors) para permitir explícitamente que el frontend Angular (que se ejecuta en un origen diferente, ej. localhost:4200) pueda realizar solicitudes a la API del backend (ej. localhost:3000) durante el desarrollo y en producción.
+•
+Dotenv:
+−
+Descripción: Módulo de Node.js que carga variables de entorno desde un archivo .env al objeto process.env.
+−
+Uso en el Proyecto: Se utiliza en el backend para gestionar de forma segura información sensible (claves de API de AWS, secreto de JWT, cadena de conexión a MongoDB)
+manteniéndola fuera del código fuente y del control de
+versiones.
+Herramientas de desarrollo y control de versiones
+•
+Visual Studio Code (VS Code):
+−
+Descripción: Editor de código fuente ligero pero potente, multiplataforma y gratuito, desarrollado por Microsoft. Es altamente extensible.
+−
+Uso en el Proyecto: Es el entorno de desarrollo principal utilizado para escribir, depurar y gestionar todo el código del proyecto (frontend Angular/TypeScript y backend Node.js/JavaScript).
+•
+Node Package Manager (npm):
+−
+Descripción: Gestor de paquetes por defecto para Node.js y el ecosistema JavaScript.
+−
+Uso en el Proyecto: Se utiliza tanto en el frontend como en el backend para instalar, gestionar y actualizar las librerías y dependencias necesarias para el proyecto, así como para ejecutar scripts definidos en los archivos package.json.
+•
+Git:
+−
+Descripción: Sistema de control de versiones distribuido, estándar de facto en el desarrollo de software moderno.
+−
+Uso en el Proyecto: Esencial para el control de versiones del código fuente. Se utiliza para registrar cambios, gestionar ramas de desarrollo, revertir a estados anteriores y facilitar la organización del proyecto a lo largo de su ciclo de vida. Se
+gestiona el código en un repositorio local, con potencial
+conexión a plataformas como GitHub o GitLab.
+Documentación y pruebas API
+•
+Postman:
+−
+Descripción: Plataforma de colaboración para el desarrollo de APIs, popular por su cliente para realizar y probar solicitudes HTTP.
+−
+Uso en el Proyecto: Se utiliza extensivamente durante el desarrollo del backend para probar manualmente cada endpoint de la API RESTful, verificar su correcto funcionamiento, estructura de respuestas y manejo de errores antes de integrarlo con el frontend Angular.
+•
+Swagger:
+−
+Descripción: Especificación estándar para describir APIs RESTful. Herramientas como Swagger UI permiten generar documentación interactiva a partir de esta especificación.
+−
+Uso en el Proyecto: Se contempla su uso (o se utilizó parcialmente) en el backend para definir y documentar la estructura de la API, facilitando la comprensión de los endpoints disponibles, sus parámetros y respuestas esperadas, tanto para el desarrollo del frontend como para futuras integraciones.
+Este conjunto de tecnologías proporciona una base sólida y moderna para el desarrollo del Sistema de Gestión Documental, equilibrando la eficiencia en el desarrollo, la escalabilidad de la solución y la seguridad de los datos gestionados.

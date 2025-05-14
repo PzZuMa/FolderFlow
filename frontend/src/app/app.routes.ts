@@ -8,12 +8,18 @@ import { MainLayoutComponent } from './layout/main-layout/main-layout.component'
 import { HomeComponent } from './features/home/home.component';
 import { DocumentExplorerComponent } from './features/documents/document-explorer/document-explorer.component';
 import { FolderExplorerComponent } from './features/folders/folder-explorer/folder-explorer.component';
+import { TarifasComponent } from './features/tarifas/tarifas.component'; // Pública
+import { ContactoComponent } from './features/contacto/contacto.component';
+import { InfoComponent } from './features/info/info.component'; // Pública
 
 export const routes: Routes = [
   // Rutas públicas
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'dashboard', component: DashboardComponent },
+  { path: 'tarifas', component: TarifasComponent },
+  { path: 'contacto', component: ContactoComponent },
+  { path: 'info', component: InfoComponent }, // <<<--- Ruta pública para la info
 
   // --- Sección Protegida usando el Layout ---
   {

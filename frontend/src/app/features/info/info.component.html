@@ -1,0 +1,206 @@
+<div class="info-container">
+  
+  <app-public-header></app-public-header>
+
+  <!-- Contenido principal -->
+  <main class="info-content">
+    <!-- Sección de introducción -->
+    <section class="intro-section">
+      <div class="container">
+        <h1>Transformando la gestión documental para PYMEs</h1>
+        <p class="subtitle">Nuestra misión es hacer la gestión documental profesional accesible para todos</p>
+      </div>
+    </section>
+
+    <!-- Sección de historia -->
+    <section class="story-section">
+      <div class="container">
+        <div class="section-header">
+          <h2>Nuestra Historia</h2>
+          <div class="divider"></div>
+        </div>
+        <div class="content-block">
+          <div class="text-content">
+            <p>FolderFlow nació en 2023 con un propósito claro: resolver los desafíos que enfrentan las pequeñas y medianas empresas en la gestión de su documentación digital.</p>
+            
+            <p>En la era de la transformación digital, identificamos que las PYMEs se encontraban atrapadas entre soluciones empresariales complejas y costosas, o métodos rudimentarios e ineficientes para gestionar sus documentos críticos.</p>
+            
+            <p>Después de años trabajando en el sector tecnológico implementando soluciones para grandes corporaciones, nuestro fundador decidió crear una alternativa: una plataforma intuitiva, segura y accesible diseñada específicamente para las necesidades y recursos de las pequeñas y medianas empresas.</p>
+          </div>
+          <div class="image-content">
+            <img src="assets/oficina-moderna.jpg" alt="Oficina FolderFlow">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección de misión y valores -->
+    <section class="mission-section">
+      <div class="container">
+        <div class="section-header">
+          <h2>Misión y Valores</h2>
+          <div class="divider"></div>
+        </div>
+        
+        <div class="mission-grid">
+          <div class="mission-item">
+            <div class="icon-container">
+              <i class="material-icons">visibility</i>
+            </div>
+            <h3>Visión</h3>
+            <p>Convertirnos en el referente en gestión documental para PYMEs, facilitando la transformación digital de pequeñas y medianas empresas en todo el mundo.</p>
+          </div>
+          
+          <div class="mission-item">
+            <div class="icon-container">
+              <i class="material-icons">track_changes</i>
+            </div>
+            <h3>Misión</h3>
+            <p>Proporcionar soluciones de gestión documental intuitivas y accesibles que mejoren la eficiencia operativa, seguridad y colaboración en las PYMEs.</p>
+          </div>
+          
+          <div class="mission-item">
+            <div class="icon-container">
+              <i class="material-icons">handshake</i>
+            </div>
+            <h3>Compromiso</h3>
+            <p>Ofrecer un servicio excepcional y adaptable a las necesidades reales de nuestros clientes, con un soporte cercano y personalizado.</p>
+          </div>
+          
+          <div class="mission-item">
+            <div class="icon-container">
+              <i class="material-icons">security</i>
+            </div>
+            <h3>Seguridad</h3>
+            <p>Garantizar la protección y privacidad de la información de nuestros clientes como prioridad fundamental en cada aspecto de nuestro servicio.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección del equipo -->
+    <section class="team-section">
+      <div class="container">
+        <div class="section-header">
+          <h2>Nuestro Equipo</h2>
+          <div class="divider"></div>
+        </div>
+        
+        <div class="team-grid">
+          <div class="team-member" *ngFor="let member of teamMembers">
+            <div class="member-image">
+              <img [src]="member.image" [alt]="member.name">
+            </div>
+            <div class="member-info">
+              <h3>{{member.name}}</h3>
+              <p class="position">{{member.position}}</p>
+              <p class="description">{{member.description}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección de tecnologías -->
+    <section class="tech-section">
+      <div class="container">
+        <div class="section-header">
+          <h2>Tecnologías que nos impulsan</h2>
+          <div class="divider"></div>
+        </div>
+        
+        <div class="tech-description">
+          <p>En FolderFlow, desarrollamos nuestra plataforma con tecnologías modernas y robustas que garantizan seguridad, rendimiento y escalabilidad para gestionar los documentos de tu empresa:</p>
+        </div>
+        
+        <div class="tech-grid">
+          <div class="tech-item" *ngFor="let tech of technologies">
+            <div class="tech-icon">
+              <img [src]="tech.image" [alt]="tech.name">
+            </div>
+            <h3>{{tech.name}}</h3>
+            <p>{{tech.description}}</p>
+          </div>
+        </div>
+        
+        <div class="tech-footer">
+          <p>Nuestra arquitectura distribuida asegura alta disponibilidad, mientras que la implementación de buenas prácticas de seguridad protege los datos sensibles de tu empresa en todo momento.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección por qué elegirnos -->
+    <section class="why-us-section">
+      <div class="container">
+        <div class="section-header">
+          <h2>¿Por qué elegir FolderFlow?</h2>
+          <div class="divider"></div>
+        </div>
+        
+        <div class="features-grid">
+          <div class="feature">
+            <div class="icon-container">
+              <i class="material-icons">savings</i>
+            </div>
+            <h3>Ahorro de Costes</h3>
+            <p>Reduce gastos en almacenamiento físico, búsqueda manual de documentos y horas de trabajo perdidas.</p>
+          </div>
+          
+          <div class="feature">
+            <div class="icon-container">
+              <i class="material-icons">speed</i>
+            </div>
+            <h3>Eficiencia Operativa</h3>
+            <p>Encuentra cualquier documento en segundos y automatiza la organización de tu información corporativa.</p>
+          </div>
+          
+          <div class="feature">
+            <div class="icon-container">
+              <i class="material-icons">gpp_good</i>
+            </div>
+            <h3>Seguridad Avanzada</h3>
+            <p>Protege tu información sensible con cifrado en reposo, acceso controlado y copias de seguridad automáticas.</p>
+          </div>
+          
+          <div class="feature">
+            <div class="icon-container">
+              <i class="material-icons">groups</i>
+            </div>
+            <h3>Colaboración Mejorada</h3>
+            <p>Facilita el trabajo en equipo con acceso compartido a documentos desde cualquier ubicación.</p>
+          </div>
+          
+          <div class="feature">
+            <div class="icon-container">
+              <i class="material-icons">auto_fix_high</i>
+            </div>
+            <h3>Experiencia Intuitiva</h3>
+            <p>Interfaz diseñada para usuarios no técnicos, con curva de aprendizaje mínima.</p>
+          </div>
+          
+          <div class="feature">
+            <div class="icon-container">
+              <i class="material-icons">support_agent</i>
+            </div>
+            <h3>Soporte Personalizado</h3>
+            <p>Atención al cliente dedicada para ayudarte con cualquier duda o incidencia.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Final -->
+    <section class="cta-section">
+      <div class="container">
+        <h2>Tu empresa merece una gestión documental eficiente</h2>
+        <p>Comienza hoy y transforma la manera en que tu organización gestiona la información</p>
+        <div class="cta-buttons">
+          <button class="btn btn-primary btn-cta" [routerLink]="['/register']">COMENZAR PRUEBA GRATUITA</button>
+          <button class="btn btn-secondary btn-cta" [routerLink]="['/contacto']">CONTACTAR CON VENTAS</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <app-footer></app-footer>
+</div>

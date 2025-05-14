@@ -1,12 +1,11 @@
 html, body {
-    height: 100%;
-    overflow: hidden; // <<<--- Evita el scrollbar de la página entera
-    margin: 0;       // <<<--- Quita márgenes por defecto
-  }
+  height: 100%;
+  margin: 0;       // <<<--- Quita márgenes por defecto
+}
   
-  body {
-    // font-family y color ya deberían estar aquí
-    font-family: Roboto, "Helvetica Neue", sans-serif;
-    color: rgba(0, 0, 0, 0.87); // Color base del tema claro
-    // El background ya debería venir de tu tema o de la variable --app-background-color si la definiste
-  }
+body {
+  // font-family y color ya deberían estar aquí
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  color: rgba(0, 0, 0, 0.87); // Color base del tema claro
+  // El background ya debería venir de tu tema o de la variable --app-background-color si la definiste
+}
