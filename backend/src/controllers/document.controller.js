@@ -110,6 +110,72 @@ async function moveUserDocument(req, res, next) {
     }
 }
 
+/**
+ * Obtiene los documentos recientes del usuario.
+ */
+async function getRecentDocs(req, res, next) {
+    try {
+        const userId = req.user.id;
+        const limit = parseInt(req.query.limit || '5', 10);
+        
+        const recentDocs = await documentService.getRecentDocuments(userId, limit);
+        res.status(200).json(recentDocs);
+    } catch (error) {
+        next(error);
+    }
+}
+
+/**
+ * Obtiene los documentos favoritos del usuario.
+ */
+async function getFavoriteDocs(req, res, next) {
+    try {
+        const userId = req.user.id;
+        const limit = parseInt(req.query.limit || '5', 10);
+        
+        const favoriteDocs = await documentService.getFavoriteDocuments(userId, limit);
+        res.status(200).json(favoriteDocs);
+    } catch (error) {
+        next(error);
+    }
+}
+
+/**
+ * Obtiene estadísticas de documentos del usuario.
+ */
+async function getDocStats(req, res, next) {
+    try {
+        const userId = req.user.id;
+        
+        const stats = await documentService.getDocumentStats(userId);
+        res.status(200).json(stats);
+    } catch (error) {
+        next(error);
+    }
+}
+
+/**
+ * Marca/desmarca un documento como favorito.
+ */
+async function toggleFavorite(req, res, next) {
+    try {
+        const userId = req.user.id;
+        const { documentId } = req.params;
+        const { isFavorite } = req.body;
+        
+        // Usar el servicio en lugar de acceder directamente al modelo
+        const document = await documentService.toggleDocumentFavorite(userId, documentId, isFavorite);
+        
+        if (!document) {
+            return res.status(404).json({ message: 'Document not found or access denied' });
+        }
+        
+        res.status(200).json(document);
+    } catch (error) {
+        next(error);
+    }
+}
+
 // Exportación nombrada de todas las funciones del controlador
 export {
     getUploadUrl,
@@ -119,4 +185,8 @@ export {
     deleteUserDocument,
     getAllUserDocuments,
     moveUserDocument,
+    getRecentDocs,
+    getFavoriteDocs,
+    getDocStats,
+    toggleFavorite,
 };

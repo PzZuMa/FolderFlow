@@ -17,6 +17,10 @@ router.get('/:documentId/download-url', documentController.getDownloadUrl);
 router.delete('/:documentId', documentController.deleteUserDocument);
 router.get('/all', documentController.getAllUserDocuments);
 router.patch('/:documentId/move', documentController.moveUserDocument);
+router.get('/recent', documentController.getRecentDocs);
+router.get('/favorites', documentController.getFavoriteDocs);
+router.get('/stats', documentController.getDocStats);
+router.patch('/:documentId/favorite', documentController.toggleFavorite);
 
 
 // Exportación por defecto del router

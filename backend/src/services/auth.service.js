@@ -27,11 +27,18 @@ export const loginUser = async ({ email, password }) => {
     throw new Error('Credenciales inválidas');
   }
 
-  const token = jwt.sign(
-    { userId: user._id, email: user.email },
-    process.env.JWT_SECRET,
-    { expiresIn: '1h' }
-  );
+  const token = jwt.sign({ userId: user._id, email: user.email }, process.env.JWT_SECRET, {
+    expiresIn: '24h'
+  });
 
-  return { token };
+  // Devolver el token junto con la información básica del usuario
+  // CAMBIO: Añadir información del usuario a la respuesta
+  return { 
+    token,
+    user: {
+      id: user._id,
+      name: user.name || user.email.split('@')[0],
+      email: user.email
+    }
+  };
 };

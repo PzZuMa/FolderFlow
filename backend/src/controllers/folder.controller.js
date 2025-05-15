@@ -97,3 +97,21 @@ export const moveUserFolder = async(req, res, next) => {
         next(error);
     }
 };
+
+/**
+ * Obtiene estadísticas de carpetas del usuario.
+ */
+export const handleGetFolderStats = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        console.log("Fetching folder stats for user:", userId); // Log para depuración
+        
+        const stats = await folderService.getFolderStats(userId);
+        console.log("Folder stats retrieved:", stats); // Log para depuración
+        
+        res.status(200).json(stats);
+    } catch (error) {
+        console.error('Error getting folder stats:', error);
+        res.status(500).json({ message: error.message || 'Error interno del servidor' });
+    }
+};

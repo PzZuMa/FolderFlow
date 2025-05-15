@@ -1,11 +1,13 @@
 export interface Document {
-    _id: string;
-    name: string;
-    s3Key: string;
-    mimeType: string;
-    size: number;
-    ownerId: string;
-    folderId: string | null;
-    createdAt?: string; // O Date
-    updatedAt?: string; // O Date
+  _id: string;
+  name: string;
+  size: number;
+  mimeType: string;
+  ownerId: string;
+  folderId: string | null;
+  s3Key?: string;
+  url?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  isFavorite?: boolean; // Asegúrate de que esta propiedad esté definida
   }

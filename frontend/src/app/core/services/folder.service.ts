@@ -96,8 +96,12 @@ getBreadcrumbs(folderId: string | null): Observable<Folder[]> {
   }
 
   moveFolder(folderId: string, destinationParentId: string | null): Observable<Folder> {
-  const url = `${this.apiUrl}/${folderId}/move`;
-  return this.http.patch<Folder>(url, { destinationParentId }); // Enviar destino en el body
-}
+    const url = `${this.apiUrl}/${folderId}/move`;
+    return this.http.patch<Folder>(url, { destinationParentId }); // Enviar destino en el body
+  }
+
+  getFolderStats(): Observable<{totalCount: number}> {
+    return this.http.get<{totalCount: number}>(`${this.apiUrl}/stats`);
+  }
 
 }

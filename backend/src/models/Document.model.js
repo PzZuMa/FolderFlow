@@ -7,6 +7,10 @@ const DocumentSchema = new Schema({
         required: true,
         trim: true,
     },
+        isFavorite: {
+        type: Boolean,
+        default: false
+    },
     s3Key: {
         type: String,
         required: true,

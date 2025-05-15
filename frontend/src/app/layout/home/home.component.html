@@ -1,0 +1,207 @@
+<div class="home-container">
+  <!-- Encabezado de bienvenida -->
+  <div class="welcome-header">
+    <div class="welcome-text">
+      <h1>Bienvenido, "{{ userName }}".</h1>
+      <p class="welcome-subtitle">Tu espacio de trabajo está listo</p>
+    </div>
+    <div class="quick-actions">
+      <button mat-raised-button color="primary" [routerLink]="['/documents']" class="action-btn">
+        <mat-icon>note_add</mat-icon>
+        Subir documento
+      </button>
+      <button mat-raised-button class="folder-btn" [routerLink]="['/folders']">
+        <mat-icon>create_new_folder</mat-icon>
+        Nueva carpeta
+      </button>
+    </div>
+  </div>
+
+  <!-- Tarjetas de estadísticas -->
+  <div class="stats-cards">
+    <mat-card class="stat-card">
+      <div class="stat-icon files-icon">
+        <mat-icon>description</mat-icon>
+      </div>
+      <div class="stat-content">
+        <div class="stat-value">{{ totalDocuments }}</div>
+        <div class="stat-label">Documentos</div>
+      </div>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <div class="stat-icon folders-icon">
+        <mat-icon>folder</mat-icon>
+      </div>
+      <div class="stat-content">
+        <div class="stat-value">{{ totalFolders }}</div>
+        <div class="stat-label">Carpetas</div>
+      </div>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <div class="stat-icon storage-icon">
+        <mat-icon>cloud_done</mat-icon>
+      </div>
+      <div class="stat-content">
+        <div class="stat-value">{{ formatBytes(storageUsed) }}</div>
+        <div class="stat-label">Almacenamiento usado</div>
+        <mat-progress-bar mode="determinate" [value]="(storageUsed / storageLimit) * 100"></mat-progress-bar>
+      </div>
+    </mat-card>
+  </div>
+
+  <!-- Documentos recientes -->
+  <div class="recent-section">
+    <div class="section-header">
+      <h2>Documentos recientes</h2>
+      <a mat-button color="primary" [routerLink]="['/documents']" class="view-all-link">
+        Ver todos
+        <mat-icon>arrow_forward</mat-icon>
+      </a>
+    </div>
+
+    <div class="document-list" *ngIf="!isLoading">
+      <mat-card class="document-card" *ngFor="let doc of recentDocuments">
+        <div class="document-icon">
+          <mat-icon>{{ getIconForMimeType(doc.mimeType) }}</mat-icon>
+        </div>
+        <div class="document-info">
+          <div class="document-name">
+            {{ doc.name }}
+            <mat-icon *ngIf="doc.isFavorite" class="favorite-indicator">star</mat-icon>
+          </div>
+          <div class="document-meta">
+            <span class="document-size">{{ formatBytes(doc.size) }}</span>
+            <span class="document-date">{{ getTimeAgo(doc.updatedAt || '') }}</span>
+          </div>
+        </div>
+        <div class="document-actions">
+          <button mat-icon-button (click)="downloadFile(doc)" matTooltip="Descargar">
+            <mat-icon>download</mat-icon>
+          </button>
+          <button mat-icon-button [matMenuTriggerFor]="menu" matTooltip="Más opciones">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="toggleFavorite(doc)">
+              <mat-icon>{{ doc.isFavorite ? 'favorite' : 'favorite_border' }}</mat-icon>
+              <span>{{ doc.isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos' }}</span>
+            </button>
+            <button mat-menu-item [routerLink]="['/app/folders', doc.folderId]">
+              <mat-icon>folder_open</mat-icon>
+              <span>Abrir carpeta</span>
+            </button>
+            <mat-divider></mat-divider>
+            <button mat-menu-item (click)="downloadFile(doc)">
+              <mat-icon>download</mat-icon>
+              <span>Descargar</span>
+            </button>
+          </mat-menu>
+        </div>
+      </mat-card>
+
+      <div class="empty-documents" *ngIf="recentDocuments.length === 0">
+        <mat-icon>info</mat-icon>
+        <p>No tienes documentos recientes</p>
+        <button mat-stroked-button color="primary" [routerLink]="['/documents']">
+          Ir a mis documentos
+        </button>
+      </div>
+    </div>
+
+    <div class="loading-container" *ngIf="isLoading">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <p>Cargando documentos recientes...</p>
+    </div>
+  </div>
+
+  <!-- Documentos destacados -->
+  <div class="favorites-section" *ngIf="favoriteDocuments.length > 0">
+    <div class="section-header">
+      <h2>Documentos destacados</h2>
+      <a mat-button color="primary" [routerLink]="['/documents']" class="view-all-link">
+        Ver todos
+        <mat-icon>arrow_forward</mat-icon>
+      </a>
+    </div>
+
+    <div class="document-list">
+      <mat-card class="document-card" *ngFor="let doc of favoriteDocuments">
+        <div class="document-icon favorite">
+          <mat-icon>{{ getIconForMimeType(doc.mimeType) }}</mat-icon>
+        </div>
+        <div class="document-info">
+          <div class="document-name">{{ doc.name }}</div>
+          <div class="document-meta">
+            <span class="document-size">{{ formatBytes(doc.size) }}</span>
+            <mat-chip-set>
+              <mat-chip highlighted color="accent">
+                <mat-icon>star</mat-icon>
+                Destacado
+              </mat-chip>
+            </mat-chip-set>
+          </div>
+        </div>
+        <div class="document-actions">
+          <button mat-icon-button (click)="downloadFile(doc)" matTooltip="Descargar">
+            <mat-icon>download</mat-icon>
+          </button>
+          <button mat-icon-button [matMenuTriggerFor]="favMenu" matTooltip="Más opciones">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #favMenu="matMenu">
+            <button mat-menu-item (click)="toggleFavorite(doc)">
+              <mat-icon>star</mat-icon>
+              <span>Quitar de destacados</span>
+            </button>
+            <button mat-menu-item [routerLink]="['/app/folders', doc.folderId]">
+              <mat-icon>folder_open</mat-icon>
+              <span>Abrir carpeta</span>
+            </button>
+            <mat-divider></mat-divider>
+            <button mat-menu-item (click)="downloadFile(doc)">
+              <mat-icon>download</mat-icon>
+              <span>Descargar</span>
+            </button>
+          </mat-menu>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Accesos rápidos -->
+  <div class="quick-links-section">
+    <h2>Accesos rápidos</h2>
+    
+    <div class="quick-links">
+      <a [routerLink]="['/documents']" class="quick-link-card">
+        <div class="quick-link-icon documents">
+          <mat-icon>article</mat-icon>
+        </div>
+        <span>Mis Documentos</span>
+      </a>
+
+      <a [routerLink]="['/folders']" class="quick-link-card">
+        <div class="quick-link-icon folders">
+          <mat-icon>folder</mat-icon>
+        </div>
+        <span>Mis Carpetas</span>
+      </a>
+
+      <a [routerLink]="['/settings']" class="quick-link-card">
+        <div class="quick-link-icon settings">
+          <mat-icon>settings</mat-icon>
+        </div>
+        <span>Configuración</span>
+      </a>
+
+      <a [routerLink]="['/contacto']" class="quick-link-card">
+        <div class="quick-link-icon help">
+          <mat-icon>help</mat-icon>
+        </div>
+        <span>Ayuda</span>
+      </a>
+    </div>
+  </div>
+</div>

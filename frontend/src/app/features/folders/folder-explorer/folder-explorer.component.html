@@ -160,16 +160,6 @@
         <h2 *ngIf="currentFolderId !== null">Esta carpeta está vacía</h2>
         <p *ngIf="currentFolderId === null">Comienza creando una carpeta o subiendo archivos</p>
         <p *ngIf="currentFolderId !== null">Añade archivos o carpetas a esta ubicación</p>
-        <div class="empty-state-actions">
-          <button mat-raised-button color="primary" (click)="openCreateFolderDialog()" class="empty-state-action">
-            <mat-icon>create_new_folder</mat-icon>
-            Nueva Carpeta
-          </button>
-          <button mat-raised-button color="primary" (click)="triggerFileInputClick()" class="empty-state-action">
-            <mat-icon>upload_file</mat-icon>
-            Subir Archivo
-          </button>
-        </div>
       </div>
     </div>
   </div>

@@ -7,92 +7,455 @@ $bg-page: #f0f3f7;
 $card-bg: #ffffff;
 $text-color: #2c3e50;
 $text-muted: #6c757d;
-$box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-$box-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.12);
+$success-color: #10b981;
+$warning-color: #f59e0b;
+$error-color: #ef4444;
+$info-color: #3b82f6;
+$folder-color: #ffca28;
+$folder-hover: #f5b300;
+$folder-light: rgba(255, 202, 40, 0.1);
 
 .home-container {
+  padding: 24px;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-// Estilos para tarjetas
-.card {
-  background-color: $card-bg;
+// Encabezado de bienvenida
+.welcome-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 24px 32px;
   border-radius: 16px;
-  box-shadow: $box-shadow;
-  padding: 24px;
   margin-bottom: 24px;
-  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: $box-shadow-hover;
+  .welcome-text {
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: $text-color;
+      margin: 0 0 8px 0;
+      letter-spacing: -0.02em;
+    }
+    
+    .welcome-subtitle {
+      color: $text-muted;
+      font-size: 1.1rem;
+      margin: 0;
+    }
   }
   
-  h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: $text-color;
+  .quick-actions {
+    display: flex;
+    gap: 12px;
+    
+    .action-btn {
+      background-color: $primary-color;
+      color: white;
+      padding: 0 24px;
+      height: 48px;
+      border-radius: 12px;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(107, 79, 187, 0.15);
+      transition: all 0.3s ease;
+      
+      &:hover {
+        background-color: $primary-hover;
+        box-shadow: 0 6px 16px rgba(107, 79, 187, 0.25);
+        transform: translateY(-2px);
+      }
+      
+      mat-icon {
+        margin-right: 8px;
+      }
+    }
+    
+    .folder-btn {
+      background-color: $folder-color;
+      color: white;
+      padding: 0 24px;
+      height: 48px;
+      border-radius: 12px;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba($folder-color, 0.15);
+      transition: all 0.3s ease;
+      
+      &:hover {
+        background-color: $folder-hover;
+        box-shadow: 0 6px 16px rgba($folder-color, 0.25);
+        transform: translateY(-2px);
+      }
+      
+      mat-icon {
+        margin-right: 8px;
+      }
+    }
+  }
+}
+
+// Tarjetas de estadísticas
+.stats-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+  
+  .stat-card {
+    display: flex;
+    align-items: center;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+    }
+    
+    .stat-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 20px;
+      
+      mat-icon {
+        font-size: 28px;
+        width: 28px;
+        height: 28px;
+        color: white;
+      }
+      
+      &.files-icon {
+        background: linear-gradient(135deg, $primary-color, $primary-hover);
+      }
+      
+      &.folders-icon {
+        background: linear-gradient(135deg, $folder-color, $folder-hover);
+      }
+      
+      &.storage-icon {
+        background: linear-gradient(135deg, $info-color, darken($info-color, 10%));
+      }
+    }
+    
+    .stat-content {
+      flex: 1;
+      
+      .stat-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: $text-color;
+        line-height: 1.2;
+      }
+      
+      .stat-label {
+        font-size: 0.9rem;
+        color: $text-muted;
+        margin-bottom: 8px;
+      }
+      
+      mat-progress-bar {
+        height: 6px;
+        border-radius: 3px;
+        overflow: hidden;
+      }
+    }
+  }
+}
+
+// Secciones de documentos (recientes y favoritos)
+.recent-section, .favorites-section {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 32px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: $text-color;
+      margin: 0;
+    }
+    
+    .view-all-link {
+      color: $primary-color;
+      font-weight: 500;
+      
+      mat-icon {
+        font-size: 18px;
+        height: 18px;
+        width: 18px;
+        margin-left: 4px;
+      }
+    }
+  }
+}
+
+.document-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  
+  .document-card {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+      
+      .document-actions {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .document-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      background-color: $primary-light;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 16px;
+      
+      mat-icon {
+        font-size: 24px;
+        color: $primary-color;
+      }
+      
+      &.favorite {
+        background-color: rgba($folder-color, 0.15);
+        
+        mat-icon {
+          color: $folder-color;
+        }
+      }
+    }
+    
+    .document-info {
+      flex: 1;
+      min-width: 0;
+      
+      .document-name {
+        font-weight: 500;
+        font-size: 1rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: $text-color;
+        margin-bottom: 6px;
+      }
+      
+      .document-meta {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        font-size: 0.85rem;
+        color: $text-muted;
+      }
+    }
+    
+    .document-actions {
+      display: flex;
+      gap: 8px;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all 0.3s ease;
+      
+      button {
+        color: $secondary-color;
+        
+        &:hover {
+          color: $primary-color;
+          background-color: $primary-light;
+        }
+      }
+    }
+  }
+}
+
+// Estado vacío para documentos
+.empty-documents {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  
+  mat-icon {
+    font-size: 48px;
+    height: 48px;
+    width: 48px;
+    color: $secondary-color;
+    opacity: 0.6;
     margin-bottom: 16px;
   }
   
   p {
     color: $text-muted;
-    line-height: 1.6;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
   }
 }
 
-// Estilo para botones
-.btn {
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 600;
-  text-decoration: none;
-  display: inline-block;
+// Loading container
+.loading-container {
+  padding: 30px 0;
   text-align: center;
-  transition: all 0.2s ease;
-  position: relative;
+  
+  p {
+    margin-top: 16px;
+    color: $text-muted;
+  }
+}
+
+// Accesos rápidos
+.quick-links-section {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 32px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: $text-color;
+    margin: 0 0 20px 0;
+  }
+  
+  .quick-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    
+    .quick-link-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      background-color: rgba(255, 255, 255, 0.8);
+      transition: all 0.3s ease;
+      text-decoration: none;
+      
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+        
+        .quick-link-icon {
+          transform: scale(1.05);
+        }
+      }
+      
+      .quick-link-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 12px;
+        transition: transform 0.3s ease;
+        
+        mat-icon {
+          font-size: 28px;
+          color: white;
+        }
+        
+        &.documents {
+          background: linear-gradient(135deg, $primary-color, $primary-hover);
+        }
+        
+        &.folders {
+          background: linear-gradient(135deg, $folder-color, $folder-hover);
+        }
+        
+        &.settings {
+          background: linear-gradient(135deg, $secondary-color, darken($secondary-color, 15%));
+        }
+        
+        &.help {
+          background: linear-gradient(135deg, $info-color, darken($info-color, 10%));
+        }
+      }
+      
+      span {
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: $text-color;
+        text-align: center;
+      }
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .welcome-header {
+    flex-direction: column;
+    align-items: flex-start;
+    
+    .quick-actions {
+      margin-top: 16px;
+      width: 100%;
+      
+      button {
+        flex: 1;
+      }
+    }
+  }
+  
+  .document-list {
+    grid-template-columns: 1fr;
+  }
+  
+  .document-card {
+    .document-actions {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+.document-name {
+  font-weight: 500;
+  font-size: 1rem;
+  white-space: nowrap;
   overflow: hidden;
-  font-size: 0.95rem;
+  text-overflow: ellipsis;
+  color: $text-color;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
   
-  &.btn-primary {
-    background-color: $primary-color;
-    color: white;
-    
-    &:hover {
-      background-color: $primary-hover;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba($primary-color, 0.3);
-    }
+  .favorite-indicator {
+    font-size: 16px;
+    height: 16px;
+    width: 16px;
+    margin-left: 6px;
+    color: $folder-color;
   }
-  
-  &.btn-outline {
-    background-color: transparent;
-    color: $primary-color;
-    border: 2px solid $primary-color;
-    
-    &:hover {
-      background-color: $primary-light;
-      transform: translateY(-2px);
-    }
-  }
-}
-
-// Animación de entrada
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.card {
-  animation: fadeInUp 0.5s ease forwards;
-  animation-delay: calc(0.1s * var(--index, 0));
-  opacity: 0;
 }

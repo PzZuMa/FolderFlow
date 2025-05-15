@@ -112,11 +112,31 @@ export class DocumentService {
   }
 
   getAllUserDocuments(): Observable<Document[]> {
-  return this.http.get<Document[]>(`${this.apiUrl}/all`);
-}
+    return this.http.get<Document[]>(`${this.apiUrl}/all`);
+  }
 
-moveDocument(documentId: string, destinationFolderId: string | null): Observable<Document> {
-  const url = `${this.apiUrl}/${documentId}/move`;
-  return this.http.patch<Document>(url, { destinationFolderId });
-}
+  moveDocument(documentId: string, destinationFolderId: string | null): Observable<Document> {
+    const url = `${this.apiUrl}/${documentId}/move`;
+    return this.http.patch<Document>(url, { destinationFolderId });
+  }
+
+  // Para obtener documentos recientes
+  getRecentDocuments(limit: number = 5): Observable<Document[]> {
+    return this.http.get<Document[]>(`${this.apiUrl}/recent?limit=${limit}`);
+  }
+  
+  // Para obtener documentos favoritos/destacados
+  getFavoriteDocuments(limit: number = 5): Observable<Document[]> {
+    return this.http.get<Document[]>(`${this.apiUrl}/favorites?limit=${limit}`);
+  }
+  
+  // Para estadísticas de documentos
+  getDocumentStats(): Observable<{totalCount: number, totalSize: number}> {
+    return this.http.get<{totalCount: number, totalSize: number}>(`${this.apiUrl}/stats`);
+  }
+  
+  // Para marcar/desmarcar un documento como favorito
+  toggleFavorite(documentId: string, isFavorite: boolean): Observable<Document> {
+    return this.http.patch<Document>(`${this.apiUrl}/${documentId}/favorite`, { isFavorite });
+  }
 }

@@ -133,3 +133,30 @@ export const moveFolder = async (userId, folderIdToMove, destinationParentId) =>
     console.log(`Folder ${folderIdToMove} moved to parent ${destinationParentId} by user ${userId}`);
     return folderToMove;
 }
+
+/**
+ * Obtiene estadísticas de carpetas del usuario.
+ * @param {string} userId ID del usuario
+ * @returns {Promise<Object>} Estadísticas de carpetas
+ */
+export const getFolderStats = async (userId) => {
+    try {
+        // Asegurarse de que userId es válido
+        console.log("Getting folder stats for user:", userId);
+        
+        // Contar total de carpetas del usuario
+        const totalCount = await Folder.countDocuments({ ownerId: userId });
+        console.log(`Found ${totalCount} folders for user ${userId}`);
+        
+        // Carpetas raíz
+        const rootFolders = await Folder.find({ ownerId: userId, parentId: null });
+        
+        return { 
+            totalCount,
+            rootFolderCount: rootFolders.length
+        };
+    } catch (error) {
+        console.error("Error getting folder statistics:", error);
+        throw new Error("Could not retrieve folder statistics");
+    }
+};
