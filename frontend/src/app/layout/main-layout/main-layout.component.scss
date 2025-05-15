@@ -1,8 +1,16 @@
+// Variables consistentes con el resto de la aplicación
+$primary-color: #6b4fbb;
+$primary-hover: #5936b1;
+$primary-light: rgba(107, 79, 187, 0.05);
+$bg-page: #f0f3f7;
+
 .main-layout-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
   overflow: hidden;
+  // Añadir un fondo con sutil gradiente en tono morado claro
+  background: linear-gradient(135deg, $bg-page 0%, mix($bg-page, $primary-light, 80%) 100%);
 }
 
 app-header {
@@ -10,26 +18,49 @@ app-header {
   top: 0;
   z-index: 100;
   flex-shrink: 0;
+  // Añadir un borde inferior con el color primario para darle identidad
+  border-bottom: 1px solid rgba($primary-color, 0.1);
 }
 
 .content-wrapper {
   display: flex;
   flex-grow: 1;
   overflow: hidden;
+  // Añadir un sutil patrón de fondo
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba($primary-color, 0.02) 0%, transparent 70%),
+    radial-gradient(circle at 90% 80%, rgba($primary-color, 0.03) 0%, transparent 70%);
 }
 
 app-sidebar {
   flex-shrink: 0;
   transition: width 0.3s ease-in-out;
+  // Añadir borde derecho con tono del primario
+  border-right: 1px solid rgba($primary-color, 0.08);
 }
 
 .main-content-area {
   flex-grow: 1;
   overflow-y: auto;
   transition: margin-left 0.3s ease-in-out;
+  padding: 0 0 32px 0; // Añadir padding inferior
+  position: relative;
+  
+  // Añadir un sutil decorador para la esquina
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 180px;
+    height: 180px;
+    background: radial-gradient(circle at top right, rgba($primary-color, 0.03), transparent 70%);
+    pointer-events: none;
+    opacity: 0.7;
+  }
 }
 
 // Opcional: Ajustar el contenido cuando el sidebar está colapsado
 .main-content-area.collapsed-sidebar {
-  margin-left: -5; // Si necesitas ajustar el margen
+  margin-left: 0; 
 }

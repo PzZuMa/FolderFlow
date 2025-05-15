@@ -1,79 +1,116 @@
-<!-- src/app/features/documents/document-explorer.component.html -->
 <div class="explorer-container">
   <!-- Barra de Progreso de Carga Global -->
-  <mat-progress-bar mode="indeterminate" *ngIf="isLoading && uploads.length === 0"></mat-progress-bar>
+  <mat-progress-bar mode="indeterminate" *ngIf="isLoading && uploads.length === 0" class="global-progress"></mat-progress-bar>
+
+  <!-- Encabezado de la Página -->
+  <div class="page-header">
+    <div class="page-title">
+      <h1>Mis documentos</h1>
+      <p class="page-description">Gestiona y organiza todos tus archivos importantes</p>
+    </div>
+    <div class="header-actions">
+      <button mat-raised-button color="primary" class="upload-btn" (click)="triggerFileInputClick()">
+        <mat-icon>upload_file</mat-icon>
+        <span>Subir Documento</span>
+      </button>
+    </div>
+  </div>
 
   <!-- Lista de Subidas en Progreso -->
   <div *ngIf="uploads.length > 0" class="upload-section">
-    <h4>Subidas en progreso</h4>
+    <div class="section-title">
+      <mat-icon>cloud_upload</mat-icon>
+      <h2>Subidas en progreso</h2>
+    </div>
+    
     <div class="upload-items-container">
-       <div *ngFor="let upload of uploads; let i = index" class="upload-item"
-            [ngClass]="{'upload-success': upload.status === 'success', 'upload-error': upload.status === 'error'}">
-           <mat-icon class="upload-icon">{{ getIconForMimeType(upload.file.type) }}</mat-icon>
-           <div class="upload-info">
-             <span class="upload-title">{{ upload.file.name }}</span>
-             <span class="upload-details">
-                 <span *ngIf="upload.status === 'pending'">Pendiente...</span>
-                 <span *ngIf="upload.status === 'uploading'">{{ upload.progress }}%</span>
-                 <span *ngIf="upload.status === 'confirming'">Confirmando...</span>
-                 <span *ngIf="upload.status === 'success'">¡Listo!</span>
-                 <span *ngIf="upload.status === 'error'" class="error-message">{{ upload.error }}</span>
-                 - {{ formatBytes(upload.file.size) }}
-             </span>
-             <mat-progress-bar *ngIf="upload.status === 'uploading' || upload.status === 'confirming'"
-                               mode="determinate" [value]="upload.progress" class="upload-progress-bar">
-             </mat-progress-bar>
-           </div>
-       </div>
+      <div *ngFor="let upload of uploads; let i = index" class="upload-item"
+           [ngClass]="{'upload-success': upload.status === 'success', 'upload-error': upload.status === 'error'}">
+        <div class="upload-icon-container">
+          <mat-icon class="upload-icon">{{ getIconForMimeType(upload.file.type) }}</mat-icon>
+        </div>
+        <div class="upload-info">
+          <span class="upload-title">{{ upload.file.name }}</span>
+          <span class="upload-details">
+            <span *ngIf="upload.status === 'pending'" class="status-indicator pending">Pendiente</span>
+            <span *ngIf="upload.status === 'uploading'" class="status-indicator uploading">{{ upload.progress }}%</span>
+            <span *ngIf="upload.status === 'confirming'" class="status-indicator confirming">Confirmando...</span>
+            <span *ngIf="upload.status === 'success'" class="status-indicator success">¡Completado!</span>
+            <span *ngIf="upload.status === 'error'" class="status-indicator error">{{ upload.error }}</span>
+            <span class="file-size">{{ formatBytes(upload.file.size) }}</span>
+          </span>
+          <mat-progress-bar *ngIf="upload.status === 'uploading' || upload.status === 'confirming'"
+                           mode="determinate" [value]="upload.progress" class="upload-progress-bar">
+          </mat-progress-bar>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- Contenido Principal (Grid de Tarjetas) -->
   <div class="content-area">
+    <!-- Filtros y Búsqueda -->
+    <div class="filters-container">
+      <div class="search-box">
+        <mat-icon>search</mat-icon>
+        <input type="text" placeholder="Buscar documentos..." (input)="filterDocuments($event)">
+      </div>
+    </div>
+    
+    <!-- Grid de Documentos -->
     <div *ngIf="!isLoading" class="grid-container">
       <!-- Documentos -->
-      <mat-card *ngFor="let doc of documents" class="grid-item document-card" [matTooltip]="doc.name">
-          <mat-card-content>
-              <mat-icon class="item-icon">{{ getIconForMimeType(doc.mimeType) }}</mat-icon>
-              <span class="item-name">{{ doc.name }}</span>
-              <span class="item-details">{{ formatBytes(doc.size) }} | {{ doc.updatedAt | date:'shortDate' }}</span>
-          </mat-card-content>
-         <!-- Botón de menú para acciones -->
-         <button mat-icon-button [matMenuTriggerFor]="itemMenuDoc" (click)="$event.stopPropagation()" class="item-menu-button" aria-label="Acciones de documento">
-             <mat-icon>more_vert</mat-icon>
-         </button>
-         <!-- Menú PARA DOCUMENTOS -->
-         <mat-menu #itemMenuDoc="matMenu">
-             <button mat-menu-item (click)="downloadFile(doc)">
-                <mat-icon>download</mat-icon>
-                <span>Descargar</span>
-             </button>
-             <button mat-menu-item (click)="openMoveDialog(doc, 'document')">
-                <mat-icon>drive_file_move</mat-icon>
-                <span>Mover a...</span>
-             </button>
-             <mat-divider></mat-divider>
-             <button mat-menu-item (click)="openDeleteConfirmation(doc, 'document')" color="warn">
-                <mat-icon>delete</mat-icon>
-                <span>Eliminar</span>
-             </button>
-         </mat-menu>
+      <mat-card *ngFor="let doc of documents" class="document-card" [matTooltip]="doc.name">
+        <div class="document-icon">
+          <mat-icon class="item-icon">{{ getIconForMimeType(doc.mimeType) }}</mat-icon>
+        </div>
+        <div class="document-info">
+          <h3 class="document-name">{{ doc.name }}</h3>
+          <div class="document-meta">
+            <span class="size">{{ formatBytes(doc.size) }}</span>
+            <span class="date">{{ doc.updatedAt | date:'dd MMM, yyyy' }}</span>
+          </div>
+        </div>
+        <div class="document-actions">
+          <button mat-icon-button class="action-btn" (click)="downloadFile(doc)" matTooltip="Descargar">
+            <mat-icon>download</mat-icon>
+          </button>
+          <button mat-icon-button class="action-btn" [matMenuTriggerFor]="itemMenuDoc" (click)="$event.stopPropagation()" matTooltip="Más acciones">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #itemMenuDoc="matMenu" class="custom-menu">
+            <button mat-menu-item (click)="openMoveDialog(doc, 'document')">
+              <mat-icon>drive_file_move</mat-icon>
+              <span>Mover a...</span>
+            </button>
+            <button mat-menu-item (click)="openDeleteConfirmation(doc, 'document')" class="warn-action">
+              <mat-icon>delete</mat-icon>
+              <span>Eliminar</span>
+            </button>
+          </mat-menu>
+        </div>
       </mat-card>
     </div>
 
     <!-- Mensaje si está vacío -->
-    <div *ngIf="!isLoading && folders.length === 0 && documents.length === 0 && uploads.length === 0" class="empty-state">
-       <mat-icon class="empty-icon">folder_off</mat-icon>
-       <span>Esta carpeta está vacía</span>
-       <button mat-raised-button color="primary" (click)="triggerFileInputClick()">Subir primer archivo</button>
+    <div *ngIf="!isLoading && documents.length === 0 && uploads.length === 0" class="empty-state">
+      <div class="empty-state-content">
+        <mat-icon class="empty-icon">description</mat-icon>
+        <h2>No hay documentos</h2>
+        <p>Comienza subiendo tu primer documento para organizarlo aquí</p>
+        <button mat-raised-button color="primary" (click)="triggerFileInputClick()" class="empty-state-action">
+          <mat-icon>upload_file</mat-icon>
+          Subir documento
+        </button>
+      </div>
     </div>
   </div>
 
   <!-- Input oculto para subida -->
-  <input type="file" hidden #fileInput multiple (change)="onFileSelected($event)">
-
-  <!-- Botón Flotante (FAB) para Subir Archivo -->
-  <button mat-fab color="primary" class="upload-fab" (click)="triggerFileInputClick()" matTooltip="Subir archivo" aria-label="Subir archivo">
-    <mat-icon>upload</mat-icon>
+  <input type="file" #fileInput style="display:none" (change)="onFileSelected($event)" multiple>
+  
+  <!-- Botón flotante para subir (visible en móvil) -->
+  <button mat-fab color="primary" class="upload-fab" (click)="triggerFileInputClick()">
+    <mat-icon>upload_file</mat-icon>
   </button>
 </div>

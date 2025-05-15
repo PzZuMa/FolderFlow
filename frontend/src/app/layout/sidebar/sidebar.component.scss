@@ -1,41 +1,75 @@
+// Variables - Consistentes con el header
+$primary-color: #6b4fbb;
+$primary-hover: #5936b1;
+$primary-light: rgba(107, 79, 187, 0.1);
+$secondary-color: #5e6c84;
+$bg-page: #f0f3f7;
+$card-bg: #ffffff;
+$text-color: #2c3e50;
+$text-muted: #6c757d;
+$box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
 :host {
   display: block;
   height: 100%;
-  background-color: #f4f4f4;
+  // Cambiar a un fondo más sutil
+  background-color: rgba(255, 255, 255, 0.7);
   overflow: hidden;
   width: 240px;
   flex-shrink: 0;
-  transition: width 0.3s ease-in-out;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  // Quitar el box-shadow para un look más moderno y reemplazarlo con un efecto más sutil
+  box-shadow: none;
+  // Mantener el borde para definir el área
+  border-right: 1px solid rgba($primary-color, 0.08);
+  backdrop-filter: blur(8px); // Efecto de cristal moderno (funciona en navegadores modernos)
 }
 
 :host(.collapsed) {
-  width: 75px; // Ajustado para coincidir con el botón del header
+  width: 70px; 
 }
 
 .sidebar-container {
   height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: 16px; // Padding general para el container
+  padding: 16px 12px;
+  
+  /* Estilo de la barra de scroll */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+    
+    &:hover {
+      background: rgba(0, 0, 0, 0.2);
+    }
+  }
 }
 
 .nav-item {
-  margin: 12px 0; // Margen vertical entre items
-  border-radius: 4px; // Bordes redondeados
-  transition: all 0.3s ease-in-out;
+  margin: 6px 0; 
+  border-radius: 10px; 
+  transition: all 0.2s ease-in-out;
   overflow: hidden;
 }
 
-// Hover effect contenido dentro del item
-.nav-item:hover {
-  background-color: rgba(0, 0, 0, 0.04);
-}
-
+// Estilos para el texto e icono del nav-item
 .nav-text {
   white-space: nowrap;
   opacity: 1;
-  transition: opacity 0.2s ease-in-out;
-  margin-left: 12px; // Espacio entre icono y texto
+  font-weight: 500;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.95rem;
+  color: $text-color;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 :host(.collapsed) .nav-text {
@@ -47,23 +81,35 @@
 
 // Estilos del mat-list-item
 .mat-mdc-list-item {
-  color: var(--app-secondary-text-color, #6c757d);
-  border-radius: 4px;
-  min-height: 40px; // Altura mínima consistente
+  color: $text-color;
+  border-radius: 10px;
+  min-height: 46px;
+  transition: all 0.2s ease;
   
   .mat-icon {
-    color: var(--app-secondary-text-color, #6c757d);
-    margin-right: 0; // Resetear margen
+    color: $text-muted;
+    font-size: 22px;
+    transition: all 0.2s ease;
+  }
+  
+  &:hover {
+    background-color: $primary-light;
+    
+    .mat-icon, .nav-text {
+      color: $primary-color;
+    }
   }
 }
 
 // Ajustar el item cuando está colapsado
 :host(.collapsed) .mat-mdc-list-item {
-  padding: 0 !important;
+  padding: 0;
+  display: flex;
+  justify-content: center;
   
   ::ng-deep .mdc-list-item__content {
-    padding: 0 !important;
-    justify-content: center !important;
+    padding: 0;
+    justify-content: center;
     width: 100%;
   }
   
@@ -75,44 +121,62 @@
     padding: 0;
   }
   
-  // Centrar específicamente el icono
   mat-icon {
-    margin-left: 10px !important;
+    margin: 0 auto !important;
     padding: 0 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
   }
+  
+  // Eliminar cualquier desplazamiento que pueda afectar al centrado
+  ::ng-deep .mdc-list-item__start {
+    margin: 0 auto !important;
+  }
+}
+
+:host(.collapsed) .sidebar-container {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+// Añadir regla específica para el ícono dentro del item colapsado
+:host(.collapsed) .mat-mdc-list-item .mat-icon {
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 
 // Estilo para el item activo
 .active-link {
-  background-color: rgba(118, 71, 169, 0.08); // Fondo del color primario con transparencia
+  background-color: $primary-light;
   
   .mat-icon, 
   .nav-text {
-    color: var(--app-primary-color, #7647a9);
-  }
-  
-  .nav-text {
-    font-weight: 500;
+    color: $primary-color;
+    font-weight: 600;
   }
 }
 
 // Hover effect para active-link
 .active-link:hover {
-  background-color: rgba(118, 71, 169, 0.12);
+  background-color: rgba($primary-color, 0.15);
 }
 
-// Eliminamos el hover del mat-list-item para evitar conflictos
-.mat-mdc-list-item:hover {
-  background-color: transparent !important;
+// Animación para el sidebar
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
-// Asegurar que el contenido no se desborde
-.mat-mdc-list-item-content {
-  overflow: hidden;
-}
-
-// Ajustar el ripple para que no se salga del container
-.mat-mdc-list-item .mat-ripple {
-  border-radius: 4px;
-  overflow: hidden;
+.nav-item {
+  animation: fadeIn 0.4s ease forwards;
+  animation-delay: calc(0.05s * var(--index, 0));
+  opacity: 0;
 }

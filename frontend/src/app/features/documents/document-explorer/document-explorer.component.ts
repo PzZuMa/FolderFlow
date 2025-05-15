@@ -77,6 +77,7 @@ export class DocumentExplorerComponent implements OnInit {
     this.destroy$.complete();
   }
 
+  /*
   loadAllDocuments(): void {
     this.isLoading = true;
     this.uploads = []; // Limpiar subidas pendientes
@@ -98,6 +99,7 @@ export class DocumentExplorerComponent implements OnInit {
       this.cdRef.markForCheck();
     });
   }
+  */
 
   openMoveDialog(item: Folder | Document, itemType: 'folder' | 'document'): void {
     console.log(`Abriendo diálogo para mover ${itemType}: ${item.name}`);
@@ -390,4 +392,47 @@ export class DocumentExplorerComponent implements OnInit {
     this.snackBar.open(message, 'Cerrar', { duration: 5000, panelClass: ['snackbar-error'] });
   }
 
+  filteredDocuments: Document[] = [];
+  originalDocuments: Document[] = [];
+
+  // En ngOnInit o donde cargues tus documentos, asegúrate de inicializar ambos arreglos
+  // Por ejemplo:
+  loadAllDocuments(): void {
+    this.isLoading = true;
+    this.uploads = [];
+    this.cdRef.markForCheck();
+
+    this.documentService.getAllUserDocuments().pipe(
+      takeUntil(this.destroy$),
+      catchError(error => {
+        console.error('Error loading all documents:', error);
+        this.showError('Error al cargar los documentos.');
+        return of([]);
+      }),
+      finalize(() => {
+        this.isLoading = false;
+        this.cdRef.markForCheck();
+      })
+    ).subscribe(docs => {
+      this.documents = docs;
+      this.originalDocuments = [...docs]; // Guarda una copia de los documentos originales
+      this.filteredDocuments = [...docs]; // Inicializa los documentos filtrados
+      this.cdRef.markForCheck();
+    });
+  }
+
+// Método para filtrar documentos
+filterDocuments(event: Event): void {
+  const searchTerm = (event.target as HTMLInputElement).value.toLowerCase();
+  
+  if (!searchTerm) {
+    this.documents = [...this.originalDocuments];
+  } else {
+    this.documents = this.originalDocuments.filter(doc => 
+      doc.name.toLowerCase().includes(searchTerm)
+    );
+  }
+  
+  this.cdRef.markForCheck();
+}
 }

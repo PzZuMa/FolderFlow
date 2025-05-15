@@ -22,6 +22,7 @@ import { CreateFolderDialogComponent } from '../../../shared/components/create-f
 import { ConfirmationDialogComponent, ConfirmationDialogData } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 import { MoveItemDialogComponent, MoveItemDialogData, MoveItemDialogResult } from '../../../shared/components/move-item-dialog/move-item-dialog.component';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatListModule } from '@angular/material/list';
 
 @Component({
   selector: 'app-folder-explorer',
@@ -29,7 +30,7 @@ import { MatDividerModule } from '@angular/material/divider';
   imports: [
     CommonModule, RouterModule, MatIconModule, MatButtonModule, MatToolbarModule,
     MatDialogModule, MatProgressBarModule, MatSnackBarModule, MatMenuModule,
-    MatCardModule, MatTooltipModule, MatDividerModule
+    MatCardModule, MatTooltipModule, MatDividerModule, MatListModule
   ],
   templateUrl: './folder-explorer.component.html',
   styleUrls: ['./folder-explorer.component.scss'],
@@ -144,6 +145,11 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
       console.debug('Breadcrumbs (Componente):', this.breadcrumbs.map(b => `${b.name} (${b._id || 'root'})`).join(' > '));
       console.debug('Parent ID para "Atrás":', this.parentOfCurrentFolderId);
       this.cdRef.markForCheck();
+
+      this.originalFolders = [...this.folders];
+      this.originalDocuments = [...this.documents];
+      this.filteredFolders = [...this.folders];
+      this.filteredDocuments = [...this.documents];
     });
   }
 
@@ -511,4 +517,29 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
   private showInfo(message: string): void {
     this.snackBar.open(message, 'Cerrar', { duration: 3000, panelClass: ['snackbar-info'] });
   }
+
+
+  filteredFolders: Folder[] = [];
+  filteredDocuments: Document[] = [];
+  originalFolders: Folder[] = [];
+  originalDocuments: Document[] = [];
+
+// Añade este método para filtrar elementos
+filterItems(event: Event): void {
+  const searchTerm = (event.target as HTMLInputElement).value.toLowerCase();
+  
+  if (!searchTerm) {
+    this.folders = [...this.originalFolders];
+    this.documents = [...this.originalDocuments];
+  } else {
+    this.folders = this.originalFolders.filter(folder => 
+      folder.name.toLowerCase().includes(searchTerm)
+    );
+    this.documents = this.originalDocuments.filter(document => 
+      document.name.toLowerCase().includes(searchTerm)
+    );
+  }
+  
+  this.cdRef.markForCheck();
+}
 }

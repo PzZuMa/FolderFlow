@@ -5,7 +5,7 @@ import { DashboardComponent } from './features/dashboard/dashboard.component'; /
 import { authGuard } from './core/guards/auth.guard';
 import { MainLayoutComponent } from './layout/main-layout/main-layout.component'; // <<<--- El Layout Principal
 // Importa los componentes de contenido que irán DENTRO del layout
-import { HomeComponent } from './features/home/home.component';
+import { HomeComponent } from './layout/home/home.component';
 import { DocumentExplorerComponent } from './features/documents/document-explorer/document-explorer.component';
 import { FolderExplorerComponent } from './features/folders/folder-explorer/folder-explorer.component';
 import { TarifasComponent } from './features/tarifas/tarifas.component'; // Pública

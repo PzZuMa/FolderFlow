@@ -1,10 +1,13 @@
-import { Component, EventEmitter, Output, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
-import { AuthService } from '../../core/services/auth.service'; // Importa tu servicio de Auth
+import { Router, RouterModule } from '@angular/router';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { AuthService } from '../../core/services/auth.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-header',
@@ -13,42 +16,56 @@ import { AuthService } from '../../core/services/auth.service'; // Importa tu se
     MatToolbarModule,
     MatIconModule,
     MatButtonModule,
-    MatMenuModule
+    MatMenuModule,
+    RouterModule,
+    CommonModule,
   ],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent {
-  @Output() sidebarToggle = new EventEmitter<void>(); // Evento para el botón del sidebar
-  private authService = inject(AuthService); // Inyecta AuthService
+export class HeaderComponent implements OnInit {
+  @Output() sidebarToggle = new EventEmitter<void>();
+  @Input() isSidebarCollapsed = false;
+  
+  isMobileView = false;
+  
+  private authService = inject(AuthService);
   private router = inject(Router);
+  private breakpointObserver = inject(BreakpointObserver);
+  private snackBar = inject(MatSnackBar);
 
-  // Cambiado para coincidir con el nombre del archivo en assets/images
-  userProfileImageUrl = '/assets/images/pfp-default.png';
-  snackBar: any;
+  ngOnInit(): void {
+    this.breakpointObserver.observe([
+      Breakpoints.XSmall,
+      Breakpoints.Small
+    ]).subscribe(result => {
+      this.isMobileView = result.matches;
+    });
+  }
 
   toggleSidebar() {
     this.sidebarToggle.emit();
   }
 
   logout() {
-    this.authService.logout(); // Llama al método logout de tu servicio
-    this.router.navigate(['/login']); // Redirige al login
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 
   navigateToSettings() {
-    // this.router.navigate(['/app/settings']); // Navega a la página de ajustes si la tienes
     console.log('Navegar a Ajustes');
     this.showError('Funcionalidad no disponible en esta versión');
+  }
+  
+  isActive(route: string): boolean {
+    return this.router.url.includes(route);
   }
 
   private showSuccess(message: string): void {
     this.snackBar.open(message, 'Cerrar', { duration: 3000, panelClass: ['snackbar-success'] });
   }
+  
   private showError(message: string): void {
     this.snackBar.open(message, 'Cerrar', { duration: 3000, panelClass: ['snackbar-error'] });
-  }
-  private showInfo(message: string): void {
-    this.snackBar.open(message, 'Cerrar', { duration: 3000, panelClass: ['snackbar-info'] });
   }
 }

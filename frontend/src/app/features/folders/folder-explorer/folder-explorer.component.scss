@@ -1,326 +1,758 @@
-// src/app/features/folder-explorer/folder-explorer.component.scss
-@use '@angular/material' as mat; // Importar para acceso a variables de tema si es necesario
+// Variables - Consistentes con componentes públicos
+$primary-color: #6b4fbb;
+$primary-hover: #5936b1;
+$primary-light: rgba(107, 79, 187, 0.1);
+$secondary-color: #5e6c84;
+$bg-page: #f0f3f7;
+$card-bg: #ffffff;
+$text-color: #2c3e50;
+$text-muted: #6c757d;
+$success-color: #10b981;
+$warning-color: #f59e0b;
+$error-color: #ef4444;
+$info-color: #3b82f6;
+$folder-color: #ffca28;
+$folder-hover: #f5b300;
+$folder-light: rgba(255, 202, 40, 0.1);
 
-// --- Contenedor General ---
+// Contenedor General
 .explorer-container {
   display: flex;
   flex-direction: column;
   height: 100%;
-  position: relative; // Para el FAB
-  background-color: var(--app-background-color); // Fondo general
+  background-color: transparent;
+  position: relative;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  overflow: auto;
 }
 
-// --- Toolbar Interna (ya la tenías) ---
-// --- Toolbar Interna ---
-.internal-toolbar {
-  min-height: 56px;
-  background-color: var(--app-card-background-color);
-  color: var(--app-text-color);
-  border-bottom: 1px solid var(--app-divider-color);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  flex-shrink: 0;
-  padding: 0 8px;
-  display: flex; // Asegurar que sea flexbox
-  align-items: center; // Alinear verticalmente
+// Barra de progreso global
+.global-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  height: 4px;
+}
 
-  button[mat-icon-button] { 
-    color: var(--app-secondary-text-color);
-    margin-right: 4px;
-    flex-shrink: 0; // Evitar que se comprima
-    &:hover {
-        background-color: rgba(0,0,0,0.04);
-    }
-  }
-
-  .toolbar-separator {
-      width: 1px;
-      height: 24px;
-      background-color: var(--app-divider-color);
-      margin: 0 8px;
-      flex-shrink: 0; // Evitar que se comprima
-  }
-
-  // Contenedor de Breadcrumbs
-  .breadcrumb-display-container {
-    display: flex;
-    align-items: center;
-    flex: 1; // Ocupar el espacio disponible
-    min-width: 0; // Importante: permitir que se comprima
-    overflow: hidden; // Ocultar el overflow
-    position: relative; // Para el efecto de difuminado
-
-    // Efecto de difuminado al final si hay scroll
-    &::after {
-      content: '';
-      position: absolute;
-      right: 0;
-      top: 0;
-      bottom: 0;
-      width: 30px;
-      background: linear-gradient(to right, transparent, var(--app-card-background-color));
-      pointer-events: none; // No interferir con clicks
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    // Mostrar el difuminado cuando hay scroll
-    &.has-scroll::after {
-      opacity: 1;
-    }
-
-    // Wrapper interno scrolleable
-    .breadcrumb-scroll-wrapper {
+// Encabezado de página
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 32px;
+  background-color: white;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  margin-bottom: 24px;
+  
+  .page-title {
+    .breadcrumb-display-container {
       display: flex;
-      align-items: center;
-      overflow-x: auto;
-      white-space: nowrap;
-      scroll-behavior: smooth;
-      padding-right: 10px; // Espacio para que el último item no quede pegado
-      
-      // Ocultar scrollbar en diferentes navegadores
-      scrollbar-width: none; // Firefox
-      -ms-overflow-style: none; // IE y Edge
-      &::-webkit-scrollbar { // Chrome, Safari y Opera
-        display: none;
-      }
-    }
-
-    .breadcrumb-button {
-      min-width: auto;
-      padding: 0 8px; // Un poco más de padding
-      font-size: 0.95em;
-      color: var(--app-secondary-text-color);
-      font-weight: 400;
-      line-height: 36px;
-      height: 36px;
-      flex-shrink: 0; // Evitar que se compriman
-      text-overflow: ellipsis;
-      max-width: 200px; // Limitar el ancho máximo de cada breadcrumb
+      margin-bottom: 8px;
+      position: relative;
       overflow: hidden;
-
-      &:hover:not(:disabled) {
-        background-color: rgba(0,0,0,0.04);
-        color: var(--app-primary-color);
+      
+      &::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 30px;
+        background: linear-gradient(to right, transparent, white);
+        pointer-events: none;
       }
-      &:disabled { 
-        color: var(--app-text-color);
-        font-weight: 500;
-        opacity: 1;
-        cursor: default;
+      
+      .breadcrumb-scroll-wrapper {
+        display: flex;
+        align-items: center;
+        overflow-x: auto;
+        white-space: nowrap;
+        scroll-behavior: smooth;
+        
+        &::-webkit-scrollbar {
+          display: none;
+        }
+        
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        
+        .breadcrumb-button {
+          min-width: auto;
+          padding: 0 8px;
+          font-size: 1.1rem;
+          font-weight: 600;
+          color: $text-color;
+          height: 36px;
+          
+          &:hover:not(:disabled) {
+            background-color: $primary-light;
+            color: $primary-color;
+          }
+          
+          &:disabled {
+            color: $primary-color;
+            font-weight: 700;
+            opacity: 1;
+          }
+        }
+        
+        .breadcrumb-separator {
+          margin: 0 4px;
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+          color: $text-muted;
+        }
       }
     }
     
-    .breadcrumb-separator {
-      font-size: 20px;
-      width: 20px;
-      height: 20px;
-      margin: 0 4px; // Un poco más de espacio
-      color: var(--app-secondary-text-color);
-      vertical-align: middle;
-      flex-shrink: 0; // Evitar que se comprima
+    .page-description {
+      color: $text-muted;
+      font-size: 1rem;
+      margin: 0;
     }
-
-    .toolbar-title {
-      font-size: 1.1em;
-      font-weight: 500;
-      color: var(--app-text-color);
-      margin-left: 8px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+  }
+  
+  .header-actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 16px;
+    
+    // Estilos base para ambos botones
+    .folder-btn, .upload-btn {
+      padding: 0 24px;
+      height: 48px;
+      border-radius: 12px;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: all 0.3s ease;
+      color: white;
+      
+      &:hover {
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+        transform: translateY(-2px);
+      }
+      
+      mat-icon {
+        margin-right: 8px;
+      }
+    }
+    
+    // Estilo específico para el botón de carpeta (amarillo)
+    .folder-btn {
+      background-color: $folder-color;
+      
+      &:hover {
+        background-color: $folder-hover;
+        box-shadow: 0 6px 16px rgba(255, 202, 40, 0.25);
+      }
+    }
+    
+    // Estilo específico para el botón de subida (morado - se mantiene el estilo primario)
+    .upload-btn {
+      background-color: $primary-color;
+      
+      &:hover {
+        background-color: $primary-hover;
+        box-shadow: 0 6px 16px rgba(107, 79, 187, 0.25);
+      }
     }
   }
 }
 
-// --- Sección de Subidas ---
+// Sección de subidas
 .upload-section {
-  padding: 8px 16px;
-  border-bottom: 1px solid var(--app-divider-color);
-  background-color: var(--app-card-background-color); // Fondo blanco para la sección
-  flex-shrink: 0;
-  h4 {
-      margin: 0 0 8px 0;
-      font-size: 0.9em;
-      font-weight: 500;
-      color: var(--app-secondary-text-color);
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+  margin: 0 24px 24px;
+  padding: 20px 24px;
+  overflow: hidden;
+  
+  .section-title {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    
+    mat-icon {
+      color: $primary-color;
+      margin-right: 12px;
+      font-size: 24px;
+      height: 24px;
+      width: 24px;
+    }
+    
+    h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin: 0;
+      color: $text-color;
+    }
   }
+}
+
+.upload-items-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
 }
 
 .upload-item {
   display: flex;
   align-items: center;
-  padding: 4px 0;
-  gap: 12px;
-
-  .upload-icon {
-     color: var(--app-secondary-text-color);
-     flex-shrink: 0;
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: 12px;
+  padding: 12px;
+  transition: all 0.3s ease;
+  
+  &.upload-success {
+    background-color: rgba($success-color, 0.1);
+    
+    .upload-icon {
+      color: $success-color;
+    }
   }
+  
+  &.upload-error {
+    background-color: rgba($error-color, 0.1);
+    
+    .upload-icon {
+      color: $error-color;
+    }
+  }
+  
+  .upload-icon-container {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
+    
+    .upload-icon {
+      color: $secondary-color;
+      font-size: 28px;
+      height: 28px;
+      width: 28px;
+    }
+  }
+  
   .upload-info {
-    flex-grow: 1;
+    flex: 1;
     min-width: 0;
+    
     .upload-title {
-        display: block;
-        font-size: 0.85em;
-        font-weight: 500;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+      display: block;
+      font-weight: 500;
+      font-size: 0.95rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: $text-color;
+      margin-bottom: 4px;
     }
+    
     .upload-details {
-        font-size: 0.75em;
-        color: var(--app-secondary-text-color);
-        .error-message {
-            color: var(--app-warn-color);
-            font-weight: bold;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: $text-muted;
+      
+      .status-indicator {
+        display: inline-flex;
+        align-items: center;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-weight: 500;
+        font-size: 0.8rem;
+        
+        &.pending {
+          background-color: rgba($secondary-color, 0.1);
+          color: $secondary-color;
         }
+        
+        &.uploading {
+          background-color: rgba($info-color, 0.1);
+          color: $info-color;
+        }
+        
+        &.confirming {
+          background-color: rgba($warning-color, 0.1);
+          color: $warning-color;
+        }
+        
+        &.success {
+          background-color: rgba($success-color, 0.1);
+          color: $success-color;
+        }
+        
+        &.error {
+          background-color: rgba($error-color, 0.1);
+          color: $error-color;
+        }
+      }
+      
+      .file-size {
+        color: $text-muted;
+      }
     }
+    
     .upload-progress-bar {
-        height: 3px !important;
-        margin-top: 2px;
+      margin-top: 8px;
+      height: 4px;
+      border-radius: 2px;
     }
   }
 }
 
-
-// --- Área de Contenido y Grid ---
+// Área de contenido principal
 .content-area {
   flex: 1;
-  overflow-y: auto;
-  padding: 16px;
+  padding: 0 24px 24px;
+  overflow: visible;
 }
 
+// Búsqueda y Filtros
+.filters-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  
+  .search-box {
+    display: flex;
+    align-items: center;
+    background: white;
+    border-radius: 12px;
+    padding: 8px 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    max-width: 400px;
+    
+    mat-icon {
+      color: $text-muted;
+      margin-right: 12px;
+    }
+    
+    input {
+      border: none;
+      outline: none;
+      width: 100%;
+      font-size: 0.95rem;
+      color: $text-color;
+      font-family: inherit;
+      
+      &::placeholder {
+        color: $text-muted;
+      }
+    }
+  }
+  
+  .view-options {
+    display: flex;
+    gap: 8px;
+    
+    button {
+      color: $text-muted;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      
+      &.active, &:hover {
+        color: $primary-color;
+        background-color: $primary-light;
+      }
+    }
+  }
+}
+
+// Grid de carpetas y documentos
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); // Ajusta minmax según prefieras
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
 }
 
-// --- Estilos Tarjetas (Grid Items) ---
-.grid-item {
-  height: 150px; // Altura fija para las tarjetas
+// Tarjeta base
+.folder-card, .document-card {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: flex-start; // Alinear al inicio para que el texto no se corte abajo si es mucho
-  text-align: center;
+  padding: 20px;
+  border-radius: 16px;
+  overflow: visible;
   cursor: pointer;
-  position: relative; // Para el botón de menú
-  padding: 0; // Quitar padding de mat-card, lo manejamos en mat-card-content
-
-  // Ripple effect y hover
-  // La directiva mat-ripple se puede añadir a mat-card para mejor efecto
-  transition: box-shadow 0.2s ease-in-out;
+  position: relative;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  background-color: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  
   &:hover {
-    @include mat.elevation(4); // Helper de elevación de Material
-  }
-
-  // Contenido interno de la tarjeta
-  mat-card-content {
-     padding: 16px 8px 8px 8px !important; // Padding interno
-     display: flex;
-     flex-direction: column;
-     align-items: center;
-     justify-content: flex-start; // Alinear al inicio
-     flex-grow: 1; // Para que ocupe el espacio
-     width: 100%;
-     box-sizing: border-box;
-     overflow: hidden; // Evitar que el contenido desborde la tarjeta
-  }
-
-  .item-icon {
-    font-size: 56px; // Icono grande
-    width: 56px;
-    height: 56px;
-    margin-bottom: 8px;
-    color: var(--app-secondary-text-color); // Color base
-  }
-
-  // Estilo específico para tarjetas de carpeta
-  &.folder-card .item-icon {
-      color: #ffca28; // Amarillo/naranja para carpetas (ejemplo de Google Drive)
-  }
-  // Puedes añadir más aquí para tipos de documentos si este componente los mostrara
-  // &.document-card.pdf .item-icon { color: #DB4437; } // Rojo PDF
-  // &.document-card.image .item-icon { color: #4CAF50; } // Verde Imagen
-
-  .item-name {
-    font-size: 0.9em;
-    font-weight: 500;
-    color: var(--app-text-color);
-    line-height: 1.3;
-    max-height: calc(1.3em * 2); // Aproximadamente 2 líneas
-    overflow: hidden;
-    text-overflow: ellipsis;
-    // Técnica de ellipsis multilínea
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    word-break: break-all; // Para palabras muy largas
-    margin-top: 4px;
-    padding: 0 4px; // Pequeño padding lateral para el nombre
-  }
-
-   .item-details { // Para documentos (si se añadieran de nuevo)
-       font-size: 0.75em;
-       color: var(--app-secondary-text-color);
-       margin-top: 6px;
-       white-space: nowrap;
-   }
-
-  // Botón de menú en la esquina
-  .item-menu-button {
-    position: absolute;
-    top: 0px; // Ajusta según tu preferencia
-    right: 0px; // Ajusta según tu preferencia
-    color: var(--app-secondary-text-color); // Discreto
-    // Aumentar área de click
-    width: 36px;
-    height: 36px;
-    line-height: 36px;
-    .mat-icon { font-size: 20px; height: 20px; width: 20px; }
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba($primary-color, 0.12);
+    background-color: white;
+    border-color: rgba($primary-color, 0.1);
+    
+    .folder-actions, .document-actions {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }
 
-// --- Empty State ---
+// Tarjeta de carpeta
+.folder-card {
+  .folder-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 12px;
+    background-color: rgba($folder-color, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    
+    .item-icon {
+      font-size: 32px;
+      color: $folder-color;
+    }
+  }
+  
+  .folder-info {
+    flex: 1;
+    
+    .folder-name {
+      font-size: 1rem;
+      font-weight: 600;
+      color: $text-color;
+      margin: 0;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  }
+  
+  .folder-actions {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: all 0.3s ease;
+    
+    .action-btn {
+      color: $secondary-color;
+      background-color: white;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      
+      &:hover {
+        color: $primary-color;
+        background-color: $primary-light;
+      }
+    }
+  }
+}
+
+// Tarjeta de documento
+.document-card {
+  .document-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 12px;
+    background-color: $primary-light;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    
+    .item-icon {
+      font-size: 32px;
+      color: $primary-color;
+    }
+  }
+  
+  .document-info {
+    flex: 1;
+    
+    .document-name {
+      font-size: 1rem;
+      font-weight: 600;
+      color: $text-color;
+      margin: 0 0 8px 0;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
+    .document-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      color: $text-muted;
+      font-size: 0.85rem;
+      
+      .size, .date {
+        display: flex;
+        align-items: center;
+      }
+    }
+  }
+  
+  .document-actions {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: all 0.3s ease;
+    
+    .action-btn {
+      color: $secondary-color;
+      background-color: white;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      
+      &:hover {
+        color: $primary-color;
+        background-color: $primary-light;
+      }
+    }
+  }
+}
+
+// Vista de lista
+.list-container {
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  
+  .list-section {
+    .list-section-header {
+      padding: 12px 16px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: $text-muted;
+      background-color: rgba(0, 0, 0, 0.02);
+    }
+  }
+  
+  .folder-list-item, .document-list-item {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+    
+    &:hover {
+      background-color: $primary-light;
+    }
+    
+    mat-icon {
+      &[matListItemIcon] {
+        color: $folder-color;
+      }
+    }
+  }
+  
+  .document-list-item {
+    mat-icon {
+      &[matListItemIcon] {
+        color: $primary-color;
+      }
+    }
+    
+    .document-meta-list {
+      display: flex;
+      gap: 16px;
+      color: $text-muted;
+      font-size: 0.85rem;
+    }
+  }
+}
+
+// Estado vacío
 .empty-state {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 300px;
-  height: 100%; // Para que ocupe el espacio si el grid está vacío
-  text-align: center;
-  color: var(--app-secondary-text-color);
-
-  .empty-icon {
-    font-size: 72px; // Icono grande
-    width: 72px;
-    height: 72px;
-    margin-bottom: 16px;
+  padding: 48px 0;
+  min-height: 400px;
+  
+  .empty-state-content {
+    text-align: center;
+    
+    .empty-icon {
+      font-size: 72px;
+      height: 72px;
+      width: 72px;
+      color: $primary-light;
+      background-color: white;
+      border-radius: 50%;
+      padding: 16px;
+      margin-bottom: 24px;
+      box-shadow: 0 12px 24px rgba(107, 79, 187, 0.15);
+    }
+    
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: $text-color;
+      margin: 0 0 16px 0;
+    }
+    
+    p {
+      color: $text-muted;
+      margin: 0 0 24px 0;
+      font-size: 1rem;
+      max-width: 400px;
+    }
+    
+    .empty-state-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
+      
+      .empty-state-action {
+        background-color: $primary-color;
+        color: white;
+        padding: 0 24px;
+        height: 48px;
+        border-radius: 12px;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(107, 79, 187, 0.15);
+        transition: all 0.3s ease;
+        
+        &:hover {
+          background-color: $primary-hover;
+          box-shadow: 0 6px 16px rgba(107, 79, 187, 0.25);
+          transform: translateY(-2px);
+        }
+        
+        mat-icon {
+          margin-right: 8px;
+        }
+        &:first-child { // Botón de nueva carpeta
+      background-color: $folder-color;
+      
+      &:hover {
+        background-color: $folder-hover;
+        box-shadow: 0 6px 16px rgba(255, 202, 40, 0.25);
+      }
+    }
+      }
+    }
   }
-  span {
-    font-size: 1.2em;
-    margin-bottom: 16px;
-  }
-  // Estilo para el botón en estado vacío (si lo usas)
-  // button[mat-stroked-button] { ... }
 }
 
-// --- FABs (Botones Flotantes de Acción) ---
-.fab-container {
-  position: absolute;
+// Botones flotantes para móvil
+.mobile-actions {
+  position: fixed;
   bottom: 24px;
   right: 24px;
-  z-index: 50; // Asegura que estén por encima
-  display: flex;
-  flex-direction: column; // Apilar si hay varios
-  gap: 16px; // Espacio entre FABs
+  display: none;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 100;
+  
+  .fab-action {
+    background-color: $primary-color;
+    box-shadow: 0 6px 16px rgba(107, 79, 187, 0.25);
+    
+    &:hover {
+      background-color: $primary-hover;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(107, 79, 187, 0.3);
+    }
+
+    &:first-child { // Botón de nueva carpeta
+      background-color: $folder-color;
+      
+      &:hover {
+        background-color: $folder-hover;
+      }
+    }
+    
+    &:last-child { // Botón de subir archivo
+      background-color: $primary-color;
+      
+      &:hover {
+        background-color: $primary-hover;
+      }
+    }
+  }
 }
 
-// Estilos individuales para los FABs
-.upload-fab, .create-folder-fab {
-  // El color se define con color="primary" o color="accent" en el HTML
-  .mat-icon {
-      transform: scale(1.2); // Icono un poco más grande dentro del FAB
+// Estilos del menú personalizado
+::ng-deep .custom-menu {
+  .mat-mdc-menu-item {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    
+    &.warn-action {
+      color: $error-color;
+      
+      .mat-icon {
+        color: $error-color;
+      }
+    }
+  }
+}
+
+.main-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: $text-color;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.02em;
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .page-header {
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    
+    .breadcrumb-button {
+      font-size: 0.95rem;
+    }
+  }
+  
+  .header-actions {
+    .action-btn, .upload-btn {
+      display: none;
+    }
+  }
+  
+  .content-area {
+    padding: 0 16px 16px;
+  }
+  
+  .mobile-actions {
+    display: flex;
+  }
+  
+  .grid-container {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  
+  .upload-items-container {
+    grid-template-columns: 1fr;
   }
 }

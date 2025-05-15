@@ -1,26 +1,31 @@
-<mat-toolbar color="primary" class="app-header">
-    <button mat-icon-button (click)="toggleSidebar()" aria-label="Toggle sidebar">
+<header class="app-header">
+  <div class="menu-button-container" [class.sidebar-expanded]="!isSidebarCollapsed">
+    <button mat-icon-button class="menu-button" (click)="toggleSidebar()" aria-label="Toggle sidebar">
       <mat-icon>menu</mat-icon>
     </button>
-  
-    <div class="logo-container">
-      <span>Mi SGD</span>
-    </div>
-  
-    <span class="header-spacer"></span>
-  
+  </div>
+
+  <div class="logo-container">
+    <span>FolderFlow</span>
+  </div>
+
+  <span class="header-spacer"></span>
+
+  <!-- Profile button -->
+  <div style="padding-right: 1.5rem;">
     <button mat-icon-button [matMenuTriggerFor]="userMenu" aria-label="User menu" class="profile-button">
       <mat-icon class="profile-icon">account_circle</mat-icon>
     </button>
-  
-    <mat-menu #userMenu="matMenu">
-      <button mat-menu-item (click)="navigateToSettings()">
-        <mat-icon>settings</mat-icon>
-        <span>Ajustes</span>
-      </button>
-      <button mat-menu-item (click)="logout()">
-        <mat-icon>logout</mat-icon>
-        <span>Cerrar Sesión</span>
-      </button>
-    </mat-menu>
-</mat-toolbar>
+  </div>
+
+  <mat-menu #userMenu="matMenu">
+    <button mat-menu-item (click)="navigateToSettings()">
+      <mat-icon>settings</mat-icon>
+      <span>Ajustes</span>
+    </button>
+    <button mat-menu-item (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      <span>Cerrar Sesión</span>
+    </button>
+  </mat-menu>
+</header>

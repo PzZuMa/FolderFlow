@@ -1,122 +1,189 @@
 <div class="explorer-container">
-  <mat-toolbar class="internal-toolbar">
-    <button mat-icon-button
-            *ngIf="currentFolderId !== null"
-            (click)="navigateUp()"
-            matTooltip="Subir un nivel"
-            aria-label="Subir un nivel">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-    <span *ngIf="currentFolderId !== null" class="toolbar-separator"></span>
+  <!-- Barra de Progreso de Carga Global -->
+  <mat-progress-bar mode="indeterminate" *ngIf="isLoading && uploads.length === 0" class="global-progress"></mat-progress-bar>
 
-    <div class="breadcrumb-display-container">
-      <ng-container *ngIf="currentFolderId !== null && breadcrumbs.length > 0">
-        <ng-container *ngFor="let crumb of breadcrumbs; let isLast = last; let isFirst = first">  
-
-          <button mat-button class="breadcrumb-button"
-                  *ngIf="!(isFirst && isRootId(crumb._id) && breadcrumbs.length === 1)"
-                  (click)="navigateToBreadcrumb(isRootId(crumb._id) ? null : crumb._id)"
-                  [disabled]="isLast"
-                  [matTooltip]="isLast ? '' : ('Ir a ' + crumb.name)"
-                  type="button">
-            {{ crumb.name }}
-          </button>
-          <mat-icon class="breadcrumb-separator" *ngIf="!isLast">chevron_right</mat-icon>
-        </ng-container>
-      </ng-container>
-
-      <span *ngIf="currentFolderId === null || (currentFolderId !== null && breadcrumbs.length === 0)" class="toolbar-title">
-        {{ currentFolderNameDisplay }}
-      </span>
+  <!-- Encabezado de la Página -->
+  <div class="page-header">
+    <div class="page-title">
+      <!-- Título cuando estamos en la raíz -->
+      <h1 *ngIf="currentFolderId === null" class="main-title">Mis carpetas</h1>
+      
+      <!-- Breadcrumbs cuando estamos dentro de carpetas -->
+      <div *ngIf="currentFolderId !== null" class="breadcrumb-display-container">
+        <div class="breadcrumb-scroll-wrapper">
+          <ng-container *ngFor="let crumb of breadcrumbs; let isLast = last; let isFirst = first">  
+            <button mat-button class="breadcrumb-button"
+                    (click)="navigateToBreadcrumb(isRootId(crumb._id) ? null : crumb._id)"
+                    [disabled]="isLast">
+              {{ crumb.name }}
+            </button>
+            <mat-icon *ngIf="!isLast" class="breadcrumb-separator">chevron_right</mat-icon>
+          </ng-container>
+        </div>
+      </div>
+      <p class="page-description">Organiza y gestiona tus carpetas y archivos</p>
     </div>
-
-    <span class="toolbar-spacer"></span>
-  </mat-toolbar>
-
-  <mat-progress-bar mode="indeterminate" *ngIf="isLoading && uploads.length === 0"></mat-progress-bar>
-
-  <div *ngIf="uploads.length > 0" class="upload-section">
-    <h4>Subidas en progreso:</h4>
-    <div class="upload-items-container">
-       <div *ngFor="let upload of uploads; let i = index" class="upload-item"
-            [ngClass]="{'upload-success': upload.status === 'success', 'upload-error': upload.status === 'error'}">
-           <mat-icon class="upload-icon">{{ getIconForMimeType(upload.file.type) }}</mat-icon>
-           <div class="upload-info">
-             <span class="upload-title">{{ upload.file.name }}</span>
-             <span class="upload-details">
-                 <span *ngIf="upload.status === 'pending'">Pendiente...</span>
-                 <span *ngIf="upload.status === 'uploading'">{{ upload.progress }}%</span>
-                 <span *ngIf="upload.status === 'confirming'">Confirmando...</span>
-                 <span *ngIf="upload.status === 'success'">¡Listo!</span>
-                 <span *ngIf="upload.status === 'error'" class="error-message">Error: {{ upload.error }}</span>
-                 - {{ formatBytes(upload.file.size) }}
-             </span>
-             <mat-progress-bar *ngIf="upload.status === 'uploading' || upload.status === 'confirming'"
-                               mode="determinate" [value]="upload.progress" class="upload-progress-bar">
-             </mat-progress-bar>
-           </div>
-       </div>
+    <div class="header-actions">
+      <!-- Botón Nueva Carpeta (siempre visible, estilo amarillo) -->
+      <button mat-raised-button class="folder-btn create-btn" (click)="openCreateFolderDialog()">
+        <mat-icon>create_new_folder</mat-icon>
+        <span>Nueva Carpeta</span>
+      </button>
+      
+      <!-- Botón Subir Archivo (solo visible dentro de una carpeta) -->
+      <button *ngIf="currentFolderId !== null" mat-raised-button color="primary" class="upload-btn" (click)="triggerFileInputClick()">
+        <mat-icon>upload_file</mat-icon>
+        <span>Subir Archivo</span>
+      </button>
     </div>
   </div>
 
-  <div class="content-area">
-    <div *ngIf="!isLoading" class="grid-container">
+  <!-- Lista de Subidas en Progreso -->
+  <div *ngIf="uploads.length > 0" class="upload-section">
+    <div class="section-title">
+      <mat-icon>cloud_upload</mat-icon>
+      <h2>Subidas en progreso</h2>
+    </div>
+    
+    <div class="upload-items-container">
+      <div *ngFor="let upload of uploads; let i = index" class="upload-item"
+           [ngClass]="{'upload-success': upload.status === 'success', 'upload-error': upload.status === 'error'}">
+        <div class="upload-icon-container">
+          <mat-icon class="upload-icon">{{ getIconForMimeType(upload.file.type) }}</mat-icon>
+        </div>
+        <div class="upload-info">
+          <span class="upload-title">{{ upload.file.name }}</span>
+          <span class="upload-details">
+            <span *ngIf="upload.status === 'pending'" class="status-indicator pending">Pendiente</span>
+            <span *ngIf="upload.status === 'uploading'" class="status-indicator uploading">{{ upload.progress }}%</span>
+            <span *ngIf="upload.status === 'confirming'" class="status-indicator confirming">Confirmando...</span>
+            <span *ngIf="upload.status === 'success'" class="status-indicator success">¡Completado!</span>
+            <span *ngIf="upload.status === 'error'" class="status-indicator error">{{ upload.error }}</span>
+            <span class="file-size">{{ formatBytes(upload.file.size) }}</span>
+          </span>
+          <mat-progress-bar *ngIf="upload.status === 'uploading' || upload.status === 'confirming'"
+                          mode="determinate" [value]="upload.progress" class="upload-progress-bar">
+          </mat-progress-bar>
+        </div>
+      </div>
+    </div>
+  </div>
 
-      <mat-card *ngFor="let folder of folders" class="grid-item folder-card" (click)="navigateToFolder(folder._id)" [matTooltip]="'Abrir ' + folder.name">
-         <mat-card-content>
-             <mat-icon class="item-icon">folder</mat-icon>
-             <span class="item-name">{{ folder.name }}</span>
-         </mat-card-content>
-         <button mat-icon-button [matMenuTriggerFor]="itemMenuFolder" (click)="$event.stopPropagation()" class="item-menu-button" aria-label="Acciones de carpeta">
-             <mat-icon>more_vert</mat-icon>
-         </button>
-          <mat-menu #itemMenuFolder="matMenu">
-              <button mat-menu-item (click)="navigateToFolder(folder._id)"><mat-icon>open_in_new</mat-icon><span>Abrir</span></button>
-              <button mat-menu-item (click)="openMoveDialog(folder, 'folder')"><mat-icon>drive_file_move</mat-icon><span>Mover a...</span></button>
-              <mat-divider></mat-divider>
-              <button mat-menu-item (click)="openDeleteConfirmation(folder, 'folder')" color="warn"><mat-icon>delete</mat-icon><span>Eliminar</span></button>
-         </mat-menu>
+  <!-- Contenido Principal -->
+  <div class="content-area">
+    <!-- Filtros y Búsqueda -->
+    <div class="filters-container">
+      <div class="search-box">
+        <mat-icon>search</mat-icon>
+        <input type="text" placeholder="Buscar carpetas y archivos..." (input)="filterItems($event)">
+      </div>
+    </div>
+    
+    <!-- Vista de Cuadrícula -->
+    <div *ngIf="!isLoading" class="grid-container">
+      <!-- Carpetas -->
+      <mat-card *ngFor="let folder of folders" class="folder-card" (click)="navigateToFolder(folder._id)" [matTooltip]="folder.name">
+        <div class="folder-icon">
+          <mat-icon class="item-icon">folder</mat-icon>
+        </div>
+        <div class="folder-info">
+          <h3 class="folder-name">{{ folder.name }}</h3>
+        </div>
+        <div class="folder-actions">
+          <button mat-icon-button class="action-btn" [matMenuTriggerFor]="itemMenuFolder" (click)="$event.stopPropagation()" matTooltip="Más acciones">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #itemMenuFolder="matMenu" class="custom-menu">
+            <button mat-menu-item (click)="navigateToFolder(folder._id)">
+              <mat-icon>open_in_new</mat-icon>
+              <span>Abrir</span>
+            </button>
+            <button mat-menu-item (click)="openMoveDialog(folder, 'folder')">
+              <mat-icon>drive_file_move</mat-icon>
+              <span>Mover a...</span>
+            </button>
+            <mat-divider></mat-divider>
+            <button mat-menu-item (click)="openDeleteConfirmation(folder, 'folder')" class="warn-action">
+              <mat-icon>delete</mat-icon>
+              <span>Eliminar</span>
+            </button>
+          </mat-menu>
+        </div>
       </mat-card>
 
+      <!-- Documentos si estamos dentro de una carpeta -->
       <ng-container *ngIf="currentFolderId !== null">
-          <mat-card *ngFor="let document of documents" class="grid-item document-card" [matTooltip]="document.name">
-              <mat-card-content>
-                  <mat-icon class="item-icon">{{ getIconForMimeType(document.mimeType) }}</mat-icon>
-                  <span class="item-name">{{ document.name }}</span>
-                  <span class="item-details">{{ formatBytes(document.size) }}</span>
-              </mat-card-content>
-              <button mat-icon-button [matMenuTriggerFor]="itemMenuDocument" (click)="$event.stopPropagation()" class="item-menu-button" aria-label="Acciones de documento">
-                  <mat-icon>more_vert</mat-icon>
+        <mat-card *ngFor="let document of documents" class="document-card" [matTooltip]="document.name">
+          <div class="document-icon">
+            <mat-icon class="item-icon">{{ getIconForMimeType(document.mimeType) }}</mat-icon>
+          </div>
+          <div class="document-info">
+            <h3 class="document-name">{{ document.name }}</h3>
+            <div class="document-meta">
+              <span class="size">{{ formatBytes(document.size) }}</span>
+              <span class="date">{{ document.updatedAt | date:'dd MMM, yyyy' }}</span>
+            </div>
+          </div>
+          <div class="document-actions">
+            <button mat-icon-button class="action-btn" (click)="downloadFile(document); $event.stopPropagation()" matTooltip="Descargar">
+              <mat-icon>download</mat-icon>
+            </button>
+            <button mat-icon-button class="action-btn" [matMenuTriggerFor]="itemMenuDocument" (click)="$event.stopPropagation()" matTooltip="Más acciones">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #itemMenuDocument="matMenu" class="custom-menu">
+              <button mat-menu-item (click)="downloadFile(document)">
+                <mat-icon>download</mat-icon>
+                <span>Descargar</span>
               </button>
-              <mat-menu #itemMenuDocument="matMenu">
-                  <button mat-menu-item (click)="downloadFile(document)"><mat-icon>download</mat-icon><span>Descargar</span></button>
-                  <button mat-menu-item (click)="openMoveDialog(document, 'document')"><mat-icon>drive_file_move</mat-icon><span>Mover a...</span></button>
-                  <mat-divider></mat-divider>
-                  <button mat-menu-item (click)="openDeleteConfirmation(document, 'document')" color="warn"><mat-icon>delete</mat-icon><span>Eliminar</span></button>
-              </mat-menu>
-          </mat-card>
+              <button mat-menu-item (click)="openMoveDialog(document, 'document')">
+                <mat-icon>drive_file_move</mat-icon>
+                <span>Mover a...</span>
+              </button>
+              <mat-divider></mat-divider>
+              <button mat-menu-item (click)="openDeleteConfirmation(document, 'document')" class="warn-action">
+                <mat-icon>delete</mat-icon>
+                <span>Eliminar</span>
+              </button>
+            </mat-menu>
+          </div>
+        </mat-card>
       </ng-container>
     </div>
 
-    <div *ngIf="!isLoading && folders.length === 0 && (!currentFolderId || documents.length === 0) && uploads.length === 0" class="empty-state">
-       <mat-icon class="empty-icon">
-         {{ currentFolderId === null ? 'folder_off' : 'search_off' }}
-       </mat-icon>
-       <span>
-         {{ currentFolderId === null ? 'Crea tu primera carpeta para empezar.' : 'Esta carpeta está vacía.' }}
-       </span>
+    <!-- Mensaje si está vacío -->
+    <div *ngIf="!isLoading && folders.length === 0 && documents.length === 0 && uploads.length === 0" class="empty-state">
+      <div class="empty-state-content">
+        <mat-icon class="empty-icon" *ngIf="currentFolderId === null">create_new_folder</mat-icon>
+        <mat-icon class="empty-icon" *ngIf="currentFolderId !== null">folder_open</mat-icon>
+        <h2 *ngIf="currentFolderId === null">No tienes carpetas</h2>
+        <h2 *ngIf="currentFolderId !== null">Esta carpeta está vacía</h2>
+        <p *ngIf="currentFolderId === null">Comienza creando una carpeta o subiendo archivos</p>
+        <p *ngIf="currentFolderId !== null">Añade archivos o carpetas a esta ubicación</p>
+        <div class="empty-state-actions">
+          <button mat-raised-button color="primary" (click)="openCreateFolderDialog()" class="empty-state-action">
+            <mat-icon>create_new_folder</mat-icon>
+            Nueva Carpeta
+          </button>
+          <button mat-raised-button color="primary" (click)="triggerFileInputClick()" class="empty-state-action">
+            <mat-icon>upload_file</mat-icon>
+            Subir Archivo
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
-  <input type="file" hidden #fileInput multiple (change)="onFileSelected($event)">
-
-  <div class="fab-container">
-      <button mat-fab color="accent" class="create-folder-fab" (click)="openCreateFolderDialog()" matTooltip="Nueva Carpeta" aria-label="Crear nueva carpeta">
-          <mat-icon>create_new_folder</mat-icon>
-      </button>
-      <button mat-fab color="primary" class="upload-fab" *ngIf="currentFolderId !== null" (click)="triggerFileInputClick()" matTooltip="Subir archivo a esta carpeta" aria-label="Subir archivo">
-          <mat-icon>upload_file</mat-icon>
-      </button>
+  <!-- Input oculto para subida -->
+  <input type="file" #fileInput style="display:none" (change)="onFileSelected($event)" multiple>
+  
+  <!-- Botones flotantes para móvil -->
+  <div class="mobile-actions">
+    <button mat-fab color="primary" class="fab-action" (click)="openCreateFolderDialog()" matTooltip="Nueva carpeta">
+      <mat-icon>create_new_folder</mat-icon>
+    </button>
+    <button mat-fab color="primary" class="fab-action" (click)="triggerFileInputClick()" matTooltip="Subir archivo">
+      <mat-icon>upload_file</mat-icon>
+    </button>
   </div>
-
 </div>
