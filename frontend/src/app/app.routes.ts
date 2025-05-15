@@ -11,6 +11,9 @@ import { FolderExplorerComponent } from './features/folders/folder-explorer/fold
 import { TarifasComponent } from './features/tarifas/tarifas.component'; // Pública
 import { ContactoComponent } from './features/contacto/contacto.component';
 import { InfoComponent } from './features/info/info.component'; // Pública
+import { AvisoLegalComponent } from './features/aviso-legal/aviso-legal.component';
+import { PoliticaPrivacidadComponent } from './features/politica-privacidad/politica-privacidad.component';
+import { PoliticaCookiesComponent } from './features/politica-cookies/politica-cookies.component';
 
 export const routes: Routes = [
   // Rutas públicas
@@ -20,6 +23,9 @@ export const routes: Routes = [
   { path: 'tarifas', component: TarifasComponent },
   { path: 'contacto', component: ContactoComponent },
   { path: 'info', component: InfoComponent }, // <<<--- Ruta pública para la info
+  { path: 'aviso-legal', component: AvisoLegalComponent }, // <<<--- Ruta pública para el aviso legal
+  { path: 'politica-privacidad', component: PoliticaPrivacidadComponent },
+  { path: 'politica-cookies', component: PoliticaCookiesComponent }, // <<<--- Ruta pública para la política de cookies
 
   // --- Sección Protegida usando el Layout ---
   {

@@ -1,0 +1,351 @@
+// Variables - Consistentes con el resto de componentes
+$primary-color: #6b4fbb;
+$primary-hover: #5936b1;
+$primary-light: rgba(107, 79, 187, 0.1);
+$secondary-color: #5e6c84;
+$bg-page: #f0f3f7;
+$bg-gradient: linear-gradient(135deg, $bg-page 0%, darken($bg-page, 3%) 100%);
+$card-bg: #ffffff;
+$text-color: #2c3e50;
+$text-muted: #6c757d;
+$header-height: 80px;
+$box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+$box-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.12);
+$success-color: #10b981;
+
+// Reset y estilos base
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:host {
+  display: block;
+}
+
+.legal-container {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  min-height: 100vh;
+  background: $bg-page;
+  color: $text-color;
+}
+
+// Estilos de botones
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  font-family: inherit;
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+
+  &.btn-primary {
+    background-color: $primary-color;
+    color: #fff;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.5s ease, height 0.5s ease;
+      z-index: 0;
+    }
+    
+    &:hover {
+      background-color: $primary-hover;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba($primary-color, 0.3);
+      
+      &::before {
+        width: 300px;
+        height: 300px;
+      }
+    }
+  }
+
+  &.btn-cta {
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    box-shadow: 0 4px 16px rgba($primary-color, 0.2);
+    
+    &:hover {
+      box-shadow: 0 6px 24px rgba($primary-color, 0.3);
+    }
+  }
+}
+
+// Contenedor principal
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+// Banner legal
+.legal-banner {
+  background: linear-gradient(135deg, $primary-color 0%, darken($primary-color, 20%) 100%);
+  padding: 6rem 0;
+  color: white;
+  text-align: center;
+  
+  h1 {
+    font-size: 3.5rem;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    margin-bottom: 1rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .subtitle {
+    font-size: 1.5rem;
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+}
+
+// Sección de contenido legal
+.legal-section {
+  padding: 4rem 0;
+  
+  .legal-card {
+    background-color: $card-bg;
+    border-radius: 16px;
+    box-shadow: $box-shadow;
+    padding: 3rem;
+    margin-bottom: 3rem;
+  }
+  
+  .legal-block {
+    margin-bottom: 2.5rem;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: $text-color;
+    }
+    
+    p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: $text-muted;
+      margin-bottom: 1.2rem;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+    
+    ul, ol {
+      margin: 1.2rem 0 1.2rem 1.5rem;
+      
+      li {
+        margin-bottom: 0.75rem;
+        color: $text-muted;
+        font-size: 1.05rem;
+        line-height: 1.8;
+      }
+    }
+    
+    .info-box {
+  background-color: white;
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 2rem 0;
+  box-shadow: 0 6px 20px rgba(107, 79, 187, 0.08);
+  border: 1px solid rgba(107, 79, 187, 0.2);
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 100%;
+    background: linear-gradient(to bottom, $primary-color, lighten($primary-color, 20%));
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+  }
+  
+  p {
+    margin-bottom: 1rem;
+    padding-left: 1rem;
+    position: relative;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    strong {
+      color: $text-color;
+      font-weight: 600;
+      display: inline-block;
+      min-width: 180px;
+    }
+  }
+}
+  }
+  
+  .legal-footer {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba($text-muted, 0.1);
+    text-align: center;
+    color: $text-muted;
+    font-size: 0.95rem;
+    
+    p {
+      margin-bottom: 0.5rem;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+// Sección de contacto
+.legal-contact-section {
+  background: linear-gradient(135deg, $primary-color 0%, darken($primary-color, 20%) 100%);
+  text-align: center;
+  padding: 4rem 0;
+  margin-bottom: 0;
+  color: white;
+  
+  h2 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 1rem;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  p {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 2rem;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .btn-primary {
+    background-color: white;
+    color: $primary-color;
+    font-weight: 700;
+    
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.9);
+      color: darken($primary-color, 10%);
+      box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+    }
+  }
+}
+
+// Media Queries
+@media (max-width: 992px) {
+  .legal-section .legal-card {
+    padding: 2.5rem;
+  }
+  
+  .legal-banner h1 {
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .legal-banner {
+    padding: 4rem 0;
+    
+    h1 {
+      font-size: 2.5rem;
+    }
+    
+    .subtitle {
+      font-size: 1.25rem;
+    }
+  }
+  
+  .legal-section {
+    padding: 3rem 0;
+    
+    .legal-card {
+      padding: 2rem;
+    }
+    
+    .legal-block {
+      h2 {
+        font-size: 1.5rem;
+      }
+      
+      p, ul li, ol li {
+        font-size: 1rem;
+      }
+    }
+  }
+  
+  .legal-contact-section {
+    padding: 3rem 0;
+    
+    h2 {
+      font-size: 1.8rem;
+    }
+    
+    p {
+      font-size: 1.1rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 1.5rem;
+  }
+  
+  .legal-section .legal-card {
+    padding: 1.5rem;
+  }
+  
+  .legal-banner {
+    h1 {
+      font-size: 2rem;
+    }
+    
+    .subtitle {
+      font-size: 1.1rem;
+    }
+  }
+  
+  .btn.btn-cta {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+  }
+}
