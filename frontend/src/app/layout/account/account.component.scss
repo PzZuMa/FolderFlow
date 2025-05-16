@@ -30,7 +30,6 @@ $input-invalid-border-color: $error-color;
 
 .cuenta-container {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  padding: 2rem;
   background: transparent;
   color: $text-color;
   min-height: 100vh;
@@ -38,19 +37,34 @@ $input-invalid-border-color: $error-color;
 
 // Encabezado de página
 .page-header {
-  margin-bottom: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 32px;
+  background-color: white;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  margin-bottom: 24px;
   
-  h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    color: $text-color;
-    margin-bottom: 0.5rem;
-    letter-spacing: -0.02em;
+  .page-title {
+    h1.main-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: $text-color;
+      margin: 0 0 8px 0;
+      letter-spacing: -0.02em;
+    }
+    
+    .page-description {
+      color: $text-muted;
+      font-size: 1rem;
+      margin: 0;
+    }
   }
   
-  .subtitle {
-    color: $text-muted;
-    font-size: 1.1rem;
+  .header-actions {
+    display: flex;
+    gap: 16px;
   }
 }
 
