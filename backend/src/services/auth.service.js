@@ -42,3 +42,47 @@ export const loginUser = async ({ email, password }) => {
     }
   };
 };
+
+export const updateUserProfile = async (userId, { name, email }) => {
+  // Verificar si existe otro usuario con ese email
+  const existingUserWithEmail = await User.findOne({ email, _id: { $ne: userId } });
+  if (existingUserWithEmail) {
+    throw new Error('Este correo electrónico ya está en uso');
+  }
+
+  // Actualizar el usuario
+  const updatedUser = await User.findByIdAndUpdate(
+    userId,
+    { name, email },
+    { new: true, runValidators: true }
+  ).select('-password');
+
+  if (!updatedUser) {
+    throw new Error('Usuario no encontrado');
+  }
+
+  return updatedUser;
+};
+
+export const changeUserPassword = async (userId, { currentPassword, newPassword }) => {
+  // Obtener el usuario con la contraseña
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new Error('Usuario no encontrado');
+  }
+
+  // Verificar la contraseña actual
+  const isMatch = await bcrypt.compare(currentPassword, user.password);
+  if (!isMatch) {
+    throw new Error('La contraseña actual es incorrecta');
+  }
+
+  // Hash de la nueva contraseña
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+  // Actualizar la contraseña
+  user.password = hashedPassword;
+  await user.save();
+
+  return { message: 'Contraseña actualizada correctamente' };
+};

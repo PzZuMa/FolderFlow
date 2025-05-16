@@ -14,6 +14,7 @@ import { InfoComponent } from './features/info/info.component'; // Pública
 import { AvisoLegalComponent } from './features/aviso-legal/aviso-legal.component';
 import { PoliticaPrivacidadComponent } from './features/politica-privacidad/politica-privacidad.component';
 import { PoliticaCookiesComponent } from './features/politica-cookies/politica-cookies.component';
+import { AccountComponent } from './layout/account/account.component'; // Cambia esto por el componente correcto
 
 export const routes: Routes = [
   // Rutas públicas
@@ -43,12 +44,12 @@ export const routes: Routes = [
       },
       {
         path: 'folders',               // <<<--- Ruta para las carpetas -> /folders
-        component: FolderExplorerComponent
+        component: FolderExplorerComponent,
       },
-      // --- Añade aquí otras rutas protegidas ---
-      // { path: 'settings', component: SettingsComponent },
-      
-      // --- Fin otras rutas ---
+      {
+        path: 'account',             // <<<--- Ruta para la configuración -> /settings
+        component: AccountComponent // Cambia esto por el componente correcto
+      },
       {
         path: '', redirectTo: 'home', pathMatch: 'full' // Redirige a /home si ya está autenticado
       }

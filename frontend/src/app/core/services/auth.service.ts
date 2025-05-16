@@ -123,43 +123,41 @@ export class AuthService {
     );
 }
 
-  saveToken(token: string): void {
-    try {
-      localStorage.setItem(this.TOKEN_KEY, token);
-      this.loggedInStatus.next(true);
-    } catch (e) {
-      console.error('Error guardando token en localStorage:', e);
-    }
+saveToken(token: string): void {
+  try {
+    localStorage.setItem(this.TOKEN_KEY, token);
+    this.loggedInStatus.next(true);
+  } catch (e) {
+    console.error('Error guardando token en localStorage:', e);
   }
+}
+getToken(): string | null {
+  try {
+    return localStorage.getItem(this.TOKEN_KEY);
+  } catch (e) {
+    console.error('Error obteniendo token de localStorage:', e);
+    return null;
+  }
+}
+removeToken(): void {
+  try {
+    localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.USER_KEY);
+    this.loggedInStatus.next(false);
+    this.currentUserSubject.next(null);
+  } catch (e) {
+    console.error('Error eliminando token de localStorage:', e);
+  }
+}
 
-  getToken(): string | null {
-    try {
-      return localStorage.getItem(this.TOKEN_KEY);
-    } catch (e) {
-      console.error('Error obteniendo token de localStorage:', e);
-      return null;
-    }
-  }
+private hasToken(): boolean {
+  return !!this.getToken();
+}
 
-  removeToken(): void {
-    try {
-      localStorage.removeItem(this.TOKEN_KEY);
-      localStorage.removeItem(this.USER_KEY);
-      this.loggedInStatus.next(false);
-      this.currentUserSubject.next(null);
-    } catch (e) {
-      console.error('Error eliminando token de localStorage:', e);
-    }
-  }
-
-  private hasToken(): boolean {
-    return !!this.getToken();
-  }
-
-  logout(): void {
-    this.removeToken();
-    this.router.navigate(['/login']);
-  }
+logout(): void {
+  this.removeToken();
+  this.router.navigate(['/login']);
+}
 
   private handleError(error: any): Observable<never> {
     console.error('Error en la petición HTTP:', error);
@@ -171,4 +169,31 @@ export class AuthService {
     }
     return throwError(() => new Error(errorMessage));
   }
+
+  updateProfile(userData: { name: string; email: string }): Observable<any> {
+  return this.http.put<any>(`${this.apiUrl}/auth/profile`, userData)
+    .pipe(
+      tap(response => {
+        // Actualizar el usuario en el BehaviorSubject
+        const currentUser = this.currentUserSubject.value;
+        if (currentUser) {
+          const updatedUser = {
+            ...currentUser,
+            name: userData.name,
+            email: userData.email
+          };
+          this.currentUserSubject.next(updatedUser);
+          this.saveUserToStorage(updatedUser);
+        }
+      }),
+      catchError(this.handleError.bind(this))
+    );
+}
+
+changePassword(passwordData: { currentPassword: string; newPassword: string }): Observable<any> {
+  return this.http.put<any>(`${this.apiUrl}/auth/password`, passwordData)
+    .pipe(
+      catchError(this.handleError.bind(this))
+    );
+}
 }

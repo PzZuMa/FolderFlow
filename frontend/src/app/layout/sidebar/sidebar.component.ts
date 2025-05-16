@@ -31,5 +31,6 @@ export class SidebarComponent {
     { label: 'Inicio', icon: 'home', route: '/home' },
     { label: 'Mis Documentos', icon: 'folder_open', route: '/documents' },
     { label: 'Mis Carpetas', icon: 'folder', route: '/folders' },
+    { label: 'Cuenta', icon: 'account_circle', route: '/account' },
   ];
 }

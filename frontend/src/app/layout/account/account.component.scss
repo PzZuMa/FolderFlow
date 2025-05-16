@@ -1,0 +1,406 @@
+// Variables - Consistentes con el resto de componentes
+$primary-color: #6b4fbb;
+$primary-hover: #5936b1;
+$primary-light: rgba(107, 79, 187, 0.1);
+$secondary-color: #5e6c84;
+$bg-page: #f0f3f7;
+$bg-gradient: linear-gradient(135deg, $bg-page 0%, darken($bg-page, 3%) 100%);
+$card-bg: #ffffff;
+$text-color: #2c3e50;
+$text-muted: #6c757d;
+$header-height: 80px;
+$box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+$box-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.12);
+$success-color: #10b981;
+$error-color: #e74c3c;
+$input-border-color: #e1e4e8;
+$input-focus-border-color: $primary-color;
+$input-invalid-border-color: $error-color;
+
+// Reset y estilos base
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:host {
+  display: block;
+}
+
+.cuenta-container {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  padding: 2rem;
+  background: transparent;
+  color: $text-color;
+  min-height: 100vh;
+}
+
+// Encabezado de página
+.page-header {
+  margin-bottom: 2rem;
+  
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: $text-color;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+  }
+  
+  .subtitle {
+    color: $text-muted;
+    font-size: 1.1rem;
+  }
+}
+
+// Contenido principal
+.account-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.password-input-container {
+  position: relative;
+  display: flex;
+  width: 100%;
+  
+  .form-input {
+    width: 100%;
+    padding-right: 45px; // Espacio para el botón
+  }
+  
+  .toggle-visibility-btn {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 6px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: rgba($text-color, 0.6);
+    
+    &:hover, &:focus {
+      background-color: rgba($primary-color, 0.1);
+      color: $primary-color;
+    }
+    
+    &:active {
+      background-color: rgba($primary-color, 0.2);
+    }
+    
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+  
+  // Estilo especial cuando el campo es inválido
+  .is-invalid + .toggle-visibility-btn {
+    color: rgba($error-color, 0.6);
+    
+    &:hover, &:focus {
+      background-color: rgba($error-color, 0.1);
+      color: $error-color;
+    }
+  }
+}
+
+// Tarjeta para cada sección
+.account-card {
+  background: $card-bg;
+  border-radius: 16px;
+  padding: 2.5rem;
+  box-shadow: $box-shadow;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $box-shadow-hover;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: $text-color;
+  }
+  
+  .card-description {
+    color: $text-muted;
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+  }
+}
+
+// Estructura para cada campo del formulario
+.form-field {
+  width: 100%;
+  margin-bottom: 1.5rem;
+  position: relative;
+
+  label {
+    display: block;
+    margin-bottom: 0.6rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: $text-color;
+    letter-spacing: -0.01em;
+  }
+}
+
+// Estilo del input estándar
+.form-input {
+  display: block;
+  width: 100%;
+  padding: 0.9rem 1.1rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: $text-color;
+  background-color: $card-bg;
+  border: 2px solid $input-border-color;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  font-family: inherit;
+
+  &::placeholder {
+    color: lighten($text-muted, 10%);
+  }
+
+  &:hover {
+    border-color: darken($input-border-color, 10%);
+  }
+
+  &:focus {
+    border-color: $input-focus-border-color;
+    outline: 0;
+    box-shadow: 0 0 0 3px $primary-light;
+    background-color: lighten($bg-page, 5%);
+  }
+
+  // Estilo específico para inputs inválidos
+  &.is-invalid {
+    border-color: $input-invalid-border-color;
+
+    &:focus {
+      box-shadow: 0 0 0 3px rgba($error-color, 0.1);
+    }
+  }
+}
+
+// Mensaje de error debajo de cada campo
+.field-error-message {
+  color: $error-color;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  
+  &::before {
+    content: '⚠';
+    font-size: 0.9rem;
+  }
+}
+
+// Contenedores para mensajes generales
+.success-message-container,
+.error-message-container {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 500;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.success-message-container {
+  background-color: rgba($success-color, 0.1);
+  color: darken($success-color, 10%);
+  border: 1px solid rgba($success-color, 0.2);
+}
+
+.error-message-container {
+  background-color: rgba($error-color, 0.1);
+  color: darken($error-color, 10%);
+  border: 1px solid rgba($error-color, 0.2);
+}
+
+// Contenedor del botón
+.button-container {
+  margin-top: 1.5rem;
+  
+  button {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    background-color: $primary-color;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.5s ease, height 0.5s ease;
+    }
+    
+    &:hover {
+      background-color: $primary-hover;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+      
+      &::before {
+        width: 900px;
+        height: 300px;
+      }
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// Animación de carga
+.loading-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-right: 0.5rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// Sección de próximamente
+.coming-soon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  text-align: center;
+  
+  .coming-soon-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    animation: pulse 2s infinite ease-in-out;
+  }
+  
+  p {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: $text-color;
+    margin-bottom: 0.5rem;
+  }
+  
+  span {
+    color: $text-muted;
+    font-size: 0.9rem;
+  }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+// Media queries para responsividad
+@media (min-width: 768px) {
+  .account-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .cuenta-container {
+    padding: 1.5rem 1rem;
+  }
+  
+  .page-header {
+    h1 {
+      font-size: 1.8rem;
+    }
+    
+    .subtitle {
+      font-size: 1rem;
+    }
+  }
+  
+  .account-card {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .cuenta-container {
+    padding: 1rem;
+  }
+  
+  .page-header {
+    h1 {
+      font-size: 1.6rem;
+    }
+  }
+  
+  .account-card {
+    padding: 1.25rem;
+    
+    h2 {
+      font-size: 1.3rem;
+    }
+  }
+}
