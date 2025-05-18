@@ -139,4 +139,14 @@ export class DocumentService {
   toggleFavorite(documentId: string, isFavorite: boolean): Observable<Document> {
     return this.http.patch<Document>(`${this.apiUrl}/${documentId}/favorite`, { isFavorite });
   }
+
+  /**
+ * Obtiene los detalles de un documento por su ID
+ * @param documentId ID del documento
+ * @returns Observable con los detalles del documento
+ */
+getDocumentById(documentId: string): Observable<Document> {
+  // URL corregida - quitamos "/documents" duplicado
+  return this.http.get<Document>(`${this.apiUrl}/${documentId}`);
+}
 }

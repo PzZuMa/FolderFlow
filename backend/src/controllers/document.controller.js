@@ -176,6 +176,22 @@ async function toggleFavorite(req, res, next) {
     }
 }
 
+async function getDocumentById(req, res, next) {
+    try {
+        const userId = req.user.id;
+        const { documentId } = req.params;
+        
+        const document = await documentService.getDocumentById(userId, documentId);
+        
+        res.status(200).json(document);
+    } catch (error) {
+        if (error.message.includes('Document not found')) {
+            return res.status(404).json({ message: error.message });
+        }
+        next(error);
+    }
+}
+
 // Exportación nombrada de todas las funciones del controlador
 export {
     getUploadUrl,
@@ -189,4 +205,5 @@ export {
     getFavoriteDocs,
     getDocStats,
     toggleFavorite,
+    getDocumentById,
 };

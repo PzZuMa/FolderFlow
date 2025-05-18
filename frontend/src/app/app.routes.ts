@@ -51,6 +51,11 @@ export const routes: Routes = [
         component: AccountComponent // Cambia esto por el componente correcto
       },
       {
+        path: 'documents/view/:id',
+        loadComponent: () => import('./features/documents/document-viewer/document-viewer.component')
+          .then(c => c.DocumentViewerComponent)
+      },
+      {
         path: '', redirectTo: 'home', pathMatch: 'full' // Redirige a /home si ya está autenticado
       }
     ]

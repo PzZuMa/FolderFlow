@@ -21,7 +21,7 @@ router.get('/recent', documentController.getRecentDocs);
 router.get('/favorites', documentController.getFavoriteDocs);
 router.get('/stats', documentController.getDocStats);
 router.patch('/:documentId/favorite', documentController.toggleFavorite);
-
+router.get('/:documentId', documentController.getDocumentById);
 
 // Exportación por defecto del router
 export default router;

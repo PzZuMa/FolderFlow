@@ -1,7 +1,7 @@
 // src/app/features/folder-explorer/folder-explorer.component.ts
 import { Component, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -43,6 +43,7 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
   private snackBar = inject(MatSnackBar);
   private cdRef = inject(ChangeDetectorRef);
   private destroy$ = new Subject<void>();
+  private router = inject(Router);
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
   currentFolderId: string | null = null;
@@ -161,6 +162,10 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
     // this.parentOfCurrentFolderId ya fue calculado en loadContents
     // Si es null, loadContents(null) cargará la raíz.
     this.loadContents(this.parentOfCurrentFolderId);
+  }
+
+  openDocumentViewer(document: Document): void {
+    this.router.navigate(['/documents/view', document._id]);
   }
 
   navigateToBreadcrumb(folderId: string | null): void {

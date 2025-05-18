@@ -113,8 +113,8 @@
 
       <!-- Documentos si estamos dentro de una carpeta -->
       <ng-container *ngIf="currentFolderId !== null">
-        <mat-card *ngFor="let document of documents" class="document-card" [matTooltip]="document.name">
-          <div class="document-icon">
+        <mat-card *ngFor="let document of documents" class="document-card" (click)="openDocumentViewer(document)" [matTooltip]="document.name">
+          <div class="document-icon"> 
             <mat-icon class="item-icon">{{ getIconForMimeType(document.mimeType) }}</mat-icon>
           </div>
           <div class="document-info">

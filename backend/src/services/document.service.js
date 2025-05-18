@@ -292,6 +292,30 @@ async function toggleDocumentFavorite(userId, documentId, isFavorite) {
     }
 }
 
+/**
+ * Obtiene un documento específico por su ID.
+ * @param {string} userId ID del usuario que solicita el documento
+ * @param {string} documentId ID del documento a obtener
+ * @returns {Promise<Object>} Documento solicitado
+ */
+async function getDocumentById(userId, documentId) {
+    try {
+        const document = await Document.findOne({ 
+            _id: documentId, 
+            ownerId: userId 
+        });
+        
+        if (!document) {
+            throw new Error('Document not found or access denied');
+        }
+        
+        return document;
+    } catch (error) {
+        console.error("Error getting document by ID:", error);
+        throw error;
+    }
+}
+
 // Exportar funciones individualmente (exportación nombrada)
 export {
     generateUploadUrl,
@@ -305,4 +329,5 @@ export {
     getFavoriteDocuments,
     getDocumentStats,
     toggleDocumentFavorite,
+    getDocumentById,
 };

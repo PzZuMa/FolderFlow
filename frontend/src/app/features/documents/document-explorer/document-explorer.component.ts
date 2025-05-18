@@ -435,4 +435,8 @@ filterDocuments(event: Event): void {
   
   this.cdRef.markForCheck();
 }
+
+openDocumentViewer(document: Document): void {
+    this.router.navigate(['/documents/view', document._id]);
+  }
 }

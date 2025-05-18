@@ -60,7 +60,7 @@
     <!-- Grid de Documentos -->
     <div *ngIf="!isLoading" class="grid-container">
       <!-- Documentos -->
-      <mat-card *ngFor="let doc of documents" class="document-card" [matTooltip]="doc.name">
+      <mat-card *ngFor="let doc of documents" class="document-card" (click)="openDocumentViewer(doc)" [matTooltip]="doc.name">
         <div class="document-icon">
           <mat-icon class="item-icon">{{ getIconForMimeType(doc.mimeType) }}</mat-icon>
         </div>

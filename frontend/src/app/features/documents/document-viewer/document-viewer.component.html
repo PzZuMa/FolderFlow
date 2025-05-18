@@ -1,0 +1,143 @@
+<div class="viewer-container" [ngClass]="{'fullscreen-mode': isFullscreen}">
+  <!-- Barra de herramientas superior -->
+  <div class="viewer-toolbar">
+    <div class="toolbar-left">
+      <button mat-icon-button (click)="goBack()" matTooltip="Volver">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h2 class="document-title">{{ document?.name || 'Documento' }}</h2>
+      <span class="document-info" *ngIf="document">
+        {{ formatBytes(document.size) }} · {{ getFileTypeLabel(document.mimeType) }}
+      </span>
+    </div>
+    
+    <div class="toolbar-actions">
+      <!-- Acciones específicas por tipo de archivo -->
+      <ng-container [ngSwitch]="fileType">
+        <!-- Controles para PDF -->
+        <ng-container *ngSwitchCase="'pdf'">
+          <button mat-icon-button (click)="zoomOut()" matTooltip="Reducir">
+            <mat-icon>zoom_out</mat-icon>
+          </button>
+          <span class="zoom-level">{{ zoomLevel }}%</span>
+          <button mat-icon-button (click)="zoomIn()" matTooltip="Ampliar">
+            <mat-icon>zoom_in</mat-icon>
+          </button>
+          <button mat-icon-button (click)="previousPage()" [disabled]="currentPage === 1" matTooltip="Página anterior">
+            <mat-icon>navigate_before</mat-icon>
+          </button>
+          <span class="page-indicator">{{ currentPage }} / {{ totalPages }}</span>
+          <button mat-icon-button (click)="nextPage()" [disabled]="currentPage === totalPages" matTooltip="Página siguiente">
+            <mat-icon>navigate_next</mat-icon>
+          </button>
+        </ng-container>
+        
+        <!-- Controles para imágenes -->
+        <ng-container *ngSwitchCase="'image'">
+          <button mat-icon-button (click)="zoomOut()" matTooltip="Reducir">
+            <mat-icon>zoom_out</mat-icon>
+          </button>
+          <span class="zoom-level">{{ zoomLevel }}%</span>
+          <button mat-icon-button (click)="zoomIn()" matTooltip="Ampliar">
+            <mat-icon>zoom_in</mat-icon>
+          </button>
+          <button mat-icon-button (click)="rotateImage()" matTooltip="Rotar imagen">
+            <mat-icon>rotate_right</mat-icon>
+          </button>
+        </ng-container>
+      </ng-container>
+      
+      <!-- Acciones generales -->
+      <button mat-icon-button (click)="downloadFile()" matTooltip="Descargar">
+        <mat-icon>download</mat-icon>
+      </button>
+      <button mat-icon-button (click)="toggleFullscreen()" matTooltip="Pantalla completa">
+        <mat-icon>{{ isFullscreen ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
+      </button>
+      <button mat-icon-button [matMenuTriggerFor]="viewerMenu" matTooltip="Más opciones">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #viewerMenu="matMenu">
+        <button mat-menu-item (click)="openInNewTab()">
+          <mat-icon>open_in_new</mat-icon>
+          <span>Abrir en nueva pestaña</span>
+        </button>
+        <button mat-menu-item (click)="shareDocument()" *ngIf="sharingEnabled">
+          <mat-icon>share</mat-icon>
+          <span>Compartir</span>
+        </button>
+        <button mat-menu-item (click)="printDocument()" *ngIf="isPrintable()">
+          <mat-icon>print</mat-icon>
+          <span>Imprimir</span>
+        </button>
+      </mat-menu>
+    </div>
+  </div>
+
+  <!-- Contenido del visor -->
+  <div class="viewer-content" [ngClass]="{'loading': isLoading}">
+    <!-- Loader -->
+    <div *ngIf="isLoading" class="viewer-loader">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Cargando documento...</p>
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="loadError && !isLoading" class="viewer-error">
+      <mat-icon>error_outline</mat-icon>
+      <h3>No se puede mostrar este documento</h3>
+      <p>{{ errorMessage }}</p>
+      <button mat-raised-button color="primary" (click)="downloadFile()">
+        <mat-icon>download</mat-icon>
+        Descargar archivo
+      </button>
+    </div>
+
+    <!-- Visor específico por tipo -->
+    <ng-container [ngSwitch]="fileType" *ngIf="!isLoading && !loadError">
+      <!-- PDF Viewer -->
+      <div *ngSwitchCase="'pdf'" class="pdf-viewer">
+        <ng-container *ngIf="pdfLoaded">
+          <canvas #pdfCanvas [ngStyle]="{'transform': 'scale(' + zoomLevel/100 + ')'}"></canvas>
+        </ng-container>
+      </div>
+
+      <!-- Image Viewer -->
+      <div *ngSwitchCase="'image'" class="image-viewer">
+        <img [src]="documentUrl" [style.transform]="'rotate(' + imageRotation + 'deg) scale(' + zoomLevel/100 + ')'" 
+             [alt]="document?.name || 'Imagen'" (load)="onImageLoad()" />
+      </div>
+
+      <!-- Text/Code Viewer -->
+      <div *ngSwitchCase="'text'" class="text-viewer">
+        <pre>{{ textContent }}</pre>
+      </div>
+
+      <!-- HTML Viewer -->
+      <div *ngSwitchCase="'html'" class="html-viewer">
+        <iframe [src]="(documentUrl ?? '') | safeUrl" title="Vista previa HTML"></iframe>
+      </div>
+
+      <!-- Audio Viewer -->
+      <div *ngSwitchCase="'audio'" class="audio-viewer">
+        <audio controls [src]="(documentUrl ?? '') | safeUrl"></audio>
+      </div>
+
+      <!-- Video Viewer -->
+      <div *ngSwitchCase="'video'" class="video-viewer">
+        <video controls [src]="(documentUrl ?? '') | safeUrl"></video>
+      </div>
+
+      <!-- Unsupported Format -->
+      <div *ngSwitchDefault class="unsupported-format">
+        <mat-icon>description</mat-icon>
+        <h3>Vista previa no disponible</h3>
+        <p>Este tipo de archivo no puede ser visualizado en el navegador.</p>
+        <button mat-raised-button color="primary" (click)="downloadFile()">
+          <mat-icon>download</mat-icon>
+          Descargar archivo
+        </button>
+      </div>
+    </ng-container>
+  </div>
+</div>
