@@ -1,4 +1,4 @@
-import { registerUser, loginUser, updateUserProfile, changeUserPassword } from '../services/auth.service.js';
+import { registerUser, loginUser, updateUserProfile, changeUserPassword, updateUserProfileImage } from '../services/auth.service.js';
 
 export const register = async (req, res) => {
   try {
@@ -27,6 +27,19 @@ export const updateProfile = async (req, res) => {
     res.status(200).json(updatedUser);
   } catch (error) {
     console.error('Error actualizando perfil:', error);
+    res.status(400).json({ message: error.message });
+  }
+};
+
+export const updateProfileImage = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { profileImage } = req.body;
+
+    const updatedUser = await updateUserProfileImage(userId, profileImage);
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error('Error actualizando imagen de perfil:', error);
     res.status(400).json({ message: error.message });
   }
 };

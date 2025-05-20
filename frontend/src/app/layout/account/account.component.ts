@@ -30,6 +30,16 @@ export class AccountComponent implements OnInit, OnDestroy {
   passwordSuccessMessage: string | null = null;
   passwordErrorMessage: string | null = null;
   
+  // Variables para la imagen de perfil
+  selectedFile: File | null = null;
+  previewUrl: string | null = null;
+  currentProfileImage: string | null = null;
+  isImageLoading = false;
+  imageSuccessMessage: string | null = null;
+  imageErrorMessage: string | null = null;
+  // Variable para verificar si es la imagen por defecto
+  isDefaultImage: boolean = false;
+  
   private destroy$ = new Subject<void>();
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
@@ -91,9 +101,133 @@ export class AccountComponent implements OnInit, OnDestroy {
             name: user.name || '',
             email: user.email || ''
           });
+          
+          // Verificar si tiene imagen personalizada o es la por defecto
+          if (user.profileImage && user.profileImage !== 'default-profile.png') {
+            // Si la imagen comienza con 'data:', es un string base64
+            if (user.profileImage.startsWith('data:')) {
+              this.currentProfileImage = user.profileImage;
+              this.isDefaultImage = false;
+            } 
+            // Si no, asumimos que es una ruta a un archivo
+            else if (user.profileImage.includes('pfp-default.png')) {
+              this.currentProfileImage = 'assets/images/pfp-default.png';
+              this.isDefaultImage = true;
+            } else {
+              this.currentProfileImage = `assets/profile-images/${user.profileImage}`;
+              this.isDefaultImage = false;
+            }
+          } else {
+            this.currentProfileImage = 'assets/images/pfp-default.png';
+            this.isDefaultImage = true;
+          }
         } else {
           // Si no hay usuario autenticado, redirigir al login
           this.router.navigate(['/login']);
+        }
+      });
+  }
+
+  // Método para manejar la selección de archivos
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.imageErrorMessage = null;
+      this.selectedFile = input.files[0];
+      
+      // Validar tamaño y tipo de archivo
+      if (this.selectedFile.size > 5000000) { // 5MB máximo
+        this.imageErrorMessage = 'La imagen debe ser menor a 5MB';
+        this.selectedFile = null;
+        return;
+      }
+      
+      if (!this.selectedFile.type.match(/image\/(jpeg|jpg|png|gif)/)) {
+        this.imageErrorMessage = 'El formato debe ser JPG, PNG o GIF';
+        this.selectedFile = null;
+        return;
+      }
+      
+      // Crear vista previa
+      this.createImagePreview();
+    }
+  }
+  
+  // Crear vista previa de la imagen
+  private createImagePreview(): void {
+    if (!this.selectedFile) return;
+    
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.previewUrl = reader.result as string;
+    };
+    reader.readAsDataURL(this.selectedFile);
+  }
+  
+  // Subir la imagen de perfil
+  uploadProfileImage(): void {
+    if (!this.selectedFile) return;
+    
+    this.isImageLoading = true;
+    this.imageSuccessMessage = null;
+    this.imageErrorMessage = null;
+    
+    // Convertir la imagen a base64
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64String = reader.result as string;
+      
+      // Enviar directamente el string base64 como la imagen de perfil
+      const profileImageData = { profileImage: base64String };
+
+      this.authService.updateProfileImage(profileImageData)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            this.isImageLoading = false;
+            this.imageSuccessMessage = 'Imagen de perfil actualizada correctamente';
+            
+            // Usar la imagen base64 directamente
+            this.currentProfileImage = base64String;
+            // Ya no es la imagen por defecto
+            this.isDefaultImage = false;
+            
+            this.selectedFile = null;
+            setTimeout(() => this.imageSuccessMessage = null, 5000);
+          },
+          error: (error) => {
+            this.isImageLoading = false;
+            this.imageErrorMessage = error.message || 'Error al actualizar la imagen de perfil';
+          }
+        });
+    };
+    reader.readAsDataURL(this.selectedFile);
+  }
+
+  // Añadir método para eliminar la foto de perfil
+  removeProfileImage(): void {
+    this.isImageLoading = true;
+    this.imageSuccessMessage = null;
+    this.imageErrorMessage = null;
+    
+    const defaultImagePath = 'default-profile.png'; // El nombre que se guardará en la BD
+    const profileImageData = { profileImage: defaultImagePath };
+    
+    this.authService.updateProfileImage(profileImageData)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.isImageLoading = false;
+          this.imageSuccessMessage = 'Imagen de perfil restablecida';
+          this.currentProfileImage = 'assets/images/pfp-default.png';
+          this.isDefaultImage = true;
+          this.selectedFile = null;
+          this.previewUrl = null;
+          setTimeout(() => this.imageSuccessMessage = null, 5000);
+        },
+        error: (error) => {
+          this.isImageLoading = false;
+          this.imageErrorMessage = error.message || 'Error al restablecer la imagen de perfil';
         }
       });
   }
@@ -158,23 +292,23 @@ export class AccountComponent implements OnInit, OnDestroy {
       });
   }
 
-  // Añade estas variables
-showCurrentPassword: boolean = false;
-showNewPassword: boolean = false;
-showConfirmPassword: boolean = false;
+  // Variables de visibilidad de contraseñas
+  showCurrentPassword: boolean = false;
+  showNewPassword: boolean = false;
+  showConfirmPassword: boolean = false;
 
-// Añade estos métodos para alternar la visibilidad de las contraseñas
-toggleCurrentPasswordVisibility(): void {
-  this.showCurrentPassword = !this.showCurrentPassword;
-}
+  // Métodos para alternar la visibilidad de las contraseñas
+  toggleCurrentPasswordVisibility(): void {
+    this.showCurrentPassword = !this.showCurrentPassword;
+  }
 
-toggleNewPasswordVisibility(): void {
-  this.showNewPassword = !this.showNewPassword;
-}
+  toggleNewPasswordVisibility(): void {
+    this.showNewPassword = !this.showNewPassword;
+  }
 
-toggleConfirmPasswordVisibility(): void {
-  this.showConfirmPassword = !this.showConfirmPassword;
-}
+  toggleConfirmPasswordVisibility(): void {
+    this.showConfirmPassword = !this.showConfirmPassword;
+  }
 
   // Getters para acceso fácil desde la plantilla
   get name() { return this.profileForm.get('name'); }

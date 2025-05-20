@@ -18,7 +18,7 @@
     </nav>
     
     <div class="actions">
-      <button class="btn btn-secondary" [routerLink]="['/login']">INICIAR SESIÓN</button>
-      <button class="btn btn-primary" [routerLink]="['/register']">REGISTRARSE</button>
+      <button class="btn btn-secondary" (click)="onLoginClick()">INICIAR SESIÓN</button>
+      <button class="btn btn-primary" (click)="onRegisterClick()">REGISTRARSE</button>
     </div>
 </header>

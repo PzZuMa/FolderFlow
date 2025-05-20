@@ -14,6 +14,7 @@ interface UserInfo {
   id: string;
   name?: string;
   email: string;
+  profileImage?: string; // Añadido campo para imagen de perfil
 }
 
 interface RegisterResponse {
@@ -106,7 +107,8 @@ export class AuthService {
           const user: UserInfo = {
             id: response.user.id,
             name: response.user.name || response.user.email?.split('@')[0] || 'Usuario',
-            email: response.user.email
+            email: response.user.email,
+            profileImage: response.user.profileImage || undefined
           };
           
           // Actualizar el BehaviorSubject
@@ -171,16 +173,36 @@ logout(): void {
   }
 
   updateProfile(userData: { name: string; email: string }): Observable<any> {
-  return this.http.put<any>(`${this.apiUrl}/auth/profile`, userData)
+    return this.http.put<any>(`${this.apiUrl}/auth/profile`, userData)
+      .pipe(
+        tap(response => {
+          // Actualizar el usuario en el BehaviorSubject
+          const currentUser = this.currentUserSubject.value;
+          if (currentUser) {
+            const updatedUser = {
+              ...currentUser,
+              name: userData.name,
+              email: userData.email
+            };
+            this.currentUserSubject.next(updatedUser);
+            this.saveUserToStorage(updatedUser);
+          }
+        }),
+        catchError(this.handleError.bind(this))
+      );
+  }
+
+  // Método para actualizar solo la imagen de perfil
+  updateProfileImage(imageData: { profileImage: string }): Observable<any> {
+  return this.http.put<any>(`${this.apiUrl}/auth/profile-image`, imageData)
     .pipe(
       tap(response => {
         // Actualizar el usuario en el BehaviorSubject
         const currentUser = this.currentUserSubject.value;
-        if (currentUser) {
+        if (currentUser && response.profileImage) {
           const updatedUser = {
             ...currentUser,
-            name: userData.name,
-            email: userData.email
+            profileImage: response.profileImage
           };
           this.currentUserSubject.next(updatedUser);
           this.saveUserToStorage(updatedUser);
@@ -190,10 +212,10 @@ logout(): void {
     );
 }
 
-changePassword(passwordData: { currentPassword: string; newPassword: string }): Observable<any> {
-  return this.http.put<any>(`${this.apiUrl}/auth/password`, passwordData)
-    .pipe(
-      catchError(this.handleError.bind(this))
-    );
-}
+  changePassword(passwordData: { currentPassword: string; newPassword: string }): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/auth/password`, passwordData)
+      .pipe(
+        catchError(this.handleError.bind(this))
+      );
+  }
 }

@@ -32,13 +32,13 @@ export const loginUser = async ({ email, password }) => {
   });
 
   // Devolver el token junto con la información básica del usuario
-  // CAMBIO: Añadir información del usuario a la respuesta
   return { 
     token,
     user: {
       id: user._id,
       name: user.name || user.email.split('@')[0],
-      email: user.email
+      email: user.email,
+      profileImage: user.profileImage
     }
   };
 };
@@ -54,6 +54,21 @@ export const updateUserProfile = async (userId, { name, email }) => {
   const updatedUser = await User.findByIdAndUpdate(
     userId,
     { name, email },
+    { new: true, runValidators: true }
+  ).select('-password');
+
+  if (!updatedUser) {
+    throw new Error('Usuario no encontrado');
+  }
+
+  return updatedUser;
+};
+
+export const updateUserProfileImage = async (userId, profileImage) => {
+  // Actualizar solo la imagen de perfil
+  const updatedUser = await User.findByIdAndUpdate(
+    userId,
+    { profileImage },
     { new: true, runValidators: true }
   ).select('-password');
 

@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 
 // Material imports
@@ -21,6 +21,9 @@ import { AuthService } from '../../core/services/auth.service';
 // Models
 import { Document } from '../../core/models/document.model';
 import { Folder } from '../../core/models/folder.model';
+
+// Dialogs
+import { ConfirmationDialogComponent } from '../../shared/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-home',
@@ -47,6 +50,7 @@ export class HomeComponent implements OnInit {
   private authService = inject(AuthService);
   private cdRef = inject(ChangeDetectorRef);
   private destroy$ = new Subject<void>();
+  private router = inject(Router); // Para navegar programáticamente si es necesario
 
   isLoading = true;
   userName = '';
@@ -55,7 +59,8 @@ export class HomeComponent implements OnInit {
   totalDocuments = 0;
   totalFolders = 0;
   storageUsed = 0;
-  storageLimit = 5 * 1024 * 1024 * 1024; // 5GB ejemplo
+  storageLimit = 0.5 * 1024 * 1024 * 1024; // 5GB ejemplo
+  dialog: any;
 
   capitalizeUserName(name: string): string {
   if (!name) return 'Usuario';
@@ -99,6 +104,13 @@ export class HomeComponent implements OnInit {
     
     // Cargar estadísticas
     this.loadStatistics();
+  }
+
+  /**
+ * Abre el documento para visualización
+ */
+  openDocumentViewer(document: Document): void {
+    this.router.navigate(['/documents/view', document._id]);
   }
   
   ngOnDestroy(): void {
@@ -226,12 +238,20 @@ private updateDocumentInLists(updatedDoc: Document): void {
   }
   
   formatBytes(bytes: number): string {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  if (bytes === 0) return '0 Bytes';
+  
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  
+  // Para valores muy pequeños, mostrar en bytes sin decimales
+  if (i === 0) {
+    return bytes + ' ' + sizes[i];
   }
+  
+  // Para el resto de valores, mostrar con 1 decimal
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+}
   
   getIconForMimeType(mimeType: string): string {
     if (mimeType.startsWith('image/')) return 'image';
