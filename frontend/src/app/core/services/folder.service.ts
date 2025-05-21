@@ -104,4 +104,8 @@ getBreadcrumbs(folderId: string | null): Observable<Folder[]> {
     return this.http.get<{totalCount: number}>(`${this.apiUrl}/stats`);
   }
 
+  getFoldersByIds(folderIds: string[]): Observable<Folder[]> {
+  return this.http.post<Folder[]>(`${this.apiUrl}/by-ids`, { folderIds });
+}
+
 }

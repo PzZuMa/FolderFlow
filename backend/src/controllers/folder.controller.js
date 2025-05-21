@@ -115,3 +115,23 @@ export const handleGetFolderStats = async (req, res) => {
         res.status(500).json({ message: error.message || 'Error interno del servidor' });
     }
 };
+
+/**
+ * Obtiene carpetas por una lista de IDs
+ */
+export const getFoldersByIds = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { folderIds } = req.body;
+    
+    if (!folderIds || !Array.isArray(folderIds)) {
+      return res.status(400).json({ message: 'Se requiere un array de folderIds' });
+    }
+    
+    const folders = await folderService.getFoldersByIds(userId, folderIds);
+    res.status(200).json(folders);
+  } catch (error) {
+    console.error('Error fetching folders by IDs:', error);
+    res.status(500).json({ message: error.message || 'Error interno del servidor' });
+  }
+};

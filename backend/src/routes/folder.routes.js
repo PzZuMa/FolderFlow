@@ -22,4 +22,7 @@ router.delete('/:folderId', folderController.handleDeleteFolder);
 // Mover carpeta
 router.patch('/:folderId/move', folderController.moveUserFolder);
 
+router.post('/by-ids', folderController.getFoldersByIds);
+
+
 export default router;

@@ -160,3 +160,30 @@ export const getFolderStats = async (userId) => {
         throw new Error("Could not retrieve folder statistics");
     }
 };
+
+/**
+ * Obtiene múltiples carpetas por sus IDs
+ * @param {string} userId - ID del usuario
+ * @param {Array<string>} folderIds - Array de IDs de carpetas
+ * @returns {Promise<Array>} - Array de carpetas
+ */
+export const getFoldersByIds = async (userId, folderIds) => {
+  try {
+    // Verificar que folderIds es un array válido
+    if (!Array.isArray(folderIds) || folderIds.length === 0) {
+      return [];
+    }
+    
+    // Buscar solo las carpetas que pertenecen al usuario y están en la lista
+    const folders = await Folder.find({
+      _id: { $in: folderIds },
+      ownerId: userId
+    });
+    
+    console.log(`Retrieved ${folders.length} folders by IDs for user ${userId}`);
+    return folders;
+  } catch (error) {
+    console.error("Error getting folders by IDs:", error);
+    throw new Error("Could not retrieve folders by IDs");
+  }
+};
