@@ -12,7 +12,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatCardModule } from '@angular/material/card';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Observable, forkJoin, of, Subject, EMPTY } from 'rxjs';
-import { catchError, finalize, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { catchError, finalize, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { HttpResponse } from '@angular/common/http';
 
 import { Folder, Document, UploadStatus } from '../../../core/models';
@@ -23,6 +23,13 @@ import { ConfirmationDialogComponent, ConfirmationDialogData } from '../../../sh
 import { MoveItemDialogComponent, MoveItemDialogData, MoveItemDialogResult } from '../../../shared/components/move-item-dialog/move-item-dialog.component';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
+
+import { UserPreferencesService } from '../../../core/services/preferences.service';
+
+interface FolderWithCounts extends Folder {
+  fileCount?: number;
+  folderCount?: number;
+}
 
 @Component({
   selector: 'app-folder-explorer',
@@ -44,15 +51,18 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
   private cdRef = inject(ChangeDetectorRef);
   private destroy$ = new Subject<void>();
   private router = inject(Router);
+  private userPreferencesService = inject(UserPreferencesService);
+
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
   currentFolderId: string | null = null;
   parentOfCurrentFolderId: string | null = null;
-  folders: Folder[] = [];
+  folders: FolderWithCounts[] = [];
   documents: Document[] = [];
   isLoading: boolean = false;
   uploads: UploadStatus[] = [];
   breadcrumbs: Folder[] = []; // Inicializar vacío, se llenará con la raíz en ngOnInit
+  viewType: 'grid' | 'list' = 'grid'; // Por defecto mostramos la vista de cuadrícula
 
   get currentFolderNameDisplay(): string {
     if (this.isLoading) {
@@ -70,6 +80,8 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.viewType = this.userPreferencesService.getViewType();
+
     this.loadContents(null); // Cargar la raíz inicialmente
   }
 
@@ -106,8 +118,9 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
         this.cdRef.markForCheck();
       })
     ).subscribe(result => {
-      this.folders = result.folders;
+      this.folders = result.folders as FolderWithCounts[];
       this.documents = result.documents;
+      this.loadFolderStats();
 
       if (result.breadcrumbs && result.breadcrumbs.length > 0) {
         // ***** CAMBIO IMPORTANTE: Asignar directamente, sin invertir *****
@@ -178,9 +191,16 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
     }
   }
 
-  // ... (resto de los métodos: openCreateFolderDialog, subida de archivos, etc. se mantienen igual) ...
-  // Asegúrate de que la lógica interna de esos métodos no interfiera con currentFolderId o breadcrumbs
-  // de formas inesperadas.
+  // Método para cambiar el tipo de vista
+  setViewType(type: 'grid' | 'list'): void {
+    if (this.viewType !== type) {
+      this.viewType = type;
+      // Save the preference
+      this.userPreferencesService.saveViewType(type);
+      this.cdRef.markForCheck();
+    }
+  }
+
   openCreateFolderDialog(): void {
     const dialogRef = this.dialog.open(CreateFolderDialogComponent, {
       width: '400px'
@@ -214,6 +234,39 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
     if (this.fileInput && this.fileInput.nativeElement) { 
         this.fileInput.nativeElement.click();
     }
+  }
+
+  private loadFolderStats(): void {
+  if (!this.folders || this.folders.length === 0) return;
+  
+  const folderStatsRequests = this.folders.map(folder => 
+    this.folderService.getFolderStats(folder._id).pipe(
+      map(stats => ({folderId: folder._id, stats})),
+      catchError(error => {
+        console.error(`Error loading stats for folder ${folder._id}:`, error);
+        return of({folderId: folder._id, stats: {folderCount: 0, fileCount: 0}});
+      })
+    )
+  );
+  
+  forkJoin(folderStatsRequests)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(results => {
+      // Update folders with real counts
+      this.folders = this.folders.map(folder => {
+        const folderStats = results.find(r => r.folderId === folder._id);
+        return {
+          ...folder,
+          folderCount: folderStats?.stats.folderCount || 0,
+          fileCount: folderStats?.stats.fileCount || 0
+        };
+      });
+      
+      // Update original folders collection as well
+      this.originalFolders = [...this.folders];
+      this.filteredFolders = [...this.folders];
+      this.cdRef.markForCheck();
+    });
   }
 
   onFileSelected(event: Event): void {
@@ -504,6 +557,24 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
     if (mimeType === 'application/zip' || mimeType === 'application/x-rar-compressed') return 'archive';
     return 'insert_drive_file';
   }
+  
+  getColorForMimeType(mimeType: string): string {
+    if (mimeType.startsWith('image/')) return '25, 91, 255'; // Azul para imágenes
+    if (mimeType === 'application/pdf') return '239, 71, 58'; // Rojo para PDF
+    if (mimeType.startsWith('video/')) return '92, 107, 192'; // Morado para videos
+    if (mimeType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || 
+        mimeType === 'application/msword') return '33, 150, 243'; // Azul para documentos Word
+    if (mimeType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || 
+        mimeType === 'application/vnd.ms-excel') return '46, 125, 50'; // Verde para Excel
+    if (mimeType === 'application/vnd.openxmlformats-officedocument.presentationml.presentation' || 
+        mimeType === 'application/vnd.ms-powerpoint') return '230, 81, 0'; // Naranja para PowerPoint
+    if (mimeType === 'text/plain') return '117, 117, 117'; // Gris para texto plano
+    if (mimeType === 'application/zip' || mimeType === 'application/x-rar-compressed') return '121, 85, 72'; // Marrón para archivos comprimidos
+    
+    // Color por defecto
+    return '100, 116, 139'; // Gris azulado
+  }
+
   formatBytes(bytes: number, decimals = 2): string {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
@@ -524,9 +595,9 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
   }
 
 
-  filteredFolders: Folder[] = [];
+  filteredFolders: FolderWithCounts[] = [];
   filteredDocuments: Document[] = [];
-  originalFolders: Folder[] = [];
+  originalFolders: FolderWithCounts[] = [];
   originalDocuments: Document[] = [];
 
 // Añade este método para filtrar elementos
@@ -547,4 +618,43 @@ filterItems(event: Event): void {
   
   this.cdRef.markForCheck();
 }
+
+/**
+ * Marca o desmarca un documento como favorito
+ */
+toggleFavorite(doc: Document, event: Event): void {
+  event.stopPropagation();
+  
+  const newStatus = !doc.isFavorite;
+  
+  this.documentService.toggleFavorite(doc._id, newStatus)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (updatedDoc) => {
+        // Actualizar el documento en la lista original
+        const originalIndex = this.originalDocuments.findIndex(d => d._id === updatedDoc._id);
+        if (originalIndex !== -1) {
+          this.originalDocuments[originalIndex] = updatedDoc;
+        }
+        
+        // Actualizar el documento en la lista filtrada si está en uso
+        const index = this.documents.findIndex(d => d._id === updatedDoc._id);
+        if (index !== -1) {
+          this.documents[index] = updatedDoc;
+        }
+        
+        const message = newStatus 
+          ? `"${doc.name}" añadido a favoritos` 
+          : `"${doc.name}" eliminado de favoritos`;
+        
+        this.showSuccess(message);
+        this.cdRef.markForCheck();
+      },
+      error: (error) => {
+        console.error('Error al cambiar estado de favorito:', error);
+        this.showError('No se pudo cambiar el estado de favorito');
+      }
+    });
+}
+
 }

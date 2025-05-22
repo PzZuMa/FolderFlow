@@ -37,18 +37,22 @@ export const routes: Routes = [
       {
         path: 'home',                  // <<<--- Ruta para la vista de inicio (3+3 items) -> /home
         component: HomeComponent,
+        title: 'Inicio | FolderFlow', // Título de la ruta
       },
       {
         path: 'documents',             // <<<--- Ruta para el explorador -> /documents
         component: DocumentExplorerComponent,
+        title: 'Mis documentos | FolderFlow', // Título de la ruta
       },
       {
         path: 'folders',               // <<<--- Ruta para las carpetas -> /folders
         component: FolderExplorerComponent,
+        title: 'Mis carpetas | FolderFlow', // Título de la ruta
       },
       {
         path: 'account',             // <<<--- Ruta para la configuración -> /settings
-        component: AccountComponent // Cambia esto por el componente correcto
+        component: AccountComponent, // Cambia esto por el componente correctoç
+        title: 'Cuenta | FolderFlow', // Título de la ruta
       },
       {
         path: 'documents/view/:id',

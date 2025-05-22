@@ -100,9 +100,17 @@ getBreadcrumbs(folderId: string | null): Observable<Folder[]> {
     return this.http.patch<Folder>(url, { destinationParentId }); // Enviar destino en el body
   }
 
-  getFolderStats(): Observable<{totalCount: number}> {
-    return this.http.get<{totalCount: number}>(`${this.apiUrl}/stats`);
-  }
+  /**
+ * Obtiene estadísticas de carpetas
+ * @param folderId ID de la carpeta específica o undefined para estadísticas globales
+ */
+getFolderStats(folderId?: string | null): Observable<any> {
+  const params = folderId !== undefined 
+    ? new HttpParams().set('folderId', folderId || 'null') 
+    : new HttpParams();
+  
+  return this.http.get<any>(`${this.apiUrl}/stats`, { params });
+}
 
   getFoldersByIds(folderIds: string[]): Observable<Folder[]> {
   return this.http.post<Folder[]>(`${this.apiUrl}/by-ids`, { folderIds });

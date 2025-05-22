@@ -76,6 +76,8 @@ $sidebar-collapsed-width: 70px; // Ancho del sidebar colapsado
     color: $text-color;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     letter-spacing: 0.01em;
+        cursor: pointer; // Añadir cursor pointer para indicar que es clicable
+
   }
 }
 

@@ -43,7 +43,7 @@ app-sidebar {
   flex-grow: 1;
   overflow-y: auto;
   transition: margin-left 0.3s ease-in-out;
-  padding: 0 0 32px 0; // Añadir padding inferior
+  padding: 0; // Añadir padding inferior
   position: relative;
   
   // Añadir un sutil decorador para la esquina

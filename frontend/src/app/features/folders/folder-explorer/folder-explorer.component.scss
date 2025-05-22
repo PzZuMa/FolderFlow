@@ -36,6 +36,79 @@ $folder-light: rgba(255, 202, 40, 0.1);
   height: 4px;
 }
 
+.folder-card {
+  .item-icon-container {
+    background-color: rgba($folder-color, 0.1);
+    
+    .folder-icon {
+      color: $folder-color;
+    }
+  }
+}
+
+.breadcrumb-title-container {
+  display: flex;
+  margin-bottom: 8px;
+  position: relative;
+  overflow: hidden;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 30px;
+    background: linear-gradient(to right, transparent, white);
+    pointer-events: none;
+  }
+  
+  .breadcrumb-scroll-wrapper {
+    display: flex;
+    align-items: center;
+    overflow-x: auto;
+    white-space: nowrap;
+    scroll-behavior: smooth;
+    
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    
+    .breadcrumb-title-button {
+      min-width: auto;
+      padding: 0 8px;
+      font-size: 2rem;
+      font-weight: 700;
+      color: $text-color;
+      height: auto;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      
+      &:hover:not(:disabled) {
+        background-color: $primary-light;
+        color: $primary-color;
+      }
+      
+      &:disabled {
+        color: $primary-color;
+        font-weight: 700;
+        opacity: 1;
+      }
+    }
+    
+    .breadcrumb-separator {
+      margin: 0 4px;
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+      color: $text-muted;
+    }
+  }
+}
+
 // Encabezado de página
 .page-header {
   display: flex;
@@ -82,10 +155,11 @@ $folder-light: rgba(255, 202, 40, 0.1);
         .breadcrumb-button {
           min-width: auto;
           padding: 0 8px;
-          font-size: 1.1rem;
+          font-size: 1.2rem;
           font-weight: 600;
           color: $text-color;
           height: 36px;
+          line-height: 1.2;
           
           &:hover:not(:disabled) {
             background-color: $primary-light;
@@ -374,14 +448,142 @@ $folder-light: rgba(255, 202, 40, 0.1);
   }
 }
 
+// Nuevo estilo unificado para cards de items (carpetas y documentos)
+.item-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
+  border-radius: 16px;
+  overflow: visible;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  background-color: white;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  height: 180px; // Altura fija más compacta
+  
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+  }
+  
+  .item-content {
+    display: flex;
+    gap: 16px;
+    
+    .item-icon-container {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    .item-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+      line-height: 1;
+      display: block; // Cambiado de flex a block para mejor centrado
+    }
+  }
+    
+    .item-details {
+      flex: 1;
+      overflow: hidden;
+      
+      .item-name {
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: $text-color;
+        margin: 0 0 4px 0;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      
+      .item-metadata {
+        color: $text-muted;
+        font-size: 0.8rem;
+        
+        .item-size, .item-count {
+          display: block;
+        }
+      }
+    }
+  }
+  
+  .item-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    
+    .item-date {
+      font-size: 0.8rem;
+      color: $text-muted;
+    }
+    
+    .item-actions {
+          display: flex;
+          justify-content: flex-end;
+          gap: 8px;
+          
+          .action-button {
+            width: 32px;
+            height: 32px;
+            min-width: 32px;
+              border-radius: 8px;
+            transition: all 0.2s ease;
+            background-color: transparent; // Quitar fondo blanco
+            box-shadow: none; // Quitar sombra
+            
+            
+            mat-icon {
+              font-size: 18px;
+              height: 18px;
+              width: 18px;
+              margin: 0;
+            }
+            
+            &:hover {
+              transform: none; // Quitar animación de elevación
+              box-shadow: none; // Mantener sin sombra al hacer hover
+              background-color: rgba(0, 0, 0, 0.04); // Fondo sutil al hacer hover
+              border-radius: 50%;
+            }
+            
+            // Mantener colores de íconos
+            &.favorite-btn mat-icon {
+              color: $folder-color;
+            }
+            
+            &.move-btn mat-icon {
+              color: $info-color;
+            }
+            
+            &.delete-btn mat-icon {
+              color: $error-color;
+            }
+          }
+        }
+  }
+}
+
 // Grid de carpetas y documentos
 .grid-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 24px;
+  margin-top: 16px;
 }
 
-// Tarjeta base
+// Tarjeta base - estilos compartidos
 .folder-card, .document-card {
   display: flex;
   flex-direction: column;
@@ -394,52 +596,23 @@ $folder-light: rgba(255, 202, 40, 0.1);
   border: 1px solid rgba(0, 0, 0, 0.04);
   background-color: rgba(255, 255, 255, 0.85);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  height: 200px; // Fixed height
+  min-width: 280px; // Minimum width
   
   &:hover {
     transform: translateY(-4px);
     box-shadow: 0 12px 24px rgba($primary-color, 0.12);
     background-color: white;
     border-color: rgba($primary-color, 0.1);
-    
-    .folder-actions, .document-actions {
-      opacity: 1;
-      transform: translateY(0);
-    }
   }
 }
 
-// Tarjeta de carpeta
+// Estilos específicos para acciones de carpetas
 .folder-card {
-  .folder-icon {
-    width: 64px;
-    height: 64px;
-    border-radius: 12px;
-    background-color: rgba($folder-color, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 16px;
-    
-    .item-icon {
-      font-size: 32px;
-      color: $folder-color;
-    }
-  }
-  
-  .folder-info {
-    flex: 1;
-    
-    .folder-name {
-      font-size: 1rem;
-      font-weight: 600;
-      color: $text-color;
-      margin: 0;
-      line-height: 1.4;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+  &:hover {
+    .folder-actions {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
   
@@ -448,46 +621,90 @@ $folder-light: rgba(255, 202, 40, 0.1);
     top: 16px;
     right: 16px;
     display: flex;
-    gap: 4px;
+    gap: 8px;
     opacity: 0;
     transform: translateY(-8px);
     transition: all 0.3s ease;
     
-    .action-btn {
-      color: $secondary-color;
+    .action-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      padding: 0;
+      line-height: 1;
+      border-radius: 8px;
       background-color: white;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      
+      mat-icon {
+        font-size: 18px;
+        height: 18px;
+        width: 18px;
+        margin: 0;
+        vertical-align: middle;
+        line-height: 18px;
+      }
       
       &:hover {
-        color: $primary-color;
-        background-color: $primary-light;
+        transform: translateY(-3px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+      
+      &.move-btn {
+        mat-icon {
+          color: $info-color;
+        }
+        
+        &:hover {
+          background-color: rgba($info-color, 0.1);
+        }
+      }
+      
+      &.delete-btn {
+        mat-icon {
+          color: $error-color;
+        }
+        
+        &:hover {
+          background-color: rgba($error-color, 0.1);
+        }
       }
     }
   }
-}
-
-// Tarjeta de documento
-.document-card {
-  .document-icon {
+  
+  .folder-icon {
     width: 64px;
     height: 64px;
     border-radius: 12px;
-    background-color: $primary-light;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 16px;
+    background-color: rgba($folder-color, 0.1);
+
     
     .item-icon {
       font-size: 32px;
-      color: $primary-color;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      color: $folder-color;
     }
   }
   
-  .document-info {
+  .folder-info {
     flex: 1;
+    display: flex;
+    flex-direction: column;
     
-    .document-name {
+    .folder-name {
       font-size: 1rem;
       font-weight: 600;
       color: $text-color;
@@ -500,89 +717,687 @@ $folder-light: rgba(255, 202, 40, 0.1);
       overflow: hidden;
     }
     
-    .document-meta {
+    .folder-meta {
       display: flex;
       flex-wrap: wrap;
       gap: 16px;
       color: $text-muted;
       font-size: 0.85rem;
+      margin-top: auto; // Push to bottom
       
-      .size, .date {
+      .type, .date {
         display: flex;
         align-items: center;
+      }
+      
+      .type {
+        background-color: rgba($folder-color, 0.1);
+        color: darken($folder-color, 20%);
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-weight: 500;
+      }
+
+      .folder-counts {
+        display: flex;
+        gap: 12px;
+    
+      .file-count,
+      .subfolder-count {
+        display: flex;
+        align-items: center;
+        font-size: 0.8rem;
+
+        mat-icon {
+          font-size: 14px;
+          height: 14px;
+          width: 14px;
+          margin-right: 4px;
+        }
+      }
+
+      .file-count {
+        color: $primary-color;
+      }
+
+      .subfolder-count {
+        color: $folder-color;
+      }
+    }
+    }
+  }
+}
+
+// Estilos específicos para acciones de documentos
+.document-card {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  border: none;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  position: relative;
+  padding: 0;
+  cursor: pointer;
+  height: 170px; // Altura fija para todas las cards
+  
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    
+    .document-actions {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  // Barra superior de color
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, $primary-color, lighten($primary-color, 20%));
+    z-index: 1;
+  }
+  
+  &.folder-card::before {
+    background: linear-gradient(90deg, $folder-color, lighten($folder-color, 20%));
+  }
+  
+  &.favorite-document::before {
+    background: linear-gradient(90deg, $folder-color, lighten($folder-color, 20%));
+  }
+  
+  // Contenido principal de la tarjeta
+  .document-content {
+    display: flex;
+    align-items: flex-start;
+    padding: 22px 20px;
+    height: calc(100% - 60px); // Altura ajustada para dejar espacio al footer
+  }
+  
+  .document-icon {
+    width: 54px;
+    height: 54px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.12);
+    flex-shrink: 0;
+    
+    mat-icon {
+      font-size: 26px;
+      height: 26px;
+      width: 26px;
+    }
+  }
+  
+  .document-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    
+    .document-name {
+      font-weight: 600;
+      font-size: 1.05rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: $text-color;
+      margin: 0 0 12px 0;
+      display: flex;
+      align-items: center;
+      
+      .favorite-indicator {
+        flex-shrink: 0;
+        font-size: 16px;
+        height: 16px;
+        width: 16px;
+        margin-left: 8px;
+        color: $folder-color;
+      }
+    }
+    
+    .document-meta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 0.85rem;
+      color: $text-muted;
+      
+      .document-size, .folder-stats {
+        display: flex;
+        align-items: center;
+        
+        mat-icon {
+          font-size: 16px;
+          height: 16px;
+          width: 16px;
+          margin-right: 4px;
+        }
+      }
+      
+      .folder-stats {
+        display: flex;
+        gap: 12px;
+        
+        .file-count, .subfolder-count {
+          display: flex;
+          align-items: center;
+          
+          mat-icon {
+            font-size: 14px;
+            height: 14px;
+            width: 14px;
+            margin-right: 4px;
+          }
+        }
+        
+        .file-count {
+          color: $primary-color;
+        }
+        
+        .subfolder-count {
+          color: $folder-color;
+        }
       }
     }
   }
   
-  .document-actions {
-    position: absolute;
-    top: 16px;
-    right: 16px;
+  // Footer de la tarjeta
+  .document-footer {
     display: flex;
-    gap: 4px;
-    opacity: 0;
-    transform: translateY(-8px);
-    transition: all 0.3s ease;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    border-top: 1px solid rgba(0, 0, 0, 0.04);
+    margin-top: auto;
+    background-color: rgba($bg-page, 0.3);
     
-    .action-btn {
-      color: $secondary-color;
-      background-color: white;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    .document-date {
+      display: flex;
+      align-items: center;
+      font-size: 0.8rem;
+      color: $text-muted;
       
-      &:hover {
-        color: $primary-color;
-        background-color: $primary-light;
+      mat-icon {
+        font-size: 14px;
+        height: 14px;
+        width: 14px;
+        margin-right: 4px;
+      }
+    }
+    
+    .document-actions {
+      display: flex;
+      gap: 8px;
+      
+      .action-button {
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+        padding: 0;
+        line-height: 1;
+        border-radius: 8px;
+        background-color: white;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        
+        mat-icon {
+          font-size: 18px;
+          height: 18px;
+          width: 18px;
+          margin: 0;
+        }
+        
+        &:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+      }
+      
+      // Estilos específicos para cada botón
+      .favorite-btn {
+        mat-icon {
+          color: $folder-color;
+        }
+        
+        &:hover {
+          background-color: rgba($folder-color, 0.1);
+        }
+      }
+      
+      .move-btn {
+        mat-icon {
+          color: $info-color;
+        }
+        
+        &:hover {
+          background-color: rgba($info-color, 0.1);
+        }
+      }
+      
+      .delete-btn {
+        mat-icon {
+          color: $error-color;
+        }
+        
+        &:hover {
+          background-color: rgba($error-color, 0.1);
+        }
       }
     }
   }
 }
 
-// Vista de lista
+// Vista de lista - separando estilos de acciones
+// Vista de lista mejorada
 .list-container {
   background-color: white;
   border-radius: 16px;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
   overflow: hidden;
   
-  .list-section {
-    .list-section-header {
-      padding: 12px 16px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: $text-muted;
-      background-color: rgba(0, 0, 0, 0.02);
+  .document-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed;
+    
+    .table-header {
+      border-bottom: 2px solid rgba(0, 0, 0, 0.08);
+      background-color: rgba($bg-page, 0.6);
+      
+      th {
+        padding: 16px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: $text-muted;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        
+        &.icon-header {
+          width: 60px;
+          padding-left: 20px;
+        }
+        
+        &.title-header {
+          width: 40%;
+          min-width: 200px;
+          padding-left: 0;
+        }
+        
+        &.info-header {
+          width: 15%;
+          text-align: center;
+        }
+        
+        &.date-header {
+          width: 15%;
+          text-align: center;
+        }
+        
+        &.actions-header {
+          width: 140px;
+          text-align: center;
+          padding-right: 20px;
+        }
+      }
+    }
+    
+    // Estilos para las filas
+    .document-row, .folder-row {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+      transition: background-color 0.2s ease;
+      cursor: pointer;
+      height: 60px;
+      
+      &:hover {
+        background-color: $primary-light;
+      }
+      
+      &.favorite-row {
+        background-color: rgba($folder-color, 0.05);
+        
+        &:hover {
+          background-color: rgba($folder-color, 0.1);
+        }
+      }
+      
+      td {
+        padding: 8px 16px;
+        vertical-align: middle;
+      }
+      
+      .icon-cell {
+        width: 60px;
+        padding-left: 20px;
+      }
+      
+      .title-cell {
+        width: 40%;
+        min-width: 200px;
+        padding-left: 0;
+        
+        .item-title {
+          display: flex;
+          align-items: center;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          font-size: 1rem;
+          font-weight: 500;
+          color: $text-color;
+          
+          .favorite-indicator {
+            flex-shrink: 0;
+            font-size: 16px;
+            height: 16px;
+            width: 16px;
+            margin-left: 8px;
+            color: $folder-color;
+          }
+        }
+      }
+      
+      .info-cell {
+        width: 15%;
+        color: $text-muted;
+        font-size: 0.85rem;
+        white-space: nowrap;
+        text-align: center;
+        
+        .folder-stats {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 12px;
+          
+          .stat-item {
+            display: flex;
+            align-items: center;
+            
+            mat-icon {
+              font-size: 14px;
+              height: 14px;
+              width: 14px;
+              margin-right: 4px;
+            }
+            
+            &.file-count {
+              color: $primary-color;
+            }
+            
+            &.subfolder-count {
+              color: $folder-color;
+            }
+          }
+        }
+      }
+      
+      .date-cell {
+        width: 15%;
+        color: $text-muted;
+        font-size: 0.85rem;
+        white-space: nowrap;
+        text-align: center;
+      }
+      
+      .actions-cell {
+        width: 140px;
+        text-align: right;
+        padding-right: 20px;
+        
+        .item-actions {
+          display: flex;
+          justify-content: center;
+          gap: 8px;
+          
+          .action-button {
+            width: 32px; // Aumentado de 28px a 32px
+            height: 32px;
+            min-width: 32px;
+            border-radius: 8px;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+            &:focus {
+              outline: none;
+              box-shadow: 0 0 0 2px rgba($primary-color, 0.3);
+            }
+            
+            &::after {
+              content: '';
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              width: 5px;
+              height: 5px;
+              background: rgba(255, 255, 255, 0.5);
+              opacity: 0;
+              border-radius: 100%;
+              transform: scale(1, 1) translate(-50%, -50%);
+              transform-origin: 50% 50%;
+            }
+            
+            &:active::after {
+              animation: ripple 0.6s ease-out;
+            }
+            
+            mat-icon {
+              font-size: 18px; // Aumentado de 16px a 18px
+              height: 18px;
+              width: 18px;
+              line-height: 18px;
+              transition: transform 0.2s ease;
+              margin: 0;
+            }
+            
+            &:hover {
+              transform: translateY(-3px);
+              box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            }
+          }
+          
+          // Estilos específicos para cada tipo de botón (mejorando visibilidad de colores)
+          .favorite-btn {
+            mat-icon {
+              color: $folder-color; // Color amarillo para el icono de estrella
+            }
+            
+            &:hover {
+              background-color: rgba($folder-color, 0.1);
+            }
+          }
+          
+          .move-btn {
+            mat-icon {
+              color: $info-color;
+            }
+            
+            &:hover {
+              background-color: rgba($info-color, 0.1);
+            }
+          }
+          
+          .delete-btn {
+            mat-icon {
+              color: $error-color;
+            }
+            
+            &:hover {
+              background-color: rgba($error-color, 0.1);
+            }
+          }
+        }
+      }
     }
   }
-  
-  .folder-list-item, .document-list-item {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-    transition: background-color 0.2s ease;
-    cursor: pointer;
-    
-    &:hover {
-      background-color: $primary-light;
-    }
+
+  // Estilos para los iconos en la vista de lista
+  .list-icon {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
     
     mat-icon {
-      &[matListItemIcon] {
+      font-size: 20px;
+      height: 20px;
+      width: 20px;
+    }
+    
+    &.folder-icon {
+      background-color: rgba($folder-color, 0.15);
+      
+      mat-icon {
         color: $folder-color;
       }
     }
   }
   
-  .document-list-item {
-    mat-icon {
-      &[matListItemIcon] {
-        color: $primary-color;
+  // Estado vacío 
+  .empty-list {
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 0;
+    
+    .empty-state-container {
+      text-align: center;
+      max-width: 400px;
+      
+      .empty-icon-container {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background-color: rgba($primary-color, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 24px;
+        
+        mat-icon {
+          font-size: 40px;
+          height: 40px;
+          width: 40px;
+          color: $primary-color;
+        }
+      }
+      
+      h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: $text-color;
+        margin: 0 0 12px;
+      }
+      
+      p {
+        color: $text-muted;
+        margin: 0 0 28px;
+        font-size: 1rem;
+      }
+      
+      .empty-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        
+        button {
+          min-width: 140px;
+          
+          &.folder-btn {
+            background-color: $folder-color;
+            color: white;
+            
+            &:hover {
+              background-color: $folder-hover;
+            }
+          }
+        }
       }
     }
-    
-    .document-meta-list {
-      display: flex;
-      gap: 16px;
-      color: $text-muted;
-      font-size: 0.85rem;
+  }
+}
+
+// Ajustes responsivos para la vista de lista
+@media (max-width: 768px) {
+  .list-container {
+    .document-table {
+      .table-header {
+        .info-header, .date-header {
+          display: none; // Ocultar columnas en pantallas pequeñas
+        }
+        
+        .title-header {
+          width: 60%; // Más espacio para el título en móvil
+        }
+        
+        .actions-header {
+          width: 120px; // Reducir en móvil
+        }
+      }
+      
+      .document-row, .folder-row {
+        .info-cell, .date-cell {
+          display: none; // Ocultar columnas en pantallas pequeñas
+        }
+        
+        .title-cell {
+          width: 60%; // Más espacio para el título en móvil
+        }
+        
+        .actions-cell {
+          width: 120px; // Reducir en móvil
+          
+          .item-actions {
+            gap: 4px; // Menos espacio entre botones en móvil
+            
+            .action-button {
+              width: 30px;
+              height: 30px;
+              min-width: 30px;
+            }
+          }
+        }
+      }
     }
+  }
+}
+
+// Estilos para los iconos de la vista de lista
+.folder-list-icon, .document-list-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  
+  mat-icon {
+    font-size: 20px;
+    height: 20px;
+    width: 20px;
   }
 }
 
@@ -648,14 +1463,15 @@ $folder-light: rgba(255, 202, 40, 0.1);
         mat-icon {
           margin-right: 8px;
         }
-        &:first-child { // Botón de nueva carpeta
-      background-color: $folder-color;
-      
-      &:hover {
-        background-color: $folder-hover;
-        box-shadow: 0 6px 16px rgba(255, 202, 40, 0.25);
-      }
-    }
+        
+        &:first-child { 
+          background-color: $folder-color;
+          
+          &:hover {
+            background-color: $folder-hover;
+            box-shadow: 0 6px 16px rgba(255, 202, 40, 0.25);
+          }
+        }
       }
     }
   }
@@ -722,6 +1538,19 @@ $folder-light: rgba(255, 202, 40, 0.1);
   letter-spacing: -0.02em;
 }
 
+.breadcrumb-display-container {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  
+  .breadcrumb-button {
+    font-size: 1.2rem;
+    font-weight: 600;
+    line-height: 1.2;
+    height: auto;
+    padding: 4px 8px;
+  }
+}
+
 // Responsive
 @media (max-width: 768px) {
   .page-header {
@@ -748,8 +1577,18 @@ $folder-light: rgba(255, 202, 40, 0.1);
   }
   
   .grid-container {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 16px;
+  }
+  
+  .document-card {
+    .document-content {
+      padding: 18px 16px;
+    }
+    
+    .document-footer {
+      padding: 10px 16px;
+    }
   }
   
   .upload-items-container {

@@ -342,6 +342,8 @@ $folder-light: rgba(255, 202, 40, 0.1);
     transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
     position: relative;
     padding: 0; // Quitar el padding predeterminado
+    cursor: pointer; // Añadir cursor pointer para indicar que es clicable
+
     
     &:hover {
       transform: translateY(-8px);

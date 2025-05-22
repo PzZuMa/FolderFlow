@@ -13,6 +13,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 // Services
 import { DocumentService } from '../../core/services/document.service';
@@ -40,7 +41,8 @@ import { MoveItemDialogComponent, MoveItemDialogData, MoveItemDialogResult } fro
     MatTooltipModule,
     MatProgressBarModule,
     MatDividerModule,
-    MatChipsModule
+    MatChipsModule,
+    MatSnackBarModule,
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
@@ -54,6 +56,8 @@ export class HomeComponent implements OnInit {
   private dialog = inject(MatDialog);
   private destroy$ = new Subject<void>();
   private router = inject(Router); // Para navegar programáticamente si es necesario
+  private snackBar = inject(MatSnackBar);
+
 
   isLoading = true;
   userName = '';
@@ -236,6 +240,14 @@ export class HomeComponent implements OnInit {
         console.error('Error loading favorite documents:', error);
       }
     });
+  }
+
+  private showSuccess(message: string): void {
+    this.snackBar.open(message, 'Cerrar', { duration: 3000, panelClass: ['snackbar-success'] });
+  }
+
+  private showError(message: string): void {
+    this.snackBar.open(message, 'Cerrar', { duration: 5000, panelClass: ['snackbar-error'] });
   }
 
   // Función auxiliar para obtener el nombre de la carpeta

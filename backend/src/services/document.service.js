@@ -81,7 +81,7 @@ async function listAllUserDocuments(userId) {
     const query = { ownerId: userId }; // Solo filtra por dueño
     try {
         const documents = await Document.find(query).sort({ updatedAt: -1 }); // Ordenar por más reciente globalmente
-        console.log(`BACKEND: listAllUserDocuments for user ${userId} found ${documents.length} documents.`);
+        // console.log(`BACKEND: listAllUserDocuments for user ${userId} found ${documents.length} documents.`);
         return documents;
     } catch (error) {
         console.error("Error listing all user documents:", error);

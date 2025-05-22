@@ -1,6 +1,5 @@
 import Folder from '../models/Folder.model.js';
-// Importaremos el modelo Document cuando exista para la comprobación de carpeta vacía
-// import Document from '../models/Document.model.js';
+import Document from '../models/Document.model.js';
 
 // --- Crear Carpeta ---
 export const createFolder = async (folderData, userId) => {
@@ -135,26 +134,47 @@ export const moveFolder = async (userId, folderIdToMove, destinationParentId) =>
 }
 
 /**
- * Obtiene estadísticas de carpetas del usuario.
+ * Obtiene estadísticas de carpetas del usuario
  * @param {string} userId ID del usuario
+ * @param {string|undefined} folderId ID de la carpeta específica o undefined para stats globales
  * @returns {Promise<Object>} Estadísticas de carpetas
  */
-export const getFolderStats = async (userId) => {
+export const getFolderStats = async (userId, folderId) => {
     try {
-        // Asegurarse de que userId es válido
-        console.log("Getting folder stats for user:", userId);
-        
-        // Contar total de carpetas del usuario
-        const totalCount = await Folder.countDocuments({ ownerId: userId });
-        console.log(`Found ${totalCount} folders for user ${userId}`);
-        
-        // Carpetas raíz
-        const rootFolders = await Folder.find({ ownerId: userId, parentId: null });
-        
-        return { 
-            totalCount,
-            rootFolderCount: rootFolders.length
-        };
+        // Para una carpeta específica
+        if (folderId && folderId !== 'null') {
+            const folder = await Folder.findOne({ _id: folderId, ownerId: userId });
+            
+            if (!folder) {
+                throw new Error("Folder not found or access denied");
+            }
+            
+            // Contar subcarpetas
+            const folderCount = await Folder.countDocuments({ 
+                ownerId: userId, 
+                parentId: folderId 
+            });
+            
+            // Contar archivos
+            const fileCount = await Document.countDocuments({ 
+                ownerId: userId, 
+                folderId: folderId 
+            });
+            
+            return { folderCount, fileCount };
+        } 
+        // Stats globales
+        else {
+            const totalCount = await Folder.countDocuments({ ownerId: userId });
+            const rootFolderCount = await Folder.countDocuments({ ownerId: userId, parentId: null });
+            const totalDocumentCount = await Document.countDocuments({ ownerId: userId });
+            
+            return { 
+                totalCount,
+                rootFolderCount,
+                totalDocumentCount
+            };
+        }
     } catch (error) {
         console.error("Error getting folder statistics:", error);
         throw new Error("Could not retrieve folder statistics");

@@ -1,6 +1,8 @@
-import { Component, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, ElementRef, OnDestroy } from '@angular/core';
+import { MatMenuModule } from '@angular/material/menu'; // Para menú contextual opcional
+import { Folder, Document, UploadStatus } from '../../../core/models'; // Importa todas
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { Component, OnInit, ChangeDetectionStrategy, inject, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,18 +10,17 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatMenuModule } from '@angular/material/menu'; // Para menú contextual opcional
-import { Observable, forkJoin, of, Subject, EMPTY } from 'rxjs';
-import { catchError, finalize, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { HttpResponse } from '@angular/common/http';
-import { Folder, Document, UploadStatus } from '../../../core/models'; // Importa todas
-import { FolderService } from '../../../core/services/folder.service';
-import { DocumentService } from '../../../core/services/document.service';
-import { CreateFolderDialogComponent } from '../../../shared/components/create-folder-dialog/create-folder-dialog.component';
-import { ConfirmationDialogComponent, ConfirmationDialogData } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
-import { MatCard, MatCardModule } from '@angular/material/card';
+import { MatCardModule } from '@angular/material/card';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { Subject, Observable, EMPTY, of } from 'rxjs';
+import { catchError, finalize, map, switchMap, takeUntil } from 'rxjs/operators';
+import { DocumentService} from '../../../core/services/document.service';
+import { FolderService } from '../../../core/services/folder.service';
 import { MoveItemDialogComponent, MoveItemDialogData, MoveItemDialogResult } from '../../../shared/components/move-item-dialog/move-item-dialog.component';
+import { HttpResponse } from '@angular/common/http';
+import { ConfirmationDialogComponent, ConfirmationDialogData } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
+import { UserPreferencesService } from '../../../core/services/preferences.service';
+
 
 @Component({
   selector: 'app-document-explorer',
@@ -51,6 +52,7 @@ export class DocumentExplorerComponent implements OnInit {
   private router = inject(Router); // Para navegar programáticamente si es necesario
   private cdRef = inject(ChangeDetectorRef); // Para marcar cambios manualmente con OnPush
   private destroy$ = new Subject<void>(); // Para limpiar suscripciones
+  private userPreferencesService = inject(UserPreferencesService);
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>; // Para el input file oculto
 
@@ -60,6 +62,15 @@ export class DocumentExplorerComponent implements OnInit {
   breadcrumbs: Folder[] = [];
   isLoading: boolean = false;
   uploads: UploadStatus[] = [];
+  
+  // Nuevas propiedades para controlar las vistas
+  viewType: 'grid' | 'list' = 'grid'; // Por defecto vista de cuadrícula
+  showOnlyFavorites: boolean = false; // Por defecto mostrar todos los documentos
+  searchTerm: string = ''; // Para mantener el término de búsqueda actual
+  
+  filteredDocuments: Document[] = [];
+  originalDocuments: Document[] = [];
+  folderMap: Map<string, string> = new Map();;
 
   ngOnInit(): void {
     // Escuchar cambios en los parámetros de ruta si usas rutas tipo /app/folders/:folderId
@@ -68,38 +79,26 @@ export class DocumentExplorerComponent implements OnInit {
     //   this.loadContents(this.currentFolderId);
     // });
 
+    this.viewType = this.userPreferencesService.getViewType();
+    this.showOnlyFavorites = this.userPreferencesService.getFavoritesFilter();
+
     // O si no usas parámetros de ruta, carga la raíz inicialmente
     this.loadAllDocuments();
+  }
+
+  // Reemplazar el método toggleViewType con setViewType
+  setViewType(type: 'grid' | 'list'): void {
+    if (this.viewType !== type) {
+      this.viewType = type;
+      this.userPreferencesService.saveViewType(type);
+      this.cdRef.markForCheck();
+    }
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
-
-  /*
-  loadAllDocuments(): void {
-    this.isLoading = true;
-    this.uploads = []; // Limpiar subidas pendientes
-    this.cdRef.markForCheck();
-
-    this.documentService.getAllUserDocuments().pipe( // <<< LLAMAR AL NUEVO MÉTODO DEL SERVICIO
-      takeUntil(this.destroy$),
-      catchError(error => {
-        console.error('Error loading all documents:', error);
-        this.showError('Error al cargar los documentos.');
-        return of([]); // Devolver array vacío en error
-      }),
-      finalize(() => {
-        this.isLoading = false;
-        this.cdRef.markForCheck();
-      })
-    ).subscribe(docs => {
-      this.documents = docs;
-      this.cdRef.markForCheck();
-    });
-  }
-  */
 
   openMoveDialog(item: Folder | Document, itemType: 'folder' | 'document'): void {
     console.log(`Abriendo diálogo para mover ${itemType}: ${item.name}`);
@@ -122,14 +121,12 @@ export class DocumentExplorerComponent implements OnInit {
     dialogRef.afterClosed().pipe(takeUntil(this.destroy$)).subscribe(result => {
         // 'result' será de tipo MoveItemDialogResult | undefined
         if (result && result.destinationFolderId !== undefined) {
-            // El usuario hizo clic en "Mover Aquí" y no canceló
-            console.log(`Mover ${itemType} ${item._id} a carpeta destino: ${result.destinationFolderId}`);
-            this.moveItem(item, itemType, result.destinationFolderId); // Llama a la función (aún placeholder) que hará la llamada API
+            this.moveItem(item, itemType, result.destinationFolderId);
         } else {
-            console.log('Diálogo de mover cerrado sin confirmar.');
+            this.showError('No se seleccionó una carpeta de destino válida.');
         }
     });
-}
+  }
 
   // --- Subida de Archivos ---
   triggerFileInputClick(): void {
@@ -153,8 +150,7 @@ export class DocumentExplorerComponent implements OnInit {
         status: 'pending'
       };
       this.uploads.push(uploadStatus);
-      this.cdRef.markForCheck(); // Actualizar vista para mostrar progreso inicial
-
+      this.cdRef.markForCheck();
       this.startUploadProcess(uploadStatus);
     });
   }
@@ -177,16 +173,14 @@ export class DocumentExplorerComponent implements OnInit {
         // Paso 2: Subir a S3 con la URL obtenida
         switchMap(response => {
           upload.status = 'uploading';
-          upload.s3Key = response.s3Key; // Guardar s3Key para la confirmación
-          this.cdRef.markForCheck();
+          upload.s3Key = response.s3Key;          this.cdRef.markForCheck();
           
           // Devolver el observable de la subida a S3
           return this.documentService.uploadFileToS3(response.signedUrl, upload.file).pipe(
-            // Manejar errores específicos de la subida a S3
             catchError(err => {
-              console.error('Error uploading to S3:', err);
+              console.error('Error uploading file to S3:', err);
               upload.status = 'error';
-              upload.error = 'Error durante la subida del archivo a S3.';
+              upload.error = 'Error al subir el archivo a S3.';
               this.cdRef.markForCheck();
               return EMPTY;
             })
@@ -196,26 +190,21 @@ export class DocumentExplorerComponent implements OnInit {
       .subscribe({
         next: (event) => {
           if (typeof event === 'number') {
-            // Actualizar el porcentaje de progreso
+            // Actualizar el progreso de la subida
             upload.progress = event;
             this.cdRef.markForCheck();
           } 
           else if (event instanceof HttpResponse) {
-            // Subida a S3 completada exitosamente
-            upload.status = 'confirming';
-            upload.progress = 100;
-            this.cdRef.markForCheck();
-            
-            // Paso 3: Confirmar la subida en nuestro backend
+            // Subida completada, confirmar en backend
             this.confirmUploadBackend(upload);
           }
         },
         error: (err) => {
           // Este error solo ocurre si hay un problema no capturado en los catchError anteriores
           console.error('Unexpected error in upload process:', err);
-          if (upload.status !== 'error') { // Evitar doble seteo
+          if (upload.status !== 'error') {
             upload.status = 'error';
-            upload.error = 'Error inesperado durante el proceso de subida.';
+            upload.error = 'Error inesperado durante la subida.';
             this.cdRef.markForCheck();
           }
         }
@@ -240,8 +229,7 @@ export class DocumentExplorerComponent implements OnInit {
         catchError(err => {
             console.error(`Error moving ${itemType}:`, err);
             this.showError(err.error?.message || `Error al mover ${itemType === 'folder' ? 'la carpeta' : 'el archivo'}.`);
-            return EMPTY; // Detener el flujo en caso de error
-        }),
+            return EMPTY;        }),
         finalize(() => {
             this.isLoading = false;
             this.cdRef.markForCheck();
@@ -285,8 +273,7 @@ export class DocumentExplorerComponent implements OnInit {
           this.showSuccess(`'${upload.file.name}' subido correctamente.`);
           // Podríamos quitar la subida exitosa de la lista después de un tiempo
           // O recargar todo, aunque puede ser pesado si hay muchas subidas
-          this.loadAllDocuments(); // Recargar contenido para ver el nuevo archivo
-      });
+          this.loadAllDocuments();      });
   }
 
   // --- Descarga de Archivos ---
@@ -357,10 +344,8 @@ export class DocumentExplorerComponent implements OnInit {
       })
     ).subscribe(() => {
       this.showSuccess(`${itemType === 'folder' ? 'Carpeta' : 'Archivo'} eliminado correctamente.`);
-      this.loadAllDocuments(); // Recargar
-    });
+      this.loadAllDocuments();    });
   }
-
 
   // --- Utilidades ---
   getIconForMimeType(mimeType: string): string {
@@ -392,51 +377,176 @@ export class DocumentExplorerComponent implements OnInit {
     this.snackBar.open(message, 'Cerrar', { duration: 5000, panelClass: ['snackbar-error'] });
   }
 
-  filteredDocuments: Document[] = [];
-  originalDocuments: Document[] = [];
-
-  // En ngOnInit o donde cargues tus documentos, asegúrate de inicializar ambos arreglos
-  // Por ejemplo:
-  loadAllDocuments(): void {
-    this.isLoading = true;
-    this.uploads = [];
+  // Método actualizado para filtrar documentos con múltiples criterios
+  filterDocuments(event: Event): void {
+    this.searchTerm = (event.target as HTMLInputElement).value.toLowerCase();
+    this.applyDocumentFilters();
+  }
+  
+  // Nuevo método para alternar entre mostrar todos o solo favoritos
+  toggleFavoritesFilter(): void {
+    this.showOnlyFavorites = !this.showOnlyFavorites;
+    this.userPreferencesService.saveFavoritesFilter(this.showOnlyFavorites);
+    this.applyDocumentFilters();
+  }
+  
+  // Método para aplicar todos los filtros activos
+  applyDocumentFilters(): void {
+    let result = [...this.originalDocuments];
+    
+    // Aplicar filtro de favoritos si está activo
+    if (this.showOnlyFavorites) {
+      result = result.filter(doc => doc.isFavorite);
+    }
+    
+    // Aplicar filtro de búsqueda si hay un término
+    if (this.searchTerm) {
+      result = result.filter(doc => 
+        doc.name.toLowerCase().includes(this.searchTerm)
+      );
+    }
+    
+    this.documents = result;
     this.cdRef.markForCheck();
-
-    this.documentService.getAllUserDocuments().pipe(
-      takeUntil(this.destroy$),
-      catchError(error => {
-        console.error('Error loading all documents:', error);
-        this.showError('Error al cargar los documentos.');
-        return of([]);
-      }),
-      finalize(() => {
-        this.isLoading = false;
-        this.cdRef.markForCheck();
-      })
-    ).subscribe(docs => {
-      this.documents = docs;
-      this.originalDocuments = [...docs]; // Guarda una copia de los documentos originales
-      this.filteredDocuments = [...docs]; // Inicializa los documentos filtrados
-      this.cdRef.markForCheck();
-    });
   }
 
-// Método para filtrar documentos
-filterDocuments(event: Event): void {
-  const searchTerm = (event.target as HTMLInputElement).value.toLowerCase();
-  
-  if (!searchTerm) {
-    this.documents = [...this.originalDocuments];
-  } else {
-    this.documents = this.originalDocuments.filter(doc => 
-      doc.name.toLowerCase().includes(searchTerm)
-    );
+  // Función auxiliar para obtener el nombre de la carpeta
+  getFolderName(folderId: string): string {
+    return this.folderMap.get(folderId) || 'Carpeta';
   }
-  
+
+  // Modificar el método loadAllDocuments cerca de la línea 390-430
+loadAllDocuments(): void {
+  this.isLoading = true;
+  this.uploads = [];
   this.cdRef.markForCheck();
+
+  // Primero cargar las carpetas para llenar el folderMap
+  this.folderService.getFolders(this.currentFolderId).pipe(
+    takeUntil(this.destroy$),
+    switchMap(folders => {
+      this.folders = folders;
+      
+      // Primero llenamos el mapa con las carpetas actuales
+      this.folderMap.clear();
+      this.folders.forEach(folder => {
+        this.folderMap.set(folder._id, folder.name);
+      });
+      
+      // Luego cargamos documentos
+      return this.documentService.getAllUserDocuments().pipe(
+        catchError(error => {
+          console.error('Error loading all documents:', error);
+          this.showError('Error al cargar los documentos.');
+          return of([]);
+        })
+      );
+    }),
+    // Actualizar datos de carpetas para documentos que puedan estar en otras carpetas
+    switchMap(docs => {
+      // Recopilar IDs únicos de carpetas que no estén en el mapa actual
+      const missingFolderIds = new Set<string>();
+      docs.forEach(doc => {
+        if (doc.folderId && !this.folderMap.has(doc.folderId)) {
+          missingFolderIds.add(doc.folderId);
+        }
+      });
+      
+      // Si hay carpetas faltantes, obtenerlas
+      if (missingFolderIds.size > 0) {
+        return this.folderService.getFoldersByIds(Array.from(missingFolderIds)).pipe(
+          map(additionalFolders => {
+            // Añadir las carpetas adicionales al mapa
+            additionalFolders.forEach(folder => {
+              this.folderMap.set(folder._id, folder.name);
+            });
+            return docs;
+          }),
+          catchError(error => {
+            console.error('Error loading additional folders:', error);
+            return of(docs); // Seguir con los documentos aunque falle la carga de carpetas
+          })
+        );
+      }
+      
+      // Si no hay carpetas faltantes, seguir con los documentos
+      return of(docs);
+    }),
+    finalize(() => {
+      this.isLoading = false;
+      this.cdRef.markForCheck();
+    })
+  ).subscribe(docs => {
+    this.originalDocuments = [...docs];
+    this.applyDocumentFilters();
+    this.cdRef.markForCheck();
+  });
+}
+  
+  // Método para alternar tipo de vista
+  toggleViewType(): void {
+    this.viewType = this.viewType === 'grid' ? 'list' : 'grid';
+    this.cdRef.markForCheck();
+  }
+
+  openDocumentViewer(document: Document): void {
+    this.router.navigate(['/documents/view', document._id]);
+  }
+
+ /**
+ * Marca o desmarca un documento como favorito
+ */
+toggleFavorite(doc: Document, event: Event): void {
+  event.stopPropagation();
+  
+  const newStatus = !doc.isFavorite;
+  
+  this.documentService.toggleFavorite(doc._id, newStatus)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (updatedDoc) => {
+        // Actualizar el documento en la lista original
+        const originalIndex = this.originalDocuments.findIndex(d => d._id === updatedDoc._id);
+        if (originalIndex !== -1) {
+          this.originalDocuments[originalIndex] = updatedDoc;
+        }
+        
+        // Actualizar el documento en la lista filtrada si está en uso
+        const index = this.documents.findIndex(d => d._id === updatedDoc._id);
+        if (index !== -1) {
+          this.documents[index] = updatedDoc;
+        }
+        
+        // Volver a aplicar filtros para actualizar la vista correctamente
+        this.applyDocumentFilters();
+        
+        const message = newStatus 
+          ? `"${doc.name}" añadido a favoritos` 
+          : `"${doc.name}" eliminado de favoritos`;
+        
+        this.showSuccess(message);
+        this.cdRef.markForCheck();
+      },
+      error: (error) => {
+        console.error('Error al cambiar estado de favorito:', error);
+        this.showError('No se pudo cambiar el estado de favorito');
+      }
+    });
 }
 
-openDocumentViewer(document: Document): void {
-    this.router.navigate(['/documents/view', document._id]);
+  /**
+   * Devuelve un color según el tipo de archivo
+   */
+  getColorForMimeType(mimeType: string): string {
+    if (mimeType.startsWith('image/')) return '#10b981'; // verde para imágenes
+    if (mimeType === 'application/pdf') return '#ef4444'; // rojo para PDF
+    if (mimeType.startsWith('video/')) return '#3b82f6'; // azul para videos
+    if (mimeType.startsWith('audio/')) return '#f59e0b'; // naranja para audio
+    if (mimeType.includes('zip') || mimeType.includes('compressed')) return '#8b5cf6';
+    if (mimeType.includes('word')) return '#2563eb'; // azul para Word
+    if (mimeType.includes('excel') || mimeType.includes('spreadsheet')) return '#22c55e'; // verde para Excel
+    if (mimeType.includes('powerpoint')) return '#f97316'; // naranja para PowerPoint
+    if (mimeType.includes('text/')) return '#6b4fbb'; // púrpura para texto
+    return '#64748b'; // color por defecto (gris)
   }
 }
