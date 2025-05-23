@@ -1,4 +1,3 @@
-// filepath: c:\Users\Pablo Zumaquero\FolderFlow\frontend\src\app\layout\header\header.component.ts
 import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';

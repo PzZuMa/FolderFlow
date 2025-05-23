@@ -200,10 +200,64 @@ export const getFoldersByIds = async (userId, folderIds) => {
       ownerId: userId
     });
     
-    console.log(`Retrieved ${folders.length} folders by IDs for user ${userId}`);
+    // console.log(`Retrieved ${folders.length} folders by IDs for user ${userId}`);
     return folders;
   } catch (error) {
     console.error("Error getting folders by IDs:", error);
     throw new Error("Could not retrieve folders by IDs");
+  }
+};
+
+/**
+ * Actualiza el nombre de una carpeta
+ * @param {string} userId ID del usuario
+ * @param {string} folderId ID de la carpeta
+ * @param {string} newName Nuevo nombre de la carpeta
+ * @returns {Promise<Folder>} Carpeta actualizada
+ */
+export const updateFolderName = async (userId, folderId, newName) => {
+  try {
+    // Verificar que la carpeta existe y pertenece al usuario
+    const folder = await Folder.findOne({ _id: folderId, ownerId: userId });
+    if (!folder) {
+      const err = new Error('Folder not found or access denied');
+      err.statusCode = 404;
+      throw err;
+    }
+
+    // Validar el nuevo nombre
+    if (!newName || !newName.trim()) {
+      const err = new Error('Folder name is required');
+      err.statusCode = 400;
+      throw err;
+    }
+
+    // Verificar que no existe otra carpeta con el mismo nombre en el mismo nivel
+    const existingFolder = await Folder.findOne({
+      ownerId: userId,
+      parentId: folder.parentId,
+      name: newName.trim(),
+      _id: { $ne: folderId } // Excluir la carpeta actual
+    });
+
+    if (existingFolder) {
+      const err = new Error('A folder with this name already exists in this location');
+      err.statusCode = 409; // Conflict
+      throw err;
+    }
+
+    // Actualizar el nombre
+    folder.name = newName.trim();
+    folder.updatedAt = new Date();
+    await folder.save();
+
+    console.log(`Folder ${folderId} name updated to "${newName}" by user ${userId}`);
+    return folder;
+  } catch (error) {
+    if (error.statusCode) {
+      throw error; // Re-lanzar errores con statusCode
+    }
+    console.error("Error updating folder name:", error);
+    throw new Error("Could not update folder name");
   }
 };

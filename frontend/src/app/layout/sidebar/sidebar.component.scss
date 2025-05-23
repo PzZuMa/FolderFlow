@@ -2,42 +2,64 @@
 $primary-color: #6b4fbb;
 $primary-hover: #5936b1;
 $primary-light: rgba(107, 79, 187, 0.1);
+$primary-gradient: linear-gradient(135deg, #6b4fbb 0%, #8b5fbf 100%);
 $secondary-color: #5e6c84;
 $bg-page: #f0f3f7;
 $card-bg: #ffffff;
 $text-color: #2c3e50;
 $text-muted: #6c757d;
 $box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+$box-shadow-hover: 0 8px 25px rgba(107, 79, 187, 0.15);
+$accent-yellow: #ffca28;
+
+// Nuevas variables para efectos mejorados
+$border-radius: 12px;
+$item-height: 52px;
+$transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-quick: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
 :host {
   display: block;
   height: 100%;
-  // Cambiar a un fondo más sutil
-  background-color: rgba(255, 255, 255, 0.7);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.8) 100%);
   overflow: hidden;
-  width: 240px;
+  width: 260px; // Ligeramente más ancho para mejor espaciado
   flex-shrink: 0;
-  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  // Quitar el box-shadow para un look más moderno y reemplazarlo con un efecto más sutil
-  box-shadow: none;
-  // Mantener el borde para definir el área
+  transition: $transition-smooth;
   border-right: 1px solid rgba($primary-color, 0.08);
-  backdrop-filter: blur(8px); // Efecto de cristal moderno (funciona en navegadores modernos)
+  backdrop-filter: blur(12px);
+  position: relative;
+  
+  // Añadir un sutil efecto de gradiente en el borde
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(180deg, 
+      rgba($primary-color, 0.2) 0%, 
+      rgba($primary-color, 0.05) 50%, 
+      rgba($primary-color, 0.2) 100%
+    );
+  }
 }
 
 :host(.collapsed) {
-  width: 70px; 
+  width: 76px; // Ligeramente más ancho para mejor centrado
 }
 
 .sidebar-container {
   height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: 16px 12px;
+  padding: 20px 16px;
+  position: relative;
   
-  /* Estilo de la barra de scroll */
+  // Scroll mejorado con estilo más moderno
   &::-webkit-scrollbar {
-    width: 6px;
+    width: 4px;
   }
   
   &::-webkit-scrollbar-track {
@@ -45,23 +67,46 @@ $box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   }
   
   &::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 3px;
+    background: rgba($primary-color, 0.2);
+    border-radius: 2px;
     
     &:hover {
-      background: rgba(0, 0, 0, 0.2);
+      background: rgba($primary-color, 0.3);
     }
   }
 }
 
 .nav-item {
-  margin: 6px 0; 
-  border-radius: 10px; 
-  transition: all 0.2s ease-in-out;
+  margin: 8px 0;
+  border-radius: $border-radius;
+  transition: $transition-quick;
   overflow: hidden;
+  position: relative;
+  
+  // Efecto de brillo sutil en hover
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+      transparent 0%, 
+      rgba(255, 255, 255, 0.4) 50%, 
+      transparent 100%
+    );
+    transition: left 0.6s ease;
+    z-index: 1;
+    pointer-events: none;
+  }
+  
+  &:hover::before {
+    left: 100%;
+  }
 }
 
-// Estilos para el texto e icono del nav-item
+// Estilos mejorados para el texto
 .nav-text {
   white-space: nowrap;
   opacity: 1;
@@ -69,7 +114,9 @@ $box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 0.95rem;
   color: $text-color;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: $transition-smooth;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
 }
 
 :host(.collapsed) .nav-text {
@@ -77,35 +124,88 @@ $box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   width: 0;
   overflow: hidden;
   margin-left: 0;
+  transform: translateX(-10px);
 }
 
-// Estilos del mat-list-item
+// Estilos mejorados del mat-list-item
 .mat-mdc-list-item {
   color: $text-color;
-  border-radius: 10px;
-  min-height: 46px;
-  transition: all 0.2s ease;
+  border-radius: $border-radius;
+  min-height: $item-height;
+  transition: $transition-quick;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 4px;
+  
+  // Línea inferior amarilla
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: $accent-yellow;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateX(-50%);
+    border-radius: 1px;
+  }
+  
+  // Efecto de fondo con gradiente sutil
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: $primary-gradient;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+  }
   
   .mat-icon {
     color: $text-muted;
     font-size: 22px;
-    transition: all 0.2s ease;
+    transition: $transition-quick;
+    transform: scale(1);
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
   }
   
   &:hover {
     background-color: $primary-light;
+    transform: translateY(-1px);
+    box-shadow: $box-shadow-hover;
     
-    .mat-icon, .nav-text {
-      color: $primary-color;
+    // Mostrar línea amarilla en hover
+    &::before {
+      width: 80%;
     }
+    
+    .mat-icon {
+      color: $primary-color;
+      transform: scale(1.08);
+    }
+    
+    .nav-text {
+      color: $primary-color;
+      transform: translateX(2px);
+    }
+  }
+  
+  // Efecto de presión al hacer clic
+  &:active {
+    transform: translateY(0px) scale(0.98);
   }
 }
 
-// Ajustar el item cuando está colapsado
+// Ajustes para el estado colapsado
 :host(.collapsed) .mat-mdc-list-item {
   padding: 0;
   display: flex;
   justify-content: center;
+  min-height: 56px; // Ligeramente más alto para mejor proporción
   
   ::ng-deep .mdc-list-item__content {
     padding: 0;
@@ -130,53 +230,170 @@ $box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     width: 100% !important;
   }
   
-  // Eliminar cualquier desplazamiento que pueda afectar al centrado
   ::ng-deep .mdc-list-item__start {
     margin: 0 auto !important;
   }
 }
 
 :host(.collapsed) .sidebar-container {
-  padding-left: 0;
-  padding-right: 0;
+  padding-left: 8px;
+  padding-right: 8px;
 }
 
-// Añadir regla específica para el ícono dentro del item colapsado
 :host(.collapsed) .mat-mdc-list-item .mat-icon {
   margin-left: auto !important;
   margin-right: auto !important;
 }
 
-// Estilo para el item activo
+// Estilo mejorado para el item activo
 .active-link {
-  background-color: $primary-light;
+  background: $primary-gradient !important;
+  box-shadow: $box-shadow-hover;
+  transform: translateY(-1px);
+  
+  // Línea amarilla siempre visible en estado activo
+  &::before {
+    width: 90% !important;
+    background: $accent-yellow !important;
+    height: 3px !important;
+  }
+  
+  &::after {
+    opacity: 1;
+  }
   
   .mat-icon, 
   .nav-text {
-    color: $primary-color;
+    color: white !important;
     font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+  
+  .mat-icon {
+    transform: scale(1.05);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
   }
 }
 
-// Hover effect para active-link
+// Hover effect mejorado para active-link
 .active-link:hover {
-  background-color: rgba($primary-color, 0.15);
+  background: linear-gradient(135deg, $primary-hover 0%, #9d6bc3 100%) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(107, 79, 187, 0.25);
+  
+  // Línea amarilla más prominente en hover del elemento activo
+  &::before {
+    width: 95% !important;
+    height: 3px !important;
+    box-shadow: 0 2px 8px rgba(255, 202, 40, 0.4);
+  }
+  
+  .mat-icon {
+    transform: scale(1.1);
+  }
+  
+  .nav-text {
+    transform: translateX(1px);
+  }
 }
 
-// Animación para el sidebar
-@keyframes fadeIn {
+// Animaciones mejoradas
+@keyframes slideInFromLeft {
   from {
     opacity: 0;
-    transform: translateX(-10px);
+    transform: translateX(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes pulseIcon {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.nav-item {
+  animation: slideInFromLeft 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation-delay: calc(0.08s * var(--index, 0));
+  opacity: 0;
+  
+  &:nth-child(1) { --index: 1; }
+  &:nth-child(2) { --index: 2; }
+  &:nth-child(3) { --index: 3; }
+  &:nth-child(4) { --index: 4; }
+  &:nth-child(5) { --index: 5; }
+}
+
+// Efecto especial para iconos en hover
+.nav-item:hover .mat-icon {
+  animation: pulseIcon 0.6s ease-in-out;
+}
+
+// Responsive improvements
+@media (max-width: 768px) {
+  :host {
+    width: 100%;
+    position: fixed;
+    z-index: 1000;
+    height: auto;
+    bottom: 0;
+    top: auto;
+    border-right: none;
+    border-top: 1px solid rgba($primary-color, 0.1);
+    backdrop-filter: blur(20px);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
+  }
+  
+  .sidebar-container {
+    padding: 12px 16px;
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+  
+  .nav-item {
+    margin: 0 4px;
+    min-width: 60px;
+    flex-shrink: 0;
+  }
+  
+  .mat-mdc-list-item {
+    flex-direction: column;
+    text-align: center;
+    padding: 8px 4px;
+    min-height: 60px;
+  }
+  
+  .nav-text {
+    font-size: 0.75rem;
+    margin-top: 4px;
+    opacity: 0.8;
+  }
+  
+  .mat-icon {
+    font-size: 20px;
+    margin-bottom: 2px;
+  }
+}
+
+// Efecto de carga suave para todo el sidebar
+:host {
+  animation: fadeInSidebar 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes fadeInSidebar {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
   }
   to {
     opacity: 1;
     transform: translateX(0);
   }
-}
-
-.nav-item {
-  animation: fadeIn 0.4s ease forwards;
-  animation-delay: calc(0.05s * var(--index, 0));
-  opacity: 0;
 }

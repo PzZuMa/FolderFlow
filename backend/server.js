@@ -32,7 +32,13 @@ app.use(cors());
 // }));
 
 app.use(express.json()); // Para parsear el body en formato JSON
-app.use(express.urlencoded({ extended: true })); // Para parsear bodies urlencoded si es necesario
+app.use(express.urlencoded({ 
+  extended: true,
+  limit: '10mb' // Aumenta el límite para URL-encoded (base64 images)
+})); // Para parsear bodies urlencoded si es necesario
+app.use(express.json({ 
+  limit: '10mb' // Aumenta el límite para JSON (base64 images)
+}));
 
 // 7. Ruta de prueba simple (opcional)
 app.get('/', (req, res) => {

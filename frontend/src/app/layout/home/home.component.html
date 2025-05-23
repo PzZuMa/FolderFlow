@@ -1,21 +1,31 @@
 <div class="home-container">
-  <!-- Encabezado de bienvenida -->
-  <div class="welcome-header">
-    <div class="welcome-text">
-      <h1>BIENVENIDO</h1>
-      <p class="welcome-subtitle">Tu espacio de trabajo está listo</p>
+  <!-- Encabezado de bienvenida mejorado -->
+<div class="page-header">
+  <div class="header-content">
+    <div class="header-title">
+      <h1>BIENVENIDO {{ userName ? ', ' + userName.toUpperCase() : '' }}</h1>
+      <p class="header-subtitle">Tu espacio de trabajo está listo</p>
+      
+      <!-- Información adicional del usuario -->
+      <div class="header-meta">
+        <div class="welcome-time">
+          <mat-icon>schedule</mat-icon>
+          {{ getWelcomeMessage() }}
+        </div>
+        <div class="user-status">
+          En línea
+        </div>
+      </div>
     </div>
-    <div class="quick-actions">
-      <button mat-raised-button color="primary" [routerLink]="['/documents']" class="action-btn">
-        <mat-icon>note_add</mat-icon>
-        Subir documento
-      </button>
-      <button mat-raised-button class="folder-btn" [routerLink]="['/folders']">
-        <mat-icon>create_new_folder</mat-icon>
-        Nueva carpeta
-      </button>
+    
+    <!-- Decoración lateral con indicadores -->
+    <div class="header-decoration">
+      <div class="welcome-icon">
+        <mat-icon>dashboard</mat-icon>
+      </div>
     </div>
   </div>
+</div>
 
   <!-- Tarjetas de estadísticas -->
 <div class="stats-cards">

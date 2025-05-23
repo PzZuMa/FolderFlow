@@ -22,6 +22,7 @@ router.get('/favorites', documentController.getFavoriteDocs);
 router.get('/stats', documentController.getDocStats);
 router.patch('/:documentId/favorite', documentController.toggleFavorite);
 router.get('/:documentId', documentController.getDocumentById);
+router.patch('/:documentId/name', documentController.updateDocumentName); // Nueva ruta
 
 // Exportación por defecto del router
 export default router;

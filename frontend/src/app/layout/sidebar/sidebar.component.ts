@@ -29,7 +29,7 @@ export class SidebarComponent {
   
   menuItems = [
     { label: 'Inicio', icon: 'home', route: '/home' },
-    { label: 'Mis documentos', icon: 'folder_open', route: '/documents' },
+    { label: 'Mis documentos', icon: 'description', route: '/documents' },
     { label: 'Mis carpetas', icon: 'folder', route: '/folders' },
     { label: 'Cuenta', icon: 'account_circle', route: '/account' },
   ];

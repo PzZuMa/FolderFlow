@@ -197,7 +197,7 @@ async function getRecentDocuments(userId, limit = 5) {
             .sort({ updatedAt: -1 })  // Ordenar por fecha de actualización descendente
             .limit(limit);            // Limitar cantidad de resultados
         
-        console.log(`Retrieved ${documents.length} recent documents for user ${userId}`);
+        // console.log(`Retrieved ${documents.length} recent documents for user ${userId}`);
         return documents;
     } catch (error) {
         console.error("Error getting recent documents:", error);
@@ -221,7 +221,7 @@ async function getFavoriteDocuments(userId, limit = 5) {
         .sort({ updatedAt: -1 })
         .limit(limit);
         
-        console.log(`Retrieved ${documents.length} favorite documents for user ${userId}`);
+        // console.log(`Retrieved ${documents.length} favorite documents for user ${userId}`);
         return documents;
     } catch (error) {
         console.error("Error getting favorite documents:", error);
@@ -316,6 +316,60 @@ async function getDocumentById(userId, documentId) {
     }
 }
 
+/**
+ * Actualiza el nombre de un documento
+ * @param {string} userId ID del usuario
+ * @param {string} documentId ID del documento
+ * @param {string} newName Nuevo nombre del documento
+ * @returns {Promise<Document>} Documento actualizado
+ */
+async function updateDocumentName(userId, documentId, newName) {
+    try {
+        // Verificar que el documento existe y pertenece al usuario
+        const document = await Document.findOne({ _id: documentId, ownerId: userId });
+        if (!document) {
+            const err = new Error('Document not found or access denied');
+            err.statusCode = 404;
+            throw err;
+        }
+
+        // Validar el nuevo nombre
+        if (!newName || !newName.trim()) {
+            const err = new Error('Document name is required');
+            err.statusCode = 400;
+            throw err;
+        }
+
+        // Verificar que no existe otro documento con el mismo nombre en la misma carpeta
+        const existingDocument = await Document.findOne({
+            ownerId: userId,
+            folderId: document.folderId,
+            name: newName.trim(),
+            _id: { $ne: documentId } // Excluir el documento actual
+        });
+
+        if (existingDocument) {
+            const err = new Error('A document with this name already exists in this folder');
+            err.statusCode = 409; // Conflict
+            throw err;
+        }
+
+        // Actualizar el nombre
+        document.name = newName.trim();
+        document.updatedAt = new Date();
+        await document.save();
+
+        console.log(`Document ${documentId} name updated to "${newName}" by user ${userId}`);
+        return document;
+    } catch (error) {
+        if (error.statusCode) {
+            throw error; // Re-lanzar errores con statusCode
+        }
+        console.error("Error updating document name:", error);
+        throw new Error("Could not update document name");
+    }
+}
+
 // Exportar funciones individualmente (exportación nombrada)
 export {
     generateUploadUrl,
@@ -330,4 +384,5 @@ export {
     getDocumentStats,
     toggleDocumentFavorite,
     getDocumentById,
+    updateDocumentName,
 };

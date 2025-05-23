@@ -134,3 +134,24 @@ export const getFoldersByIds = async (req, res) => {
     res.status(500).json({ message: error.message || 'Error interno del servidor' });
   }
 };
+
+/**
+ * Actualiza el nombre de una carpeta
+ */
+export const updateFolderName = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const { folderId } = req.params;
+    const { name } = req.body;
+
+    // Validación básica
+    if (!name || !name.trim()) {
+      return res.status(400).json({ message: 'Folder name is required' });
+    }
+
+    const updatedFolder = await folderService.updateFolderName(userId, folderId, name);
+    res.status(200).json(updatedFolder);
+  } catch (error) {
+    next(error);
+  }
+};

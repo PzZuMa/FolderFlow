@@ -192,6 +192,27 @@ async function getDocumentById(req, res, next) {
     }
 }
 
+/**
+ * Actualiza el nombre de un documento
+ */
+async function updateDocumentName(req, res, next) {
+    try {
+        const userId = req.user.id;
+        const { documentId } = req.params;
+        const { name } = req.body;
+
+        // Validación básica
+        if (!name || !name.trim()) {
+            return res.status(400).json({ message: 'Document name is required' });
+        }
+
+        const updatedDocument = await documentService.updateDocumentName(userId, documentId, name);
+        res.status(200).json(updatedDocument);
+    } catch (error) {
+        next(error);
+    }
+}
+
 // Exportación nombrada de todas las funciones del controlador
 export {
     getUploadUrl,
@@ -206,4 +227,5 @@ export {
     getDocStats,
     toggleFavorite,
     getDocumentById,
+    updateDocumentName,
 };

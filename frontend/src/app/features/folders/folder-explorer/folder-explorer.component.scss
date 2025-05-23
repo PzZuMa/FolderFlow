@@ -448,133 +448,6 @@ $folder-light: rgba(255, 202, 40, 0.1);
   }
 }
 
-// Nuevo estilo unificado para cards de items (carpetas y documentos)
-.item-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 20px;
-  border-radius: 16px;
-  overflow: visible;
-  cursor: pointer;
-  position: relative;
-  transition: all 0.2s ease;
-  border: 1px solid rgba(0, 0, 0, 0.04);
-  background-color: white;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  height: 180px; // Altura fija más compacta
-  
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
-  }
-  
-  .item-content {
-    display: flex;
-    gap: 16px;
-    
-    .item-icon-container {
-    width: 48px;
-    height: 48px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    
-    .item-icon {
-      font-size: 24px;
-      width: 24px;
-      height: 24px;
-      line-height: 1;
-      display: block; // Cambiado de flex a block para mejor centrado
-    }
-  }
-    
-    .item-details {
-      flex: 1;
-      overflow: hidden;
-      
-      .item-name {
-        font-size: 0.95rem;
-        font-weight: 500;
-        color: $text-color;
-        margin: 0 0 4px 0;
-        line-height: 1.4;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-      }
-      
-      .item-metadata {
-        color: $text-muted;
-        font-size: 0.8rem;
-        
-        .item-size, .item-count {
-          display: block;
-        }
-      }
-    }
-  }
-  
-  .item-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: auto;
-    
-    .item-date {
-      font-size: 0.8rem;
-      color: $text-muted;
-    }
-    
-    .item-actions {
-          display: flex;
-          justify-content: flex-end;
-          gap: 8px;
-          
-          .action-button {
-            width: 32px;
-            height: 32px;
-            min-width: 32px;
-              border-radius: 8px;
-            transition: all 0.2s ease;
-            background-color: transparent; // Quitar fondo blanco
-            box-shadow: none; // Quitar sombra
-            
-            
-            mat-icon {
-              font-size: 18px;
-              height: 18px;
-              width: 18px;
-              margin: 0;
-            }
-            
-            &:hover {
-              transform: none; // Quitar animación de elevación
-              box-shadow: none; // Mantener sin sombra al hacer hover
-              background-color: rgba(0, 0, 0, 0.04); // Fondo sutil al hacer hover
-              border-radius: 50%;
-            }
-            
-            // Mantener colores de íconos
-            &.favorite-btn mat-icon {
-              color: $folder-color;
-            }
-            
-            &.move-btn mat-icon {
-              color: $info-color;
-            }
-            
-            &.delete-btn mat-icon {
-              color: $error-color;
-            }
-          }
-        }
-  }
-}
-
 // Grid de carpetas y documentos
 .grid-container {
   display: grid;
@@ -673,6 +546,16 @@ $folder-light: rgba(255, 202, 40, 0.1);
           background-color: rgba($error-color, 0.1);
         }
       }
+
+      .edit-btn {
+      mat-icon {
+        color: $warning-color; // Color naranja/amarillo para editar
+      }
+      
+      &:hover {
+        background-color: rgba($warning-color, 0.1);
+      }
+    }
     }
   }
   
@@ -995,6 +878,16 @@ $folder-light: rgba(255, 202, 40, 0.1);
           background-color: rgba($error-color, 0.1);
         }
       }
+
+      .edit-btn {
+      mat-icon {
+        color: $warning-color; // Color naranja/amarillo para editar
+      }
+      
+      &:hover {
+        background-color: rgba($warning-color, 0.1);
+      }
+    }
     }
   }
 }
@@ -1244,6 +1137,16 @@ $folder-light: rgba(255, 202, 40, 0.1);
             
             &:hover {
               background-color: rgba($error-color, 0.1);
+            }
+          }
+
+          .edit-btn {
+            mat-icon {
+              color: $warning-color; // Color naranja/amarillo para editar
+            }
+
+            &:hover {
+              background-color: rgba($warning-color, 0.1);
             }
           }
         }

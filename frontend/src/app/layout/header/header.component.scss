@@ -7,52 +7,70 @@ $bg-page: #f0f3f7;
 $card-bg: #ffffff;
 $text-color: #2c3e50;
 $text-muted: #6c757d;
-$header-height: 64px;
+$header-height: 70px;
 $box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-$sidebar-collapsed-width: 70px; // Ancho del sidebar colapsado
+$sidebar-collapsed-width: 70px;
 
 .app-header {
   display: flex;
   align-items: center;
   height: $header-height;
-  background: white;
-  color: $text-color;
-  padding: 0;  // Eliminamos el padding para control preciso
-  box-shadow: $box-shadow;
+  background: linear-gradient(135deg, #6b4fbb 0%, #8b6fd9 50%, #a68ee8 100%);
+  color: white;
+  padding: 0 32px; // Aumentado de 24px a 32px
+  box-shadow: 0 8px 32px rgba(107, 79, 187, 0.3);
   position: relative;
   z-index: 100;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  
+  // Textura sutil de fondo
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1.5" fill="white" opacity="0.05"/><circle cx="50" cy="10" r="0.8" fill="white" opacity="0.08"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+  }
+  
+  // Asegurar que los elementos estén por encima de la textura
+  > * {
+    position: relative;
+    z-index: 1;
+  }
 }
 
-// Contenedor para el botón del menú
+// Contenedor para el botón del menú - alineado con sidebar colapsado
 .menu-button-container {
   width: $sidebar-collapsed-width;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-
+  margin-left: -30px; // Ajustado para alineación
 }
 
-// Botón del menú hamburguesa - estilo unificado
+// Botón del menú hamburguesa
 .menu-button {
-  width: 40px;
-  height: 40px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: $secondary-color;
-  transition: all 0.2s ease;
-  background-color: transparent;
   
   &:hover {
-    background-color: $primary-light;
-    color: $primary-color;
-    transform: none;
-  }
-  
-  &:active {
-    background-color: rgba($primary-color, 0.2);
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: rotate(90deg);
+    border-color: rgba(255, 255, 255, 0.4);
   }
   
   mat-icon {
@@ -60,24 +78,55 @@ $sidebar-collapsed-width: 70px; // Ancho del sidebar colapsado
     width: 24px;
     height: 24px;
     line-height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 
-// Resto de los estilos del header
+// Logo con estilo mejorado
 .logo-container {
   display: flex;
   align-items: center;
   gap: 12px;
+  margin-left: 16px; // Reducido para mejor separación
   
-  span {
-    font-size: 1.2em;
-    font-weight: 600;
-    margin-left: 0; // Quitamos el margen a la izquierda
-    color: $text-color;
+  .logo-text {
+    font-size: 1.5rem;
+    font-weight: 800;
+    padding: 10px;
+    text-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    letter-spacing: -0.02em;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    letter-spacing: 0.01em;
-        cursor: pointer; // Añadir cursor pointer para indicar que es clicable
-
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+      border-radius: 8px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: -1;
+    }
+    
+    &:hover {
+      transform: translateY(-1px);
+      text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      
+      &::before {
+        opacity: 1;
+      }
+    }
   }
 }
 
@@ -85,170 +134,134 @@ $sidebar-collapsed-width: 70px; // Ancho del sidebar colapsado
   flex: 1 1 auto;
 }
 
-// Menú de navegación - similar al public-header
-.nav-links {
-  display: flex;
-  gap: 2rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  
-  li a {
-    text-decoration: none;
-    color: $text-color;
-    font-weight: 500;
-    font-size: 0.95rem;
-    position: relative;
-    transition: color 0.2s ease;
-    letter-spacing: -0.01em;
-    
-    &::after {
-      content: '';
-      position: absolute;
-      width: 0;
-      height: 2px;
-      bottom: -5px;
-      left: 50%;
-      background-color: $primary-color;
-      transition: all 0.3s ease;
-      transform: translateX(-50%);
-    }
-    
-    &:hover, &.active {
-      color: $primary-color;
-      
-      &::after {
-        width: 100%;
-      }
-    }
-  }
-}
-
-// Estilos para los botones
-.btn {
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
+// Nombre de usuario
+.user-name {
   font-weight: 600;
-  text-decoration: none;
-  text-align: center;
-  transition: all 0.2s ease;
   font-size: 0.95rem;
-  letter-spacing: -0.01em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  margin-right: 20px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
   
-  &.btn-secondary {
-    background-color: rgba($primary-color, 0.1);
-    color: $primary-color;
-    
-    &:hover {
-      background-color: rgba($primary-color, 0.15);
-      transform: translateY(-1px);
-    }
+  @media (max-width: 768px) {
+    display: none;
   }
 }
 
-// Botón del menú hamburguesa - estilo unificado
-.menu-button {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px; // Bordes redondeados consistentes
+// Botón de cerrar sesión
+.logout-button {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+  position: relative;
+  overflow: hidden;
+  margin-right: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: $secondary-color;
-  transition: all 0.2s ease;
-  background-color: transparent;
-  margin: 0 6px; // Añadido margen horizontal para espaciado consistente
   
-  &:hover {
-    background-color: $primary-light;
-    color: $primary-color;
-    transform: none;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
   }
   
-  &:active {
-    background-color: rgba($primary-color, 0.2);
+  &:hover {
+    background-color: rgba(255, 87, 87, 0.8);
+    border-color: rgba(255, 87, 87, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    
+    &::before {
+      left: 100%;
+    }
   }
   
   mat-icon {
-    font-size: 24px;
-    width: 24px;
-    height: 24px;
-    line-height: 24px;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 
-// Asegurar que los estilos generales de botones no afecten al botón de menú
-button.menu-button.mat-icon-button {
-  // Anular cualquier padding que pueda venir de otros estilos
-  padding: 0;
-  
-  // Asegurar que los estilos de :hover de .btn no se apliquen
-  &:hover {
-    background-color: $primary-light;
-    color: $primary-color;
-    transform: none;
-  }
-}
-
-// Estilos para el nombre de usuario
-.user-name {
-  font-weight: 600;
-  font-size: 0.9rem;
-  margin-right: 16px;
-  color: $text-color;
-  letter-spacing: 0.02em;
-  
-  @media (max-width: 768px) {
-    display: none; // Ocultar en móviles
-  }
-}
-
-// Estilos para el botón de cerrar sesión
-.logout-button {
-  margin-right: 12px;
-  color: $secondary-color;
-  
-  &:hover {
-    color: $primary-color;
-    background-color: $primary-light;
-  }
-}
-
-// Actualizar estilos del contenedor de perfil
+// Contenedor de perfil
 .profile-container {
-  padding-right: 1.5rem;
+  display: flex;
+  align-items: center;
 }
 
 // Botón de perfil
 .profile-button {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   padding: 0;
   border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
   overflow: hidden;
-  border: 2px solid rgba($primary-color, 0.2);
-  transition: all 0.2s ease;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(107, 79, 187, 0.1);
+    border-radius: 50%;
+    transition: all 0.4s ease;
+    transform: translate(-50%, -50%);
+  }
   
   &:hover {
-    transform: translateY(-2px);
-    border-color: $primary-color;
-    box-shadow: 0 4px 8px rgba($primary-color, 0.2);
+    transform: scale(1.08);
+    border-color: rgba(255, 255, 255, 0.6);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    
+    &::after {
+      width: 100%;
+      height: 100%;
+    }
   }
   
   .profile-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
   }
   
   .profile-icon {
-    font-size: 36px !important;
-    width: 36px !important;
-    height: 36px !important;
-    line-height: 36px !important;
-    color: $secondary-color;
+    font-size: 24px !important;
+    width: 24px !important;
+    height: 24px !important;
+    line-height: 24px !important;
+    color: $primary-color;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
 }
 
@@ -269,11 +282,15 @@ button.menu-button.mat-icon-button {
   .mat-icon {
     margin-right: 0;
     color: $secondary-color;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   span {
     color: $text-color;
     font-weight: 500;
+    line-height: 1;
   }
   
   &:hover {
@@ -282,41 +299,6 @@ button.menu-button.mat-icon-button {
     .mat-icon, span {
       color: $primary-color;
     }
-  }
-}
-
-.profile-button {
-  width: 40px;
-  height: 40px;
-  padding: 0;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 2px solid rgba($primary-color, 0.2);
-  transition: all 0.2s ease;
-  cursor: pointer; // Añadir cursor pointer para indicar que es clickeable
-  
-  &:hover {
-    transform: translateY(-2px);
-    border-color: $primary-color;
-    box-shadow: 0 4px 8px rgba($primary-color, 0.2);
-  }
-  
-  &:active {
-    transform: translateY(0);
-  }
-  
-  .profile-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  .profile-icon {
-    font-size: 36px !important;
-    width: 36px !important;
-    height: 36px !important;
-    line-height: 36px !important;
-    color: $secondary-color;
   }
 }
 
@@ -339,10 +321,15 @@ button.menu-button.mat-icon-button {
 // Media queries para responsividad
 @media (max-width: 768px) {
   .app-header {
-    padding: 0 1rem;
+    padding: 0 1.5rem; // Aumentado también en móvil
   }
   
-  .logo-container span {
-    font-size: 1rem;
+  .logo-container .logo-text {
+    font-size: 1.2rem;
+  }
+  
+  .menu-button-container {
+    margin-left: -24px;
+    padding-left: 24px;
   }
 }

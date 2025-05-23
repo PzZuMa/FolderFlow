@@ -189,16 +189,24 @@ export class DocumentExplorerComponent implements OnInit {
       )
       .subscribe({
         next: (event) => {
-          if (typeof event === 'number') {
-            // Actualizar el progreso de la subida
-            upload.progress = event;
-            this.cdRef.markForCheck();
-          } 
-          else if (event instanceof HttpResponse) {
-            // Subida completada, confirmar en backend
-            this.confirmUploadBackend(upload);
-          }
-        },
+      upload.status = 'success';
+      upload.progress = 100;
+
+      // Confirmar la subida en el backend y actualizar la lista de documentos
+      this.confirmUploadBackend(upload);
+
+      // 🔧 Forzar detección de cambios para actualizar la vista
+      this.cdRef.detectChanges();
+
+      // Remover el upload después de un delay
+      setTimeout(() => {
+        const index = this.uploads.indexOf(upload);
+        if (index > -1) {
+          this.uploads.splice(index, 1);
+          this.cdRef.markForCheck();
+        }
+      }, 2000);
+    },
         error: (err) => {
           // Este error solo ocurre si hay un problema no capturado en los catchError anteriores
           console.error('Unexpected error in upload process:', err);

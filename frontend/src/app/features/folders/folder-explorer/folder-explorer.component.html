@@ -125,6 +125,9 @@
             matTooltip="Mover carpeta">
           <mat-icon>drive_file_move</mat-icon>
         </button>
+        <button mat-icon-button class="action-button edit-btn" (click)="openEditFolderNameDialog(folder, $event)" matTooltip="Editar nombre">
+          <mat-icon>edit</mat-icon>
+        </button>
         <button mat-icon-button class="action-button delete-btn" (click)="openDeleteConfirmation(folder, 'folder'); $event.stopPropagation()" 
             matTooltip="Eliminar">
           <mat-icon>delete_outline</mat-icon>
@@ -219,6 +222,9 @@
                     (click)="openMoveDialog(folder, 'folder'); $event.stopPropagation()"
                     matTooltip="Mover carpeta">
               <mat-icon>drive_file_move</mat-icon>
+            </button>
+            <button mat-icon-button class="action-button edit-btn" (click)="openEditFolderNameDialog(folder, $event)" matTooltip="Editar nombre">
+              <mat-icon>edit</mat-icon>
             </button>
             <button mat-icon-button class="action-button delete-btn" 
                     (click)="openDeleteConfirmation(folder, 'folder'); $event.stopPropagation()"

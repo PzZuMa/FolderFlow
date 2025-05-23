@@ -149,4 +149,8 @@ getDocumentById(documentId: string): Observable<Document> {
   // URL corregida - quitamos "/documents" duplicado
   return this.http.get<Document>(`${this.apiUrl}/${documentId}`);
 }
+
+updateDocumentName(documentId: string, newName: string): Observable<Document> {
+  return this.http.patch<Document>(`${this.apiUrl}/${documentId}/name`, { name: newName });
+}
 }

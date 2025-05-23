@@ -130,28 +130,82 @@ export class AccountComponent implements OnInit, OnDestroy {
 
   // Método para manejar la selección de archivos
   onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      this.imageErrorMessage = null;
-      this.selectedFile = input.files[0];
-      
-      // Validar tamaño y tipo de archivo
-      if (this.selectedFile.size > 5000000) { // 5MB máximo
-        this.imageErrorMessage = 'La imagen debe ser menor a 5MB';
-        this.selectedFile = null;
-        return;
-      }
-      
-      if (!this.selectedFile.type.match(/image\/(jpeg|jpg|png|gif)/)) {
-        this.imageErrorMessage = 'El formato debe ser JPG, PNG o GIF';
-        this.selectedFile = null;
-        return;
-      }
-      
-      // Crear vista previa
-      this.createImagePreview();
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files.length > 0) {
+    this.imageErrorMessage = null;
+    this.selectedFile = input.files[0];
+    
+    // Validar tamaño y tipo de archivo
+    if (this.selectedFile.size > 5000000) { // 5MB máximo
+      this.imageErrorMessage = 'La imagen debe ser menor a 5MB';
+      this.selectedFile = null;
+      return;
     }
+    
+    if (!this.selectedFile.type.match(/image\/(jpeg|jpg|png|gif)/)) {
+      this.imageErrorMessage = 'El formato debe ser JPG, PNG o GIF';
+      this.selectedFile = null;
+      return;
+    }
+    
+    // Redimensionar la imagen si es muy grande
+    this.resizeAndPreview(this.selectedFile);
   }
+}
+
+private resizeAndPreview(file: File): void {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  const img = new Image();
+  
+  img.onload = () => {
+    // Configurar tamaño máximo (ej: 800x800px)
+    const maxSize = 800;
+    let { width, height } = img;
+    
+    // Calcular nuevas dimensiones manteniendo aspect ratio
+    if (width > height) {
+      if (width > maxSize) {
+        height = (height * maxSize) / width;
+        width = maxSize;
+      }
+    } else {
+      if (height > maxSize) {
+        width = (width * maxSize) / height;
+        height = maxSize;
+      }
+    }
+    
+    // Configurar canvas
+    canvas.width = width;
+    canvas.height = height;
+    
+    // Dibujar imagen redimensionada
+    ctx?.drawImage(img, 0, 0, width, height);
+    
+    // Convertir a blob con calidad optimizada
+    canvas.toBlob((blob) => {
+      if (blob) {
+        // Crear nuevo File con la imagen optimizada
+        const optimizedFile = new File([blob], file.name, {
+          type: 'image/jpeg',
+          lastModified: Date.now()
+        });
+        
+        // Verificar que el archivo optimizado no supere los límites
+        if (optimizedFile.size > 2000000) { // 2MB después de optimización
+          this.imageErrorMessage = 'La imagen es demasiado grande incluso después de optimizarla';
+          return;
+        }
+        
+        this.selectedFile = optimizedFile;
+        this.createImagePreview();
+      }
+    }, 'image/jpeg', 0.8); // 80% de calidad
+  };
+  
+  img.src = URL.createObjectURL(file);
+}
   
   // Crear vista previa de la imagen
   private createImagePreview(): void {

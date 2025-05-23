@@ -164,13 +164,29 @@ export class HomeComponent implements OnInit {
     this.destroy$.next();
     this.destroy$.complete();
   }
+
+  /**
+   * Genera un mensaje de bienvenida basado en la hora del día
+   */
+  getWelcomeMessage(): string {
+    const now = new Date();
+    const hour = now.getHours();
+
+    if (hour >= 5 && hour < 14) {
+      return 'Buenos días';
+    } else if (hour >= 14 && hour < 21) {
+      return 'Buenas tardes';
+    } else {
+      return 'Buenas noches';
+    }
+  }
   
   // Modificar loadRecentDocuments para cargar información de carpetas
   loadRecentDocuments(): void {
     this.isLoading = true;
     this.cdRef.markForCheck();
     
-    this.documentService.getRecentDocuments(5).pipe(
+    this.documentService.getRecentDocuments(4).pipe(
       takeUntil(this.destroy$),
       switchMap(docs => {
         this.recentDocuments = docs;
@@ -208,7 +224,7 @@ export class HomeComponent implements OnInit {
     });
     
     // Cargar favoritos
-    this.documentService.getFavoriteDocuments(5).pipe(
+    this.documentService.getFavoriteDocuments(4).pipe(
       takeUntil(this.destroy$),
       switchMap(docs => {
         this.favoriteDocuments = docs;

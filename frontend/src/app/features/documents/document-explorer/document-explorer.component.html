@@ -161,16 +161,18 @@
       <tr class="table-header">
         <th class="icon-header"></th>
         <th class="title-header">Nombre del documento</th>
+        <th class="folder-header">Carpeta</th>
         <th class="size-header">Tamaño</th>
         <th class="date-header">Fecha</th>
         <th class="actions-header">Acciones</th>
       </tr>
     </thead>
     <tbody>
-<tr *ngFor="let doc of documents" 
-    class="document-row" 
-    [class.favorite-row]="doc.isFavorite" 
-    (click)="openDocumentViewer(doc)">        <td class="icon-cell">
+      <tr *ngFor="let doc of documents" 
+          class="document-row" 
+          [class.favorite-row]="doc.isFavorite" 
+          (click)="openDocumentViewer(doc)">
+        <td class="icon-cell">
           <div class="document-list-icon" [ngStyle]="{'color': getColorForMimeType(doc.mimeType), 'background-color': 'rgba(' + getColorForMimeType(doc.mimeType) + ', 0.15)'}">
             <mat-icon>{{ getIconForMimeType(doc.mimeType) }}</mat-icon>
           </div>
@@ -180,6 +182,18 @@
             {{ doc.name }}
             <mat-icon *ngIf="doc.isFavorite" class="favorite-indicator">star</mat-icon>
           </div>
+        </td>
+        <td class="folder-cell">
+          <div class="folder-info" *ngIf="doc.folderId; else rootFolder">
+            <mat-icon>folder</mat-icon>
+            <span>{{ getFolderName(doc.folderId) }}</span>
+          </div>
+          <ng-template #rootFolder>
+            <div class="folder-info root-folder">
+              <mat-icon>home</mat-icon>
+              <span>Raíz</span>
+            </div>
+          </ng-template>
         </td>
         <td class="size-cell">{{ formatBytes(doc.size) }}</td>
         <td class="date-cell">{{ doc.updatedAt | date:'dd MMM, yyyy' }}</td>

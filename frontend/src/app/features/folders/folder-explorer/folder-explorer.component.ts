@@ -25,6 +25,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 
 import { UserPreferencesService } from '../../../core/services/preferences.service';
+import { RenameFolderDialogComponent, RenameFolderDialogData } from '../../../shared/components/rename-folder-dialog/rename-folder-dialog.component';
 
 interface FolderWithCounts extends Folder {
   fileCount?: number;
@@ -91,81 +92,88 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
   }
 
   loadContents(folderId: string | null): void {
-    this.isLoading = true;
-    this.currentFolderId = folderId;
-    this.uploads = [];
-    this.folders = [];
-    this.documents = [];
-    // No reseteamos breadcrumbs aquí, esperamos la respuesta del servicio.
-    this.cdRef.markForCheck();
+  this.isLoading = true;
+  this.currentFolderId = folderId;
+  this.uploads = [];
+  this.folders = [];
+  this.documents = [];
+  // No reseteamos breadcrumbs aquí, esperamos la respuesta del servicio.
+  this.cdRef.markForCheck();
 
-    forkJoin({
-      folders: this.folderService.getFolders(folderId),
-      documents: this.documentService.getDocuments(folderId),
-      breadcrumbs: this.folderService.getBreadcrumbs(folderId) // Confiamos en este servicio para el orden
-    }).pipe(
-      takeUntil(this.destroy$),
-      catchError(error => {
-        console.error('Error loading contents:', error);
-        this.showError('Error al cargar el contenido.');
-        // Estado de error para breadcrumbs
-        this.breadcrumbs = [{ _id: null as any, name: 'Error', parentId: null, ownerId: '' }];
+  forkJoin({
+    folders: this.folderService.getFolders(folderId),
+    documents: this.documentService.getDocuments(folderId),
+    breadcrumbs: this.folderService.getBreadcrumbs(folderId) // Confiamos en este servicio para el orden
+  }).pipe(
+    takeUntil(this.destroy$),
+    catchError(error => {
+      console.error('Error loading contents:', error);
+      this.showError('Error al cargar el contenido.');
+      // Estado de error para breadcrumbs
+      this.breadcrumbs = [{ _id: null as any, name: 'Error', parentId: null, ownerId: '' }];
+      this.parentOfCurrentFolderId = null;
+      return of({ folders: [], documents: [], breadcrumbs: this.breadcrumbs });
+    }),
+    finalize(() => {
+      this.isLoading = false;
+      this.cdRef.markForCheck();
+    })
+  ).subscribe(result => {
+    this.folders = result.folders as FolderWithCounts[];
+    
+    // Filtrar documentos que tienen carpeta asignada
+    this.documents = result.documents.filter(document => 
+      document.folderId !== null && 
+      document.folderId !== undefined && 
+      document.folderId !== ''
+    );
+    
+    this.loadFolderStats();
+
+    if (result.breadcrumbs && result.breadcrumbs.length > 0) {
+      // ***** CAMBIO IMPORTANTE: Asignar directamente, sin invertir *****
+      this.breadcrumbs = result.breadcrumbs;
+
+      // Asegurar que la raíz siempre tenga el nombre correcto si es el primer elemento
+      // y si su ID es reconocido como raíz por isRootId.
+      // Esto es importante si el servicio devuelve un nombre genérico para la raíz
+      // o si quieres forzar un nombre específico.
+      if (this.breadcrumbs.length > 0 && this.isRootId(this.breadcrumbs[0]?._id)) {
+        this.breadcrumbs[0].name = 'Mis Carpetas'; // Nombre deseado para la raíz
+      }
+
+      // Determinar el ID del padre para el botón "atrás"
+      // Esta lógica ahora debería funcionar correctamente si los breadcrumbs están en orden.
+      if (this.currentFolderId === null) { // Estamos en la raíz (el ID de la carpeta actual es null)
         this.parentOfCurrentFolderId = null;
-        return of({ folders: [], documents: [], breadcrumbs: this.breadcrumbs });
-      }),
-      finalize(() => {
-        this.isLoading = false;
-        this.cdRef.markForCheck();
-      })
-    ).subscribe(result => {
-      this.folders = result.folders as FolderWithCounts[];
-      this.documents = result.documents;
-      this.loadFolderStats();
-
-      if (result.breadcrumbs && result.breadcrumbs.length > 0) {
-        // ***** CAMBIO IMPORTANTE: Asignar directamente, sin invertir *****
-        this.breadcrumbs = result.breadcrumbs;
-
-        // Asegurar que la raíz siempre tenga el nombre correcto si es el primer elemento
-        // y si su ID es reconocido como raíz por isRootId.
-        // Esto es importante si el servicio devuelve un nombre genérico para la raíz
-        // o si quieres forzar un nombre específico.
-        if (this.breadcrumbs.length > 0 && this.isRootId(this.breadcrumbs[0]?._id)) {
-          this.breadcrumbs[0].name = 'Mis Carpetas'; // Nombre deseado para la raíz
-        }
-
-        // Determinar el ID del padre para el botón "atrás"
-        // Esta lógica ahora debería funcionar correctamente si los breadcrumbs están en orden.
-        if (this.currentFolderId === null) { // Estamos en la raíz (el ID de la carpeta actual es null)
-          this.parentOfCurrentFolderId = null;
-        } else if (this.breadcrumbs.length > 1) {
-          // Si hay más de un breadcrumb, el padre es el penúltimo
-          // El array es [Raíz, ..., Padre, Actual]
-          // El índice del padre es breadcrumbs.length - 2
-          const parentIndex = this.breadcrumbs.length - 2;
-          const parentCrumb = this.breadcrumbs[parentIndex];
-          this.parentOfCurrentFolderId = this.isRootId(parentCrumb._id) ? null : parentCrumb._id;
-        } else {
-          // Estamos en una carpeta (currentFolderId no es null), pero solo hay un breadcrumb.
-          // Esto implicaría que es una carpeta de primer nivel, y su padre es la raíz.
-          this.parentOfCurrentFolderId = null;
-        }
+      } else if (this.breadcrumbs.length > 1) {
+        // Si hay más de un breadcrumb, el padre es el penúltimo
+        // El array es [Raíz, ..., Padre, Actual]
+        // El índice del padre es breadcrumbs.length - 2
+        const parentIndex = this.breadcrumbs.length - 2;
+        const parentCrumb = this.breadcrumbs[parentIndex];
+        this.parentOfCurrentFolderId = this.isRootId(parentCrumb._id) ? null : parentCrumb._id;
       } else {
-        // Fallback si el servicio de breadcrumbs no devuelve nada
-        this.breadcrumbs = [{ _id: null as any, name: 'Mis Carpetas', parentId: null, ownerId: '' }];
+        // Estamos en una carpeta (currentFolderId no es null), pero solo hay un breadcrumb.
+        // Esto implicaría que es una carpeta de primer nivel, y su padre es la raíz.
         this.parentOfCurrentFolderId = null;
       }
-      
-      console.debug('Breadcrumbs (Componente):', this.breadcrumbs.map(b => `${b.name} (${b._id || 'root'})`).join(' > '));
-      console.debug('Parent ID para "Atrás":', this.parentOfCurrentFolderId);
-      this.cdRef.markForCheck();
+    } else {
+      // Fallback si el servicio de breadcrumbs no devuelve nada
+      this.breadcrumbs = [{ _id: null as any, name: 'Mis Carpetas', parentId: null, ownerId: '' }];
+      this.parentOfCurrentFolderId = null;
+    }
+    
+    console.debug('Breadcrumbs (Componente):', this.breadcrumbs.map(b => `${b.name} (${b._id || 'root'})`).join(' > '));
+    console.debug('Parent ID para "Atrás":', this.parentOfCurrentFolderId);
+    this.cdRef.markForCheck();
 
-      this.originalFolders = [...this.folders];
-      this.originalDocuments = [...this.documents];
-      this.filteredFolders = [...this.folders];
-      this.filteredDocuments = [...this.documents];
-    });
-  }
+    this.originalFolders = [...this.folders];
+    this.originalDocuments = [...this.documents];
+    this.filteredFolders = [...this.folders];
+    this.filteredDocuments = [...this.documents];
+  });
+}
 
   navigateToFolder(folderId: string | null): void { // Permitir null para la raíz
       this.loadContents(folderId);
@@ -288,6 +296,67 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
       this.cdRef.markForCheck();
       this.startUploadProcess(uploadStatus);
     });
+  }
+
+  openEditFolderNameDialog(folder: Folder, event: Event): void {
+    event.stopPropagation();
+    
+    const dialogData: RenameFolderDialogData = {
+      folderName: folder.name,
+      folderId: folder._id
+    };
+
+    const dialogRef = this.dialog.open(RenameFolderDialogComponent, {
+      width: '500px',
+      data: dialogData,
+      disableClose: true
+    });
+
+    dialogRef.afterClosed().pipe(takeUntil(this.destroy$)).subscribe(newName => {
+      if (newName && newName !== folder.name) {
+        this.updateFolderName(folder, newName);
+      }
+    });
+  }
+
+  private updateFolderName(folder: Folder, newName: string): void {
+    this.isLoading = true;
+    this.cdRef.markForCheck();
+
+    this.folderService.updateFolderName(folder._id, newName)
+      .pipe(
+        takeUntil(this.destroy$),
+        catchError(err => {
+          console.error('Error updating folder name:', err);
+          const message = err.error?.message || 'Error al actualizar el nombre de la carpeta';
+          this.showError(message);
+          return EMPTY;
+        }),
+        finalize(() => {
+          this.isLoading = false;
+          this.cdRef.markForCheck();
+        })
+      )
+      .subscribe(updatedFolder => {
+        // Actualizar la carpeta en las listas
+        const originalIndex = this.originalFolders.findIndex(f => f._id === updatedFolder._id);
+        if (originalIndex !== -1) {
+          this.originalFolders[originalIndex] = { ...this.originalFolders[originalIndex], ...updatedFolder };
+        }
+
+        const index = this.folders.findIndex(f => f._id === updatedFolder._id);
+        if (index !== -1) {
+          this.folders[index] = { ...this.folders[index], ...updatedFolder };
+        }
+
+        const filteredIndex = this.filteredFolders.findIndex(f => f._id === updatedFolder._id);
+        if (filteredIndex !== -1) {
+          this.filteredFolders[filteredIndex] = { ...this.filteredFolders[filteredIndex], ...updatedFolder };
+        }
+
+        this.showSuccess(`Carpeta renombrada a "${updatedFolder.name}"`);
+        this.cdRef.markForCheck();
+      });
   }
 
   private startUploadProcess(upload: UploadStatus): void {
@@ -611,11 +680,14 @@ filterItems(event: Event): void {
     this.folders = this.originalFolders.filter(folder => 
       folder.name.toLowerCase().includes(searchTerm)
     );
+    // Mantener el filtro de documentos con carpeta asignada
     this.documents = this.originalDocuments.filter(document => 
-      document.name.toLowerCase().includes(searchTerm)
+      document.name.toLowerCase().includes(searchTerm) &&
+      document.folderId !== null && 
+      document.folderId !== undefined && 
+      document.folderId !== ''
     );
   }
-  
   this.cdRef.markForCheck();
 }
 

@@ -116,4 +116,12 @@ getFolderStats(folderId?: string | null): Observable<any> {
   return this.http.post<Folder[]>(`${this.apiUrl}/by-ids`, { folderIds });
 }
 
+/**
+ * Actualiza el nombre de una carpeta
+ */
+updateFolderName(folderId: string, newName: string): Observable<Folder> {
+  return this.http.patch<Folder>(`${this.apiUrl}/${folderId}/name`, { name: newName });
 }
+
+}
+

@@ -15,7 +15,6 @@ $folder-color: #ffca28;
 $folder-hover: #f5b300;
 $folder-light: rgba(255, 202, 40, 0.1);
 
-
 // Contenedor General
 .explorer-container {
   display: flex;
@@ -25,6 +24,26 @@ $folder-light: rgba(255, 202, 40, 0.1);
   position: relative;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   overflow: auto;
+  scroll-behavior: smooth; // 🔧 Scroll suave
+  
+  // 🔧 Mejorar el scrollbar en navegadores webkit
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    
+    &:hover {
+      background: rgba(0, 0, 0, 0.3);
+    }
+  }
 }
 
 // Barra de progreso global
@@ -259,11 +278,12 @@ $folder-light: rgba(255, 202, 40, 0.1);
   }
 }
 
-// Área de contenido principal
+// Área de contenido principal - 🔧 MODIFICADA PARA AÑADIR ESPACIADO INFERIOR
 .content-area {
   flex: 1;
-  padding: 0 24px 24px;
+  padding: 0 24px 48px; // 🔧 Aumentado el padding inferior de 24px a 48px
   overflow: visible;
+  min-height: 0;
 }
 
 // Filtros y Búsqueda - Mejorado
@@ -375,59 +395,84 @@ $folder-light: rgba(255, 202, 40, 0.1);
   gap: 24px;
 }
 
-// Tarjeta de documento
-
+// Vista de Lista - 🔧 MODIFICADA PARA AÑADIR ESPACIADO INFERIOR
 .list-container {
   background-color: white;
   border-radius: 16px;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
+  overflow: visible;
+  min-height: auto;
+  padding-bottom: 24px; // 🔧 Añadir padding inferior para separación
+  margin-bottom: 24px; // 🔧 Añadir margen inferior
   
   .document-table {
     width: 100%;
-    border-collapse: separate; // Cambiar de collapse a separate para mejor control de espaciado
-    border-spacing: 0; // Inicialmente sin espacio, luego lo controlamos con padding
+    border-collapse: separate;
+    border-spacing: 0;
     table-layout: fixed;
+    min-height: auto;
+    margin-bottom: 0; // 🔧 Asegurar que no hay margen inferior
     
     // Estilos para la cabecera de la tabla
     .table-header {
       border-bottom: 2px solid rgba(0, 0, 0, 0.08);
       background-color: rgba($bg-page, 0.6);
+      position: sticky;
+      top: 0;
+      z-index: 10;
       
       th {
-        padding: 16px; // Aumentado el padding para mejor espaciado
+        padding: 16px;
         text-align: left;
         font-weight: 600;
         font-size: 0.85rem;
         color: $text-muted;
         text-transform: uppercase;
         letter-spacing: 0.5px;
+        background-color: inherit;
         
         &.icon-header {
-          width: 60px; // Aumentado de 40px a 60px
+          width: 60px;
           padding-left: 20px;
         }
         
         &.title-header {
-          width: 50%; // Asignado porcentaje para mejor responsividad
+          width: 35%;
           min-width: 200px;
-          padding-left: 0; // Ajustar margen con contenido
+          padding-left: 0;
+        }
+        
+        &.folder-header {
+          width: 20%;
+          min-width: 120px;
+          text-align: center;
         }
         
         &.size-header {
-          width: 100px; // Aumentado de 80px a 100px
+          width: 100px;
           text-align: center;
         }
         
         &.date-header {
-          width: 150px; // Aumentado de 120px a 150px
+          width: 150px;
           text-align: center;
         }
         
         &.actions-header {
-          width: 140px; // Aumentado de 120px a 140px
+          width: 140px;
           text-align: center;
           padding-right: 20px;
+        }
+      }
+    }
+
+    tbody {
+      background-color: white;
+      
+      // 🔧 Añadir separación después de la última fila
+      tr:last-child {
+        .document-row {
+          border-bottom: none; // Quitar el borde inferior de la última fila
         }
       }
     }
@@ -436,66 +481,56 @@ $folder-light: rgba(255, 202, 40, 0.1);
       border-bottom: 1px solid rgba(0, 0, 0, 0.04);
       transition: background-color 0.2s ease;
       cursor: pointer;
-      height: 60px; // Aumentado de 50px a 60px para más espacio vertical
+      height: auto;
+      min-height: 60px;
 
       &.favorite-row {
-      background-color: rgba($folder-color, 0.05);
-      
+        background-color: rgba($folder-color, 0.05);
+        
         &:hover {
           background-color: rgba($folder-color, 0.1);
         }
-      
+        
         .document-list-title {
           font-weight: 600;
         }
-      
-      // Pequeña insignia de estrella al inicio de la fila
-      // Eliminar la línea amarilla
-    // .title-cell::before {
-    //   content: '';
-    //   display: block;
-    //   width: 4px;
-    //   height: 80%;
-    //   background-color: $folder-color;
-    //   position: absolute;
-    //   left: 0;
-    //   top: 10%;
-    //   border-radius: 0 2px 2px 0;
-    // }
-    }
+      }
       
       &:hover {
         background-color: $primary-light;
       }
       
       td {
-        padding: 8px 16px; // Aumentado el padding para más espacio
+        padding: 12px 16px;
         vertical-align: middle;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
       }
       
       .icon-cell {
-        width: 60px; // Aumentado para consistencia con el encabezado
+        width: 60px;
         padding-left: 20px;
       }
       
       .title-cell {
-        width: 50%; // Para mantener consistencia con encabezado
+        width: 35%;
         min-width: 200px;
-        padding-left: 0; // Ajustar para alinear con el encabezado
+        padding-left: 0;
         
         .document-title {
           display: flex;
           align-items: center;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          font-size: 1rem; // Aumentado ligeramente el tamaño para mejor legibilidad
+          white-space: normal;
+          overflow: visible;
+          text-overflow: clip;
+          font-size: 1rem;
           font-weight: 500;
           color: $text-color;
+          line-height: 1.4;
           
           .favorite-indicator {
             flex-shrink: 0;
-            font-size: 16px; // Ligeramente más grande
+            font-size: 16px;
             height: 16px;
             width: 16px;
             margin-left: 8px;
@@ -504,35 +539,65 @@ $folder-light: rgba(255, 202, 40, 0.1);
         }
       }
       
+      .folder-cell {
+        width: 20%;
+        min-width: 120px;
+        
+        .folder-info {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 0.85rem;
+          color: $text-muted;
+          white-space: normal;
+          overflow: visible;
+          text-overflow: clip;
+          
+          mat-icon {
+            font-size: 16px;
+            height: 16px;
+            width: 16px;
+            margin-right: 6px;
+            color: $folder-color;
+            flex-shrink: 0;
+          }
+          
+          &.root-folder {
+            mat-icon {
+              color: $primary-color;
+            }
+          }
+        }
+      }
+      
       .size-cell {
-        width: 100px; // Consistencia con encabezado
+        width: 100px;
         color: $text-muted;
-        font-size: 0.85rem; // Ligeramente más grande
+        font-size: 0.85rem;
         white-space: nowrap;
-        text-align: center; // Centrar para mejor apariencia
+        text-align: center;
       }
       
       .date-cell {
-        width: 150px; // Consistencia con encabezado
+        width: 150px;
         color: $text-muted;
-        font-size: 0.85rem; // Ligeramente más grande
+        font-size: 0.85rem;
         white-space: nowrap;
         text-align: center;
       }
       
       .actions-cell {
-        width: 140px; // Consistencia con encabezado
+        width: 140px;
         text-align: right;
         padding-right: 20px;
         
         .document-actions {
           display: flex;
           justify-content: center;
-          gap: 8px; // Aumentado de 4px a 8px para más separación entre botones
+          gap: 8px;
           
-          // Estilos consistentes con la vista de cuadrícula
           .action-button {
-            width: 32px; // Aumentado de 28px a 32px
+            width: 32px;
             height: 32px;
             min-width: 32px;
             border-radius: 8px;
@@ -546,6 +611,15 @@ $folder-light: rgba(255, 202, 40, 0.1);
             align-items: center;
             justify-content: center;
             
+            mat-icon {
+              font-size: 18px;
+              height: 18px;
+              width: 18px;
+              line-height: 18px;
+              transition: transform 0.2s ease;
+              margin: 0;
+            }
+
             &:focus {
               outline: none;
               box-shadow: 0 0 0 2px rgba($primary-color, 0.3);
@@ -569,25 +643,15 @@ $folder-light: rgba(255, 202, 40, 0.1);
               animation: ripple 0.6s ease-out;
             }
             
-            mat-icon {
-              font-size: 18px; // Aumentado de 16px a 18px
-              height: 18px;
-              width: 18px;
-              line-height: 18px;
-              transition: transform 0.2s ease;
-              margin: 0;
-            }
-            
             &:hover {
               transform: translateY(-3px);
               box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             }
           }
           
-          // Estilos específicos para cada tipo de botón (mejorando visibilidad de colores)
           .favorite-btn {
             mat-icon {
-              color: $folder-color; // Color amarillo para el icono de estrella
+              color: $folder-color;
             }
             
             &:hover {
@@ -620,359 +684,38 @@ $folder-light: rgba(255, 202, 40, 0.1);
   }
   
   .document-list-icon {
-    width: 36px; // Aumentado de 28px a 36px
+    width: 36px;
     height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 6px; // Ligeramente más redondeado
+    border-radius: 6px;
     
     mat-icon {
-      font-size: 20px; // Aumentado para mejor visibilidad
+      font-size: 20px;
       height: 20px;
       width: 20px;
     }
   }
-}
-
-// Ajustes responsivos para la tabla (mantenidos pero ajustados para nuevas medidas)
-@media (max-width: 768px) {
-  .list-container {
-    .document-table {
-      .table-header {
-        .size-header, .date-header {
-          display: none; // Ocultar columnas en pantallas pequeñas
-        }
-        
-        .actions-header {
-          width: 120px; // Reducir en móvil
-        }
-      }
-      
-      .document-row {
-        .size-cell, .date-cell {
-          display: none; // Ocultar columnas en pantallas pequeñas
-        }
-        
-        .title-cell {
-          max-width: 70%; // Más espacio para el título en móvil
-        }
-        
-        .actions-cell {
-          width: 120px; // Reducir en móvil
-        }
-      }
-    }
+  
+  // 🔧 Añadir un footer visual opcional para mayor separación
+  &::after {
+    content: '';
+    display: block;
+    height: 8px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.02), transparent);
+    border-radius: 0 0 16px 16px;
   }
 }
 
-.empty-state-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 48px 20px;
-  text-align: center;
-  max-width: 500px;
-  margin: 0 auto;
-  
-  .empty-icon-container {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background-color: rgba($primary-color, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 24px;
-    
-    mat-icon {
-      padding: 0;
-      margin: 0;
-      font-size: 40px;
-      height: 40px;
-      width: 40px;
-      color: $primary-color;
-    }
-    
-    // Corregir el estilo específico para la vista de favoritos vacía
-    &.favorites-empty {
-      background-color: rgba($folder-color, 0.08); // Color de fondo más claro, casi blanco/amarillo
-      
-      mat-icon {
-        color: $folder-color; // Amarillo para la estrella
-      }
-    }
-  }
-  
-  h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: $text-color;
-    margin: 0 0 12px;
-  }
-  
-  p {
-    color: $text-muted;
-    margin: 0 0 28px;
-    font-size: 1rem;
-    max-width: 380px;
-    line-height: 1.5;
-  }
-  
-  button {
-    min-width: 180px;
-    height: 48px;
-    font-weight: 500;
-    border-radius: 24px;
-  
-    &.secondary-btn {
-      margin-top: 16px;
-    }
-  }
-}
-
-.empty-list {
-  background-color: white;
-  border-radius: 16px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
-  min-height: 400px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  
-  mat-icon {
-    font-size: 54px;
-    height: 54px;
-    width: 54px;
-    color: rgba($secondary-color, 0.5);
-    margin-bottom: 20px;
-  }
-  
-  p {
-    color: $text-muted;
-    margin-bottom: 24px;
-    font-size: 1.1rem;
-    font-weight: 500;
-  }
-  
-  button {
-    padding: 0 24px;
-    height: 44px;
-    font-weight: 600;
-    border-radius: 22px;
-    box-shadow: 0 4px 12px rgba($primary-color, 0.15);
-  }
-}
-  
-  .document-info {
-    flex: 1;
-    
-    .document-name {
-      font-size: 1rem;
-      font-weight: 600;
-      color: $text-color;
-      margin: 0 0 8px 0;
-      line-height: 1.4;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    
-    .document-meta {
-        display: flex;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 12px;
-        font-size: 0.85rem;
-        color: $text-muted;
-        
-        // Ajustar alineación específica para el tamaño del documento
-        .document-size {
-          display: flex;
-          align-items: center; // Alinea verticalmente el icono y el texto
-          
-          mat-icon {
-            font-size: 16px; // Reducir ligeramente el tamaño del icono
-            height: 16px;
-            width: 16px;
-            margin-right: 4px; // Espacio consistente entre el icono y el texto
-            display: flex; // Asegurar que el icono se comporte como flex
-            align-items: center;
-            justify-content: center;
-          }
-        }
-      }
-  }
-  
-
-// Estado vacío
-.empty-state {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 48px 0;
-  min-height: 400px;
-  
-  .empty-state-content {
-    text-align: center;
-    
-    .empty-icon {
-      font-size: 72px;
-      height: 72px;
-      width: 72px;
-      color: $primary-light;
-      background-color: white;
-      border-radius: 50%;
-      padding: 16px;
-      margin-bottom: 24px;
-      box-shadow: 0 12px 24px rgba(107, 79, 187, 0.15);
-    }
-    
-    h2 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: $text-color;
-      margin: 0 0 16px 0;
-    }
-    
-    p {
-      color: $text-muted;
-      margin: 0 0 24px 0;
-      font-size: 1rem;
-      max-width: 400px;
-    }
-    
-    .empty-state-action {
-      background-color: $primary-color;
-      color: white;
-      padding: 0 24px;
-      height: 48px;
-      border-radius: 12px;
-      font-weight: 600;
-      box-shadow: 0 4px 12px rgba(107, 79, 187, 0.15);
-      transition: all 0.3s ease;
-      
-      &:hover {
-        background-color: $primary-hover;
-        box-shadow: 0 6px 16px rgba(107, 79, 187, 0.25);
-        transform: translateY(-2px);
-      }
-      
-      mat-icon {
-        margin-right: 8px;
-      }
-    }
-  }
-}
-
-// Botón flotante para móvil
-.upload-fab {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  z-index: 100;
-  background-color: $primary-color;
-  box-shadow: 0 6px 16px rgba(107, 79, 187, 0.25);
-  display: none;
-  
-  &:hover {
-    background-color: $primary-hover;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(107, 79, 187, 0.3);
-  }
-}
-
-// Estilos del menú personalizado
-::ng-deep .custom-menu {
-  .mat-mdc-menu-item {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    
-    &.warn-action {
-      color: $error-color;
-      
-      .mat-icon {
-        color: $error-color;
-      }
-    }
-  }
-}
-
-// Responsive
-@media (max-width: 768px) {
-  .page-header {
-    padding: 16px 20px;
-    margin-bottom: 16px;
-    
-    .page-title {
-      h1 {
-        font-size: 1.5rem;
-      }
-    }
-  }
-  
-  .header-actions {
-    .upload-btn {
-      display: none;
-    }
-  }
-  
-  .content-area {
-    padding: 0 16px 16px;
-  }
-  
-  .upload-fab {
-    display: flex;
-  }
-  
-  .grid-container {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 16px;
-  }
-  
-  .upload-items-container {
-    grid-template-columns: 1fr;
-  }
-  
-  .document-list {
-    grid-template-columns: 1fr;
-  }
-  
-  .document-card {
-    .document-actions {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  .filters-container {
-    gap: 12px;
-    
-    .search-box {
-      width: 100%;
-      max-width: none;
-    }
-    
-    .filter-actions {
-      width: 100%;
-      justify-content: space-between;
-      
-      .filter-btn span {
-        display: none; // Ocultar texto en móvil, mostrar solo icono
-      }
-    }
-  }
-}
-
-// Nuevo estilo para el grid de documentos basado en home.component
+// Nuevo estilo para el grid de documentos basado en home.component - 🔧 MODIFICADO PARA AÑADIR ESPACIADO
 .document-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 20px;
   margin-top: 16px;
+  margin-bottom: 32px; // 🔧 Aumentado de 24px a 32px para más separación
+  padding-bottom: 16px; // 🔧 Añadir padding inferior adicional
   
   .document-card {
     display: flex;
@@ -984,10 +727,9 @@ $folder-light: rgba(255, 202, 40, 0.1);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
     transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
     position: relative;
-    padding: 0; // Quitar el padding predeterminado
-    cursor: pointer; // Añadir cursor pointer para indicar que es clicable
+    padding: 0;
+    cursor: pointer;
 
-    
     &:hover {
       transform: translateY(-8px);
       box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
@@ -1140,11 +882,9 @@ $folder-light: rgba(255, 202, 40, 0.1);
           &:hover {
             transform: translateY(-3px);
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-          
           }
         }
         
-        // Estilos específicos para cada tipo de botón
         .move-btn {
           mat-icon {
             color: $info-color;
@@ -1168,60 +908,20 @@ $folder-light: rgba(255, 202, 40, 0.1);
     }
 
     &.favorite-document {
-    &::before {
-      background: linear-gradient(90deg, $folder-color, lighten($folder-color, 20%));
+      &::before {
+        background: linear-gradient(90deg, $folder-color, lighten($folder-color, 20%));
+      }
+      
+      box-shadow: 0 10px 25px rgba($folder-color, 0.15);
+      
+      &:hover {
+        box-shadow: 0 15px 30px rgba($folder-color, 0.2);
+      }
     }
-    
-    box-shadow: 0 10px 25px rgba($folder-color, 0.15);
-    
-
-    // Eliminar completamente el pseudo-elemento ::after que crea el círculo
-    // .document-content {
-    //   position: relative;
-    //   
-    //   &::after {
-    //     content: '';
-    //     position: absolute;
-    //     top: 12px;
-    //     right: 12px;
-    //     width: 24px;
-    //     height: 24px;
-    //     background-color: $folder-color;
-    //     border-radius: 50%;
-    //     display: flex;
-    //     align-items: center;
-    //     justify-content: center;
-    //     color: white;
-    //     font-size: 16px;
-    //     z-index: 2;
-    //     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-    //   }
-    // }
-    
-    &:hover {
-      box-shadow: 0 15px 30px rgba($folder-color, 0.2);
-    }
-  }
   }
 }
 
-// Animación para el efecto de onda al hacer clic
-@keyframes ripple {
-  0% {
-    transform: scale(0, 0);
-    opacity: 1;
-  }
-  20% {
-    transform: scale(25, 25);
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: scale(40, 40);
-  }
-}
-
-// Estado vacío (adaptado al nuevo estilo)
+// 🔧 Estados vacíos mejorados con margen inferior
 .empty-documents {
   background-color: white;
   border-radius: 16px;
@@ -1231,6 +931,7 @@ $folder-light: rgba(255, 202, 40, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 32px; // 🔧 Añadir margen inferior
   
   mat-icon {
     font-size: 54px;
@@ -1253,5 +954,361 @@ $folder-light: rgba(255, 202, 40, 0.1);
     font-weight: 600;
     border-radius: 22px;
     box-shadow: 0 4px 12px rgba($primary-color, 0.15);
+  }
+}
+
+.empty-list {
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 32px; // 🔧 Añadir margen inferior
+}
+
+.empty-state-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px;
+  text-align: center;
+  max-width: 500px;
+  margin: 0 auto;
+  
+  .empty-icon-container {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: rgba($primary-color, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    
+    mat-icon {
+      padding: 0;
+      margin: 0;
+      font-size: 40px;
+      height: 40px;
+      width: 40px;
+      color: $primary-color;
+    }
+    
+    &.favorites-empty {
+      background-color: rgba($folder-color, 0.08);
+      
+      mat-icon {
+        color: $folder-color;
+      }
+    }
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: $text-color;
+    margin: 0 0 12px;
+  }
+  
+  p {
+    color: $text-muted;
+    margin: 0 0 28px;
+    font-size: 1rem;
+    max-width: 380px;
+    line-height: 1.5;
+  }
+  
+  button {
+    min-width: 180px;
+    height: 48px;
+    font-weight: 500;
+    border-radius: 24px;
+  
+    &.secondary-btn {
+      margin-top: 16px;
+    }
+  }
+}
+
+.document-info {
+  flex: 1;
+  
+  .document-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: $text-color;
+    margin: 0 0 8px 0;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .document-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 0.85rem;
+    color: $text-muted;
+    
+    .document-size {
+      display: flex;
+      align-items: center;
+      
+      mat-icon {
+        font-size: 16px;
+        height: 16px;
+        width: 16px;
+        margin-right: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+  }
+}
+
+// Estado vacío
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 0;
+  min-height: 400px;
+  
+  .empty-state-content {
+    text-align: center;
+    
+    .empty-icon {
+      font-size: 72px;
+      height: 72px;
+      width: 72px;
+      color: $primary-light;
+      background-color: white;
+      border-radius: 50%;
+      padding: 16px;
+      margin-bottom: 24px;
+      box-shadow: 0 12px 24px rgba(107, 79, 187, 0.15);
+    }
+    
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: $text-color;
+      margin: 0 0 16px 0;
+    }
+    
+    p {
+      color: $text-muted;
+      margin: 0 0 24px 0;
+      font-size: 1rem;
+      max-width: 400px;
+    }
+    
+    .empty-state-action {
+      background-color: $primary-color;
+      color: white;
+      padding: 0 24px;
+      height: 48px;
+      border-radius: 12px;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(107, 79, 187, 0.15);
+      transition: all 0.3s ease;
+      
+      &:hover {
+        background-color: $primary-hover;
+        box-shadow: 0 6px 16px rgba(107, 79, 187, 0.25);
+        transform: translateY(-2px);
+      }
+      
+      mat-icon {
+        margin-right: 8px;
+      }
+    }
+  }
+}
+
+// Botón flotante para móvil
+.upload-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 100;
+  background-color: $primary-color;
+  box-shadow: 0 6px 16px rgba(107, 79, 187, 0.25);
+  display: none;
+  
+  &:hover {
+    background-color: $primary-hover;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(107, 79, 187, 0.3);
+  }
+}
+
+// Estilos del menú personalizado
+::ng-deep .custom-menu {
+  .mat-mdc-menu-item {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    
+    &.warn-action {
+      color: $error-color;
+      
+      .mat-icon {
+        color: $error-color;
+      }
+    }
+  }
+}
+
+// Animación para el efecto de onda al hacer clic
+@keyframes ripple {
+  0% {
+    transform: scale(0, 0);
+    opacity: 1;
+  }
+  20% {
+    transform: scale(25, 25);
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(40, 40);
+  }
+}
+
+// 🔧 Responsive - ACTUALIZADO CON ESPACIADO MEJORADO
+@media (max-width: 768px) {
+  .page-header {
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    
+    .page-title {
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
+  }
+  
+  .header-actions {
+    .upload-btn {
+      display: none;
+    }
+  }
+  
+  .content-area {
+    padding: 0 16px 32px; // 🔧 Mantener espaciado en móvil pero reducido
+  }
+  
+  .upload-fab {
+    display: flex;
+  }
+  
+  .grid-container {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  
+  .upload-items-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .document-list {
+    grid-template-columns: 1fr;
+    margin-bottom: 24px; // 🔧 Reducir margen en móvil
+    padding-bottom: 12px; // 🔧 Reducir padding en móvil
+  }
+  
+  .list-container {
+    margin: 0 -8px 16px; // 🔧 Añadir margen inferior en móvil
+    border-radius: 12px;
+    padding-bottom: 16px; // 🔧 Reducir padding interior en móvil
+    
+    .document-table {
+      .table-header {
+        .folder-header, .size-header, .date-header {
+          display: none;
+        }
+        
+        .title-header {
+          width: 60%;
+        }
+        
+        .actions-header {
+          width: 120px;
+        }
+      }
+      
+      .document-row {
+        .folder-cell, .size-cell, .date-cell {
+          display: none;
+        }
+        
+        .title-cell {
+          width: 60%;
+          
+          .document-title {
+            font-size: 0.95rem;
+            line-height: 1.3;
+          }
+        }
+        
+        .actions-cell {
+          width: 120px;
+          
+          .document-actions {
+            gap: 4px;
+            
+            .action-button {
+              width: 28px;
+              height: 28px;
+              min-width: 28px;
+              
+              mat-icon {
+                font-size: 16px;
+                height: 16px;
+                width: 16px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  .document-card {
+    .document-actions {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .filters-container {
+    gap: 12px;
+    
+    .search-box {
+      width: 100%;
+      max-width: none;
+    }
+    
+    .filter-actions {
+      width: 100%;
+      justify-content: space-between;
+      
+      .filter-btn span {
+        display: none;
+      }
+    }
+  }
+  
+  .empty-documents,
+  .empty-list {
+    margin-bottom: 24px; // 🔧 Reducir margen en móvil
   }
 }

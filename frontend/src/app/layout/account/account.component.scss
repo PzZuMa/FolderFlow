@@ -2,6 +2,7 @@
 $primary-color: #6b4fbb;
 $primary-hover: #5936b1;
 $primary-light: rgba(107, 79, 187, 0.1);
+$primary-gradient: linear-gradient(135deg, #6b4fbb 0%, #8b5fbf 100%);
 $secondary-color: #5e6c84;
 $bg-page: #f0f3f7;
 $bg-gradient: linear-gradient(135deg, $bg-page 0%, darken($bg-page, 3%) 100%);
@@ -11,11 +12,18 @@ $text-muted: #6c757d;
 $header-height: 80px;
 $box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 $box-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.12);
+$box-shadow-intense: 0 20px 60px rgba(107, 79, 187, 0.15);
 $success-color: #10b981;
 $error-color: #e74c3c;
+$warning-color: #f59e0b;
 $input-border-color: #e1e4e8;
 $input-focus-border-color: $primary-color;
 $input-invalid-border-color: $error-color;
+
+// Nuevas variables para efectos mejorados
+$glass-bg: rgba(255, 255, 255, 0.95);
+$glass-border: rgba(255, 255, 255, 0.2);
+$backdrop-blur: blur(10px);
 
 // Reset y estilos base
 * {
@@ -30,35 +38,85 @@ $input-invalid-border-color: $error-color;
 
 .cuenta-container {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: transparent;
+  background: $bg-gradient;
   color: $text-color;
   min-height: 100vh;
+  position: relative;
+  
+  // Efecto de partículas de fondo sutil
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+      radial-gradient(circle at 20% 80%, rgba(107, 79, 187, 0.03) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(139, 95, 191, 0.03) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(107, 79, 187, 0.02) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+  }
 }
 
-// Encabezado de página
+// Encabezado de página mejorado
 .page-header {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  padding: 24px 32px;
-  background-color: white;
-  border-bottom: 1px solid rgba(0,0,0,0.06);
-  margin-bottom: 24px;
+  padding: 32px 40px;
+  background: $glass-bg;
+  backdrop-filter: $backdrop-blur;
+  border-bottom: 1px solid rgba(107, 79, 187, 0.1);
+  margin-bottom: 32px;
+  position: relative;
+  
+  // Efecto de brillo sutil en el header
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(107, 79, 187, 0.3) 50%, transparent 100%);
+  }
   
   .page-title {
+    position: relative;
+    
     h1.main-title {
-      font-size: 2rem;
+      font-size: 2.25rem;
       font-weight: 700;
       color: $text-color;
       margin: 0 0 8px 0;
       letter-spacing: -0.02em;
+      background: linear-gradient(135deg, $text-color 0%, lighten($primary-color, 10%) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -4px;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background: $primary-gradient;
+        border-radius: 2px;
+        opacity: 0.8;
+      }
     }
     
     .page-description {
       color: $text-muted;
-      font-size: 1rem;
+      font-size: 1.05rem;
       margin: 0;
+      opacity: 0.9;
     }
   }
   
@@ -72,18 +130,19 @@ $input-invalid-border-color: $error-color;
 .account-content {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 2rem;
-  max-width: 900px;
+  gap: 2.5rem;
+  max-width: 950px;
   margin: 0 auto;
+  padding: 0 24px;
 }
 
-// Estilos para la sección de imagen de perfil
+// Estilos mejorados para la sección de imagen de perfil
 .profile-image-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
-  margin: 2rem 0;
+  gap: 2rem;
+  margin: 2.5rem 0;
   
   @media (min-width: 768px) {
     flex-direction: row;
@@ -92,35 +151,59 @@ $input-invalid-border-color: $error-color;
 }
 
 .profile-image-preview {
-  width: 150px;
-  height: 150px;
+  width: 160px;
+  height: 160px;
   border-radius: 50%;
   overflow: hidden;
-  border: 3px solid $primary-light;
+  border: 4px solid transparent;
+  background: $primary-gradient;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: $bg-page;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    background: $card-bg;
+    z-index: 1;
+  }
+  
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 15px 40px rgba(107, 79, 187, 0.25);
+  }
   
   img {
-    width: 100%;
-    height: 100%;
+    width: calc(100% - 8px);
+    height: calc(100% - 8px);
     object-fit: cover;
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
+    transition: all 0.3s ease;
   }
   
   .no-image {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
-    height: 100%;
-    background: $primary-light;
+    width: calc(100% - 8px);
+    height: calc(100% - 8px);
+    background: linear-gradient(135deg, $primary-light 0%, rgba(139, 95, 191, 0.1) 100%);
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
     
     mat-icon {
       font-size: 80px;
       height: 80px;
       width: 80px;
       color: $primary-color;
+      opacity: 0.8;
     }
   }
 }
@@ -131,70 +214,95 @@ $input-invalid-border-color: $error-color;
   gap: 1rem;
   
   .btn {
-    min-width: 180px;
+    min-width: 200px;
   }
 }
 
-// Estilos para los botones de selección y carga de imagen
+// Botones mejorados con efectos modernos
 .btn {
-  padding: 0.75rem 1.5rem;
+  padding: 0.875rem 1.75rem;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
   font-weight: 600;
   text-decoration: none;
   text-align: center;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-size: 0.95rem;
   letter-spacing: -0.01em;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+  }
+  
+  &:hover::before {
+    left: 100%;
+  }
   
   &.btn-secondary {
-    background-color: rgba($primary-color, 0.1);
+    background: linear-gradient(135deg, rgba($primary-color, 0.1) 0%, rgba(139, 95, 191, 0.1) 100%);
     color: $primary-color;
+    border: 1px solid rgba($primary-color, 0.2);
     
     &:hover {
-      background-color: rgba($primary-color, 0.15);
-      transform: translateY(-1px);
+      background: linear-gradient(135deg, rgba($primary-color, 0.15) 0%, rgba(139, 95, 191, 0.15) 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(107, 79, 187, 0.2);
     }
   }
   
   &.btn-primary {
-    background-color: $primary-color;
+    background: $primary-gradient;
     color: white;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 4px 15px rgba(107, 79, 187, 0.3);
     
     &:hover:not(:disabled) {
-      background-color: $primary-hover;
-      transform: translateY(-1px);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(107, 79, 187, 0.4);
     }
     
     &:disabled {
       opacity: 0.6;
       cursor: not-allowed;
+      transform: none;
     }
   }
   
   &.btn-danger {
-    background-color: rgba($error-color, 0.1);
+    background: linear-gradient(135deg, rgba($error-color, 0.1) 0%, rgba(231, 76, 60, 0.15) 100%);
     color: $error-color;
+    border: 1px solid rgba($error-color, 0.2);
     display: flex;
     align-items: center;
     justify-content: center;
     
     &:hover:not(:disabled) {
-      background-color: rgba($error-color, 0.2);
-      transform: translateY(-1px);
+      background: linear-gradient(135deg, rgba($error-color, 0.15) 0%, rgba(231, 76, 60, 0.2) 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(231, 76, 60, 0.25);
     }
     
     &:disabled {
       opacity: 0.6;
       cursor: not-allowed;
+      transform: none;
     }
   }
 }
 
+// Contenedor de input de contraseña mejorado
 .password-input-container {
   position: relative;
   display: flex;
@@ -202,33 +310,34 @@ $input-invalid-border-color: $error-color;
   
   .form-input {
     width: 100%;
-    padding-right: 45px; // Espacio para el botón
+    padding-right: 50px;
   }
   
   .toggle-visibility-btn {
     position: absolute;
-    right: 8px;
+    right: 10px;
     top: 50%;
     transform: translateY(-50%);
     background: transparent;
     border: none;
     outline: none;
-    padding: 6px;
-    border-radius: 50%;
+    padding: 8px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     color: rgba($text-color, 0.6);
     
     &:hover, &:focus {
-      background-color: rgba($primary-color, 0.1);
+      background: linear-gradient(135deg, rgba($primary-color, 0.1) 0%, rgba(139, 95, 191, 0.1) 100%);
       color: $primary-color;
+      transform: translateY(-50%) scale(1.1);
     }
     
     &:active {
-      background-color: rgba($primary-color, 0.2);
+      transform: translateY(-50%) scale(0.95);
     }
     
     mat-icon {
@@ -241,131 +350,159 @@ $input-invalid-border-color: $error-color;
     }
   }
   
-  // Estilo especial cuando el campo es inválido
   .is-invalid + .toggle-visibility-btn {
     color: rgba($error-color, 0.6);
     
     &:hover, &:focus {
-      background-color: rgba($error-color, 0.1);
+      background: linear-gradient(135deg, rgba($error-color, 0.1) 0%, rgba(231, 76, 60, 0.1) 100%);
       color: $error-color;
     }
   }
 }
 
-// Tarjeta para cada sección
+// Tarjetas mejoradas con efectos glassmorphism
 .account-card {
-  background: $card-bg;
-  border-radius: 16px;
-  padding: 2.5rem;
+  background: $glass-bg;
+  backdrop-filter: $backdrop-blur;
+  border: 1px solid $glass-border;
+  border-radius: 20px;
+  padding: 3rem;
   box-shadow: $box-shadow;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(107, 79, 187, 0.2) 50%, transparent 100%);
+  }
   
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: $box-shadow-hover;
+    transform: translateY(-4px);
+    box-shadow: $box-shadow-intense;
+    border-color: rgba(107, 79, 187, 0.2);
   }
   
   h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
     color: $text-color;
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 40px;
+      height: 2px;
+      background: $primary-gradient;
+      border-radius: 1px;
+      opacity: 0.7;
+    }
   }
   
   .card-description {
     color: $text-muted;
-    margin-bottom: 2rem;
-    font-size: 0.95rem;
+    margin-bottom: 2.5rem;
+    font-size: 1rem;
+    line-height: 1.6;
   }
 }
 
-// Estructura para cada campo del formulario
+// Campos de formulario mejorados
 .form-field {
   width: 100%;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.75rem;
   position: relative;
 
   label {
     display: block;
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.75rem;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     color: $text-color;
     letter-spacing: -0.01em;
+    position: relative;
   }
 }
 
-// Estilo del input estándar
+// Inputs mejorados con efectos focus modernos
 .form-input {
   display: block;
   width: 100%;
-  padding: 0.9rem 1.1rem;
+  padding: 1rem 1.25rem;
   font-size: 1rem;
   line-height: 1.5;
   color: $text-color;
-  background-color: $card-bg;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(5px);
   border: 2px solid $input-border-color;
-  border-radius: 10px;
-  transition: all 0.2s ease;
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: inherit;
+  position: relative;
 
   &::placeholder {
-    color: lighten($text-muted, 10%);
+    color: lighten($text-muted, 15%);
+    transition: all 0.3s ease;
   }
 
   &:hover {
-    border-color: darken($input-border-color, 10%);
+    border-color: rgba($primary-color, 0.4);
+    background: rgba(255, 255, 255, 0.9);
   }
 
   &:focus {
     border-color: $input-focus-border-color;
     outline: 0;
-    box-shadow: 0 0 0 3px $primary-light;
-    background-color: lighten($bg-page, 5%);
+    box-shadow: 0 0 0 4px rgba($primary-color, 0.15);
+    background: rgba(255, 255, 255, 0.95);
+    transform: translateY(-1px);
+    
+    &::placeholder {
+      opacity: 0.7;
+      transform: translateX(4px);
+    }
   }
 
-  // Estilo específico para inputs inválidos
   &.is-invalid {
     border-color: $input-invalid-border-color;
+    background: rgba(231, 76, 60, 0.05);
 
     &:focus {
-      box-shadow: 0 0 0 3px rgba($error-color, 0.1);
+      box-shadow: 0 0 0 4px rgba($error-color, 0.15);
     }
   }
 }
 
-// Mensaje de error debajo de cada campo
+// Mensajes de error mejorados
 .field-error-message {
   color: $error-color;
   font-size: 0.85rem;
-  margin-top: 0.5rem;
+  margin-top: 0.6rem;
   display: flex;
   align-items: center;
-  gap: 0.3rem;
+  gap: 0.4rem;
+  animation: slideInError 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   
   &::before {
     content: '⚠';
     font-size: 0.9rem;
+    animation: pulse 2s infinite;
   }
 }
 
-// Contenedores para mensajes generales
-.success-message-container,
-.error-message-container {
-  margin: 1.5rem 0;
-  padding: 1rem;
-  border-radius: 10px;
-  text-align: center;
-  font-size: 0.9rem;
-  font-weight: 500;
-  animation: slideIn 0.3s ease;
-}
-
-@keyframes slideIn {
+@keyframes slideInError {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-8px);
   }
   to {
     opacity: 1;
@@ -373,38 +510,82 @@ $input-invalid-border-color: $error-color;
   }
 }
 
+// Contenedores de mensajes mejorados
+.success-message-container,
+.error-message-container {
+  margin: 2rem 0;
+  padding: 1.25rem 1.5rem;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 0.95rem;
+  font-weight: 500;
+  animation: slideInMessage 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: shimmer 2s infinite;
+  }
+}
+
+@keyframes slideInMessage {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
 .success-message-container {
-  background-color: rgba($success-color, 0.1);
-  color: darken($success-color, 10%);
-  border: 1px solid rgba($success-color, 0.2);
+  background: linear-gradient(135deg, rgba($success-color, 0.1) 0%, rgba(16, 185, 129, 0.15) 100%);
+  color: darken($success-color, 15%);
+  border: 1px solid rgba($success-color, 0.3);
+  backdrop-filter: blur(5px);
 }
 
 .error-message-container {
-  background-color: rgba($error-color, 0.1);
-  color: darken($error-color, 10%);
-  border: 1px solid rgba($error-color, 0.2);
+  background: linear-gradient(135deg, rgba($error-color, 0.1) 0%, rgba(231, 76, 60, 0.15) 100%);
+  color: darken($error-color, 15%);
+  border: 1px solid rgba($error-color, 0.3);
+  backdrop-filter: blur(5px);
 }
 
-// Contenedor del botón
+// Botones principales mejorados
 .button-container {
-  margin-top: 1.5rem;
+  margin-top: 2rem;
   
   button {
     width: 100%;
-    padding: 1rem 1.5rem;
-    font-size: 1rem;
+    padding: 1.125rem 2rem;
+    font-size: 1.05rem;
     font-weight: 600;
     color: #fff;
-    background-color: $primary-color;
+    background: $primary-gradient;
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 4px 15px rgba(107, 79, 187, 0.3);
     
     &::before {
       content: '';
@@ -413,87 +594,93 @@ $input-invalid-border-color: $error-color;
       left: 50%;
       width: 0;
       height: 0;
-      background-color: rgba(255, 255, 255, 0.1);
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
       border-radius: 50%;
       transform: translate(-50%, -50%);
-      transition: width 0.5s ease, height 0.5s ease;
+      transition: all 0.6s ease;
     }
     
-    &:hover {
-      background-color: $primary-hover;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+    &:hover:not(:disabled) {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(107, 79, 187, 0.4);
       
       &::before {
-        width: 900px;
+        width: 300px;
         height: 300px;
       }
     }
 
     &:active:not(:disabled) {
-      transform: translateY(0);
+      transform: translateY(-1px);
     }
 
     &:disabled {
       opacity: 0.6;
       cursor: not-allowed;
+      transform: none;
+      box-shadow: 0 2px 8px rgba(107, 79, 187, 0.2);
     }
   }
 }
 
-// Animación de carga
+// Spinner de carga mejorado
 .loading-spinner {
   display: inline-block;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-top-color: #fff;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
-  margin-right: 0.5rem;
+  margin-right: 0.75rem;
 }
 
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
 
-// Sección de próximamente
+// Sección de próximamente mejorada
 .coming-soon {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem;
+  padding: 3rem 2rem;
   text-align: center;
+  background: linear-gradient(135deg, rgba($primary-color, 0.05) 0%, rgba(139, 95, 191, 0.05) 100%);
+  border-radius: 16px;
+  border: 1px solid rgba($primary-color, 0.1);
   
   .coming-soon-icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    animation: pulse 2s infinite ease-in-out;
+    font-size: 3.5rem;
+    margin-bottom: 1.5rem;
+    animation: float 3s ease-in-out infinite;
+    filter: drop-shadow(0 4px 8px rgba(107, 79, 187, 0.2));
   }
   
   p {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     font-weight: 600;
     color: $text-color;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
   }
   
   span {
     color: $text-muted;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
   }
 }
 
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
 }
 
-// Media queries para responsividad
+// Media queries mejoradas para responsividad
 @media (min-width: 768px) {
   .account-content {
     grid-template-columns: 1fr;
+    padding: 0 32px;
   }
 }
 
@@ -503,24 +690,30 @@ $input-invalid-border-color: $error-color;
   }
   
   .page-header {
-    padding: 20px;
+    padding: 24px 20px;
     
-    h1 {
-      font-size: 1.8rem;
+    h1.main-title {
+      font-size: 2rem;
     }
     
-    .subtitle {
+    .page-description {
       font-size: 1rem;
     }
   }
   
   .account-card {
-    padding: 1.5rem;
+    padding: 2rem 1.5rem;
   }
   
   .profile-image-container {
     flex-direction: column;
     align-items: center;
+    gap: 1.5rem;
+  }
+  
+  .profile-image-preview {
+    width: 140px;
+    height: 140px;
   }
 }
 
@@ -530,16 +723,28 @@ $input-invalid-border-color: $error-color;
   }
   
   .page-header {
-    h1 {
-      font-size: 1.6rem;
+    padding: 20px 16px;
+    
+    h1.main-title {
+      font-size: 1.75rem;
     }
   }
   
   .account-card {
-    padding: 1.25rem;
+    padding: 1.5rem 1.25rem;
     
     h2 {
-      font-size: 1.3rem;
+      font-size: 1.4rem;
     }
+  }
+  
+  .profile-image-preview {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .btn {
+    min-width: 160px;
+    padding: 0.75rem 1.5rem;
   }
 }
