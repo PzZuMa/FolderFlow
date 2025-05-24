@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "@angular/animations": "^19.2.7",
-    "mongodb": "^6.15.0"
-  }
-}
