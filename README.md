@@ -6,33 +6,50 @@
 
 ## Tabla de Contenidos
 
-- [1. Estructura del Proyecto](#estructura-del-proyecto)
-- [2. Arquitectura General](#arquitectura-general)
-- [3. Frontend: Angular](#frontend-angular)
-- [4. Backend: Node.js/Express](#backend-nodejsexpress)
-  - [4.1. Endpoints de Autenticación](#endpoints-de-autenticación)
-  - [4.2. Endpoints de Carpetas](#endpoints-de-carpetas)
-  - [4.3. Endpoints de Documentos](#endpoints-de-documentos)
-- [5. Otros Detalles Técnicos](#otros-detalles-técnicos)
-- [6. Recursos y Créditos](#recursos-y-créditos)
+- [1. Estructura del Proyecto](#1-estructura-del-proyecto)
+- [2. Arquitectura General](#2-arquitectura-general)
+- [3. Frontend: Angular](#3-frontend-angular)
+- [4. Backend: Node.js/Express](#4-backend-nodejsexpress)
+  - [4.1. Endpoints de Autenticación](#41-endpoints-de-autenticación)
+  - [4.2. Endpoints de Carpetas](#42-endpoints-de-carpetas)
+  - [4.3. Endpoints de Documentos](#43-endpoints-de-documentos)
+- [5. Otros Detalles Técnicos](#5-otros-detalles-técnicos)
+- [6. Recursos y Créditos](#6-recursos-y-créditos)
 
 ---
 
 ## 1. Estructura del Proyecto
 
+La estructura del repositorio está organizada para separar claramente los componentes del frontend y backend, así como facilitar la escalabilidad y el mantenimiento. A continuación se describe la estructura y el propósito de los principales directorios y archivos:
+
 ```
 /
-├── backend/       # API RESTful y lógica de negocio
-│   └── src/
-│       ├── controllers/
-│       ├── routes/
-│       ├── services/
-│       └── ...
-├── frontend/      # Aplicación Angular (SPA)
-│   └── src/
-│       ├── app/
-│       └── ...
-└── README.md      # Este documento
+├── backend/                       # API RESTful, lógica de negocio y conexión a servicios externos
+│   ├── src/
+│   │   ├── config/                # Configuración de la base de datos, variables de entorno, etc.
+│   │   ├── controllers/           # Controladores: lógica asociada a las rutas
+│   │   ├── middleware/            # Middlewares personalizados (autenticación, errores, etc.)
+│   │   ├── models/                # Modelos de datos (Mongoose schemas)
+│   │   ├── routes/                # Definición de rutas de la API REST
+│   │   ├── services/              # Lógica de negocio y servicios externos (ej. AWS S3)
+│   │   └── utils/                 # Utilidades y funciones auxiliares
+│   ├── package.json               # Dependencias y scripts del backend
+│   ├── server.js                  # Punto de entrada del servidor Express
+│   └── .env.example               # Ejemplo de configuración de variables de entorno
+│
+├── frontend/                      # Aplicación cliente (SPA) desarrollada en Angular
+│   ├── src/
+│   │   ├── app/                   # Componentes, servicios y módulos principales de Angular
+│   │   ├── assets/                # Recursos estáticos (imágenes, iconos, etc.)
+│   │   ├── environments/          # Configuraciones de entorno (dev/prod)
+│   │   └── styles.scss            # Estilos globales
+│   ├── angular.json               # Configuración de Angular CLI
+│   ├── package.json               # Dependencias y scripts del frontend
+│   └── README.md                  # Documentación específica del frontend
+│
+├── .gitignore                     # Exclusiones de archivos para git
+├── README.md                      # Documentación general del proyecto (este archivo)
+└── LICENSE                        # Licencia del proyecto
 ```
 
 ---
@@ -166,7 +183,7 @@ Más detalles y comandos en [`frontend/README.md`](./frontend/README.md).
 
 ---
 
-**Autor:** PzZuMa  
-**Repositorio:** [https://github.com/PzZuMa/FolderFlow](https://github.com/PzZuMa/FolderFlow)
+**Autor:** Pablo Zumaquero de Mateo  
+**Perfil:** [https://github.com/PzZuMa](https://github.com/PzZuMa)
 
 > Este repositorio es parte de un Trabajo de Fin de Grado. Para cualquier duda técnica, puedes revisar el código fuente o contactar al autor.
