@@ -1,139 +1,172 @@
-# FolderFlow
+# FolderFlow - Trabajo de Fin de Grado (TFG)
 
-FolderFlow es una solución de gestión documental compuesta por un frontend moderno desarrollado en Angular y un backend basado en Node.js/Express, orientado a la organización, resguardo y consulta eficiente de documentos y carpetas.
-
----
-
-## Estructura General del Proyecto
-
-- **frontend/**: Aplicación Angular (SPA) para la interfaz de usuario.
-- **backend/**: API RESTful Node.js/Express, conecta con MongoDB y servicios AWS S3.
+**FolderFlow** es una plataforma web de gestión documental que permite a los usuarios organizar, almacenar y consultar documentos en la nube de manera eficiente y segura. Este repositorio contiene tanto el frontend (Angular) como el backend (Node.js/Express + MongoDB + AWS S3).
 
 ---
 
-## Frontend
+## Tabla de Contenidos
 
-**Ubicación:** [`/frontend`](./frontend)  
-**Framework:** Angular 19  
-**Lenguajes:** TypeScript, SCSS, HTML
-
-### Características principales
-
-- UI moderna y responsiva usando Angular Material.
-- Organización jerárquica de carpetas y documentos.
-- Autenticación y autorización de usuarios.
-- Consumo de la API REST del backend.
-- Construcción optimizada para producción (`ng build`).
-
-### Scripts principales (`package.json`)
-
-- `start` — Levanta el servidor de desarrollo en `http://localhost:4200/`
-- `build` — Compila la app Angular para producción en `dist/`
-- `test` — Ejecuta unit tests con Karma
-
-### Configuración relevante
-
-- **Estilos:** SCSS por defecto.
-- **Recursos:** Carpeta `src/assets` y soporte para archivos públicos en `public/`.
-- **Angular Material:** Tema predefinido `deeppurple-amber`.
-
-### Documentación y comandos útiles
-
-- Para desarrollo:  
-  ```bash
-  cd frontend
-  npm install
-  npm start
-  ```
-- [Más detalles en el README del frontend](./frontend/README.md)
+- [1. Estructura del Proyecto](#estructura-del-proyecto)
+- [2. Arquitectura General](#arquitectura-general)
+- [3. Frontend: Angular](#frontend-angular)
+- [4. Backend: Node.js/Express](#backend-nodejsexpress)
+  - [4.1. Endpoints de Autenticación](#endpoints-de-autenticación)
+  - [4.2. Endpoints de Carpetas](#endpoints-de-carpetas)
+  - [4.3. Endpoints de Documentos](#endpoints-de-documentos)
+- [5. Otros Detalles Técnicos](#otros-detalles-técnicos)
+- [6. Recursos y Créditos](#recursos-y-créditos)
 
 ---
 
-## Backend
+## 1. Estructura del Proyecto
 
-**Ubicación:** [`/backend`](./backend)  
-**Framework:** Node.js + Express  
-**Base de datos:** MongoDB  
-**Servicios externos:** AWS S3 para almacenamiento de archivos
-
-### Características principales
-
-- API RESTful para autenticación, gestión de carpetas y documentos.
-- Middleware para CORS, parsing de JSON y manejo de errores global.
-- Modularización por rutas:  
-  - `/api/auth` (autenticación)
-  - `/api/folders` (gestión de carpetas)
-  - `/api/documents` (gestión de documentos)
-- Uso de JWT para autenticación.
-- Soporte para subida de archivos (probablemente vía endpoints en `/api/documents`).
-
-### Dependencias clave
-
-- `express`, `mongoose`, `mongodb` — Servidor y conexión a la BD.
-- `jsonwebtoken`, `bcrypt` — Seguridad y autenticación.
-- `@aws-sdk/client-s3`, `aws-sdk` — Integración con Amazon S3.
-
-### Ejemplo de inicio rápido
-
-```bash
-cd backend
-npm install
-# Variables de entorno requeridas en .env (por ejemplo, conexión a MongoDB, claves AWS)
-node server.js
+```
+/
+├── backend/       # API RESTful y lógica de negocio
+│   └── src/
+│       ├── controllers/
+│       ├── routes/
+│       ├── services/
+│       └── ...
+├── frontend/      # Aplicación Angular (SPA)
+│   └── src/
+│       ├── app/
+│       └── ...
+└── README.md      # Este documento
 ```
 
-El backend escuchará por defecto en el puerto `3000` (configurable por variable de entorno `PORT`).
+---
+
+## 2. Arquitectura General
+
+- **Frontend:** Aplicación Angular (SPA), consume la API REST, interfaz moderna con Angular Material, organización en módulos y componentes.
+- **Backend:** Node.js + Express, estructura modular, conexión con MongoDB para datos y AWS S3 para archivos, autenticación JWT, middlewares para seguridad, validación y manejo de errores.
+- **Comunicación:** El frontend realiza peticiones HTTP al backend usando endpoints RESTful. El backend expone rutas agrupadas en `/api/auth`, `/api/folders` y `/api/documents`.
 
 ---
 
-## Arquitectura de Comunicación
+## 3. Frontend: Angular
 
-1. **Frontend (Angular):**  
-   Realiza peticiones HTTP a la API backend (`/api/...`), mostrando la información de carpetas y documentos al usuario.
+- **Framework:** Angular 19
+- **Lenguajes:** TypeScript, SCSS, HTML
+- **Características:**
+  - SPA con Angular Material para UI responsiva
+  - Organización jerárquica de carpetas y documentos
+  - Autenticación JWT
+  - Consumo de API RESTful
+- **Estructura del código:** Modular, con servicios para abstracción de llamadas HTTP y manejo centralizado de estado y rutas.
 
-2. **Backend (Express):**  
-   Expone endpoints REST para autenticación, carpetas y documentos.  
-   Interactúa con MongoDB para almacenar metadatos y con S3 para almacenar archivos binarios.
+### Comandos principales (solo referencia, no es necesario ejecutar):
 
----
+- `ng serve` — Arrancar servidor de desarrollo Angular
+- `ng build` — Construir versión de producción
+- `ng test` — Ejecutar tests unitarios
 
-## Instalación y ejecución local
-
-```bash
-# 1. Clona el repositorio
-git clone https://github.com/PzZuMa/FolderFlow.git
-cd FolderFlow
-
-# 2. Arranca el backend
-cd backend
-npm install
-node server.js
-
-# 3. Arranca el frontend (en otra terminal)
-cd ../frontend
-npm install
-npm start
-
-# 4. Accede en tu navegador a http://localhost:4200/
-```
-
-> **Nota**: Requiere MongoDB corriendo y credenciales AWS configuradas en un archivo `.env` para el backend.
+Más detalles y comandos en [`frontend/README.md`](./frontend/README.md).
 
 ---
 
-## Recursos útiles y más información
+## 4. Backend: Node.js/Express
 
-- [Documentación oficial de Angular](https://angular.dev/)
+- **Framework:** Node.js 20 + Express 5
+- **Base de datos:** MongoDB (mediante Mongoose)
+- **Almacenamiento archivos:** AWS S3 (SDK v3)
+- **Autenticación:** JWT (jsonwebtoken + bcrypt)
+- **Estructura:** Rutas → Controladores → Servicios → Modelos
+
+### 4.1. Endpoints de Autenticación
+
+**Base:** `/api/auth`
+
+| Método | Ruta              | Descripción                               | Protección |
+|--------|-------------------|-------------------------------------------|------------|
+| POST   | `/register`       | Registrar usuario (nombre, email, pass)   | No         |
+| POST   | `/login`          | Login usuario (email, pass)               | No         |
+| PUT    | `/profile`        | Actualizar perfil (nombre, email)         | Sí         |
+| PUT    | `/profile-image`  | Actualizar imagen de perfil               | Sí         |
+| PUT    | `/password`       | Cambiar contraseña                        | Sí         |
+
+**Notas:**
+- Las rutas protegidas requieren token JWT (middleware `protect`).
+- El proceso de registro y login devuelve datos del usuario y (en login) un token JWT.
+
+### 4.2. Endpoints de Carpetas
+
+**Base:** `/api/folders`  
+**Todas las rutas protegidas con JWT**
+
+| Método | Ruta                        | Descripción                                                          |
+|--------|-----------------------------|----------------------------------------------------------------------|
+| GET    | `/stats`                    | Obtener estadísticas globales o de una carpeta (por id opcional)     |
+| POST   | `/`                         | Crear una nueva carpeta (parámetros: nombre, parentId opcional)      |
+| GET    | `/`                         | Listar carpetas del usuario, contenido de una carpeta (parentId)     |
+| GET    | `/:folderId`                | Obtener detalles de una carpeta específica                           |
+| DELETE | `/:folderId`                | Eliminar carpeta (si está vacía)                                     |
+| PATCH  | `/:folderId/move`           | Mover carpeta a otra carpeta padre                                   |
+| POST   | `/by-ids`                   | Obtener varias carpetas por sus IDs                                  |
+| PATCH  | `/:folderId/name`           | Renombrar carpeta                                                    |
+
+**Notas:**
+- El usuario solo accede a sus propias carpetas (validación en backend).
+- El endpoint `stats` puede devolver, por ejemplo, número de documentos/carpetas hijas.
+
+### 4.3. Endpoints de Documentos
+
+**Base:** `/api/documents`  
+**Todas las rutas protegidas con JWT**
+
+| Método | Ruta                                | Descripción                                                        |
+|--------|-------------------------------------|--------------------------------------------------------------------|
+| POST   | `/upload-url`                       | Obtener URL firmada para subir documento a S3                      |
+| POST   | `/confirm-upload`                   | Confirmar subida y guardar metadatos en BD                         |
+| GET    | `/`                                 | Listar documentos de una carpeta (por folderId)                    |
+| GET    | `/:documentId/download-url`         | Obtener URL firmada para descargar documento de S3                 |
+| DELETE | `/:documentId`                      | Eliminar documento del usuario                                     |
+| GET    | `/all`                              | Obtener todos los documentos del usuario                           |
+| PATCH  | `/:documentId/move`                 | Mover documento a otra carpeta                                     |
+| GET    | `/recent`                           | Obtener documentos recientes del usuario (limit opcional)          |
+| GET    | `/favorites`                        | Obtener documentos marcados como favoritos                         |
+| GET    | `/stats`                            | Obtener estadísticas de documentos                                 |
+| PATCH  | `/:documentId/favorite`             | Marcar o desmarcar documento como favorito                         |
+| GET    | `/:documentId`                      | Obtener detalles de un documento                                   |
+| PATCH  | `/:documentId/name`                 | Renombrar documento                                                |
+
+**Notas:**
+- El flujo de subida es: `/upload-url` (recibe URL de S3) → subir archivo a S3 → `/confirm-upload` (registra metadatos).
+- El endpoint `/recent` y `/favorites` permiten personalización de experiencia.
+- Los endpoints usan validación de input y manejo de errores global.
+
+---
+
+## 5. Otros Detalles Técnicos
+
+- **Middleware:**
+  - `protect`: Verifica JWT y añade info del usuario a `req.user`.
+  - Manejo de CORS y parsing de JSON.
+  - Manejador global de errores para respuestas consistentes.
+
+- **Servicios externos:**
+  - AWS S3: Almacenamiento de archivos binarios, URLs firmadas para seguridad.
+  - MongoDB: Almacenamiento de metadatos (usuarios, carpetas, documentos).
+
+- **Buenas prácticas:**
+  - Separación de lógica en controladores y servicios.
+  - Validación de datos y autorización en todos los endpoints.
+  - Modularidad y escalabilidad pensadas para proyectos reales.
+
+---
+
+## 6. Recursos y Créditos
+
+- [Angular](https://angular.dev/)
+- [Node.js](https://nodejs.org/)
 - [Express.js](https://expressjs.com/)
 - [MongoDB](https://www.mongodb.com/)
 - [AWS S3](https://aws.amazon.com/s3/)
 
 ---
 
-## Licencia
+**Autor:** PzZuMa  
+**Repositorio:** [https://github.com/PzZuMa/FolderFlow](https://github.com/PzZuMa/FolderFlow)
 
-ISC. Consulta el archivo LICENSE para más detalles.
-
----
-
-**Repositorio mantenido por [PzZuMa](https://github.com/PzZuMa)**
+> Este repositorio es parte de un Trabajo de Fin de Grado. Para cualquier duda técnica, puedes revisar el código fuente o contactar al autor.
