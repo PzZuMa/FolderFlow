@@ -19,6 +19,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { DocumentService } from '../../core/services/document.service';
 import { FolderService } from '../../core/services/folder.service';
 import { AuthService } from '../../core/services/auth.service';
+import { ErrorHandlerService } from '../../core/services/errorhandler.service';
 
 // Models
 import { Document } from '../../core/models/document.model';
@@ -57,6 +58,7 @@ export class HomeComponent implements OnInit {
   private destroy$ = new Subject<void>();
   private router = inject(Router); // Para navegar programáticamente si es necesario
   private snackBar = inject(MatSnackBar);
+  private errorHandler = inject(ErrorHandlerService);
 
 
   isLoading = true;

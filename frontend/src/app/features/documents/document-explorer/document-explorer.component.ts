@@ -20,7 +20,7 @@ import { MoveItemDialogComponent, MoveItemDialogData, MoveItemDialogResult } fro
 import { HttpResponse } from '@angular/common/http';
 import { ConfirmationDialogComponent, ConfirmationDialogData } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 import { UserPreferencesService } from '../../../core/services/preferences.service';
-
+import { ErrorHandlerService } from '../../../core/services/errorhandler.service';
 
 @Component({
   selector: 'app-document-explorer',
@@ -49,6 +49,7 @@ export class DocumentExplorerComponent implements OnInit {
   private dialog = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
   private route = inject(ActivatedRoute); // Para leer parámetros de ruta si decides usarlos
+  private errorHandler = inject(ErrorHandlerService); // Para manejar errores de forma centralizada
   private router = inject(Router); // Para navegar programáticamente si es necesario
   private cdRef = inject(ChangeDetectorRef); // Para marcar cambios manualmente con OnPush
   private destroy$ = new Subject<void>(); // Para limpiar suscripciones

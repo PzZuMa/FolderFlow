@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap, catchError, throwError, BehaviorSubject } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
+import { ErrorHandlerService } from './errorhandler.service';
 
 // Interfaces para tipado
 interface AuthResponse {
@@ -37,11 +38,9 @@ interface RegisterData extends LoginCredentials {
   providedIn: 'root'
 })
 export class AuthService {
-  // Eliminar esta línea que causa el problema
-  // [x: string]: any;
-  
   private http = inject(HttpClient);
   private router = inject(Router);
+  private errorHandler = inject(ErrorHandlerService);
   private apiUrl = environment.apiUrl;
 
   // BehaviorSubject para el estado de autenticación
@@ -91,12 +90,12 @@ export class AuthService {
     return this.http.post<RegisterResponse>(`${this.apiUrl}/auth/register`, userData)
       .pipe(
         tap(response => console.log('Registro exitoso:', response)),
-        catchError(this.handleError.bind(this))
+        catchError(error => this.handleAuthError(error))
       );
   }
 
   login(credentials: LoginCredentials): Observable<AuthResponse> {
-  return this.http.post<AuthResponse>(`${this.apiUrl}/auth/login`, credentials)
+    return this.http.post<AuthResponse>(`${this.apiUrl}/auth/login`, credentials)
     .pipe(
       tap(response => {
         this.saveToken(response.token);
@@ -121,7 +120,7 @@ export class AuthService {
         this.loggedInStatus.next(true);
         console.log('Login exitoso, token y usuario guardados');
       }),
-      catchError(this.handleError.bind(this))
+      catchError(error => this.handleAuthError(error))
     );
 }
 
@@ -162,14 +161,13 @@ logout(): void {
 }
 
   private handleError(error: any): Observable<never> {
-    console.error('Error en la petición HTTP:', error);
-    let errorMessage = 'Ocurrió un error desconocido.';
-    if (error.error instanceof ErrorEvent) {
-      errorMessage = `Error: ${error.error.message}`;
-    } else {
-      errorMessage = `Error ${error.status}: ${error.error?.msg || error.statusText}`;
-    }
-    return throwError(() => new Error(errorMessage));
+    const userMessage = this.errorHandler.getErrorMessage(error);
+    return throwError(() => new Error(userMessage));
+  }
+
+  private handleAuthError(error: any): Observable<never> {
+    const userMessage = this.errorHandler.getAuthErrorMessage(error);
+    return throwError(() => new Error(userMessage));
   }
 
   updateProfile(userData: { name: string; email: string }): Observable<any> {
@@ -188,7 +186,7 @@ logout(): void {
             this.saveUserToStorage(updatedUser);
           }
         }),
-        catchError(this.handleError.bind(this))
+        catchError(error => this.handleError(error))
       );
   }
 
@@ -208,14 +206,14 @@ logout(): void {
           this.saveUserToStorage(updatedUser);
         }
       }),
-      catchError(this.handleError.bind(this))
+      catchError(error => this.handleError(error))
     );
 }
 
   changePassword(passwordData: { currentPassword: string; newPassword: string }): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/auth/password`, passwordData)
       .pipe(
-        catchError(this.handleError.bind(this))
+        catchError(error => this.handleError(error))
       );
   }
 }

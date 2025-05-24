@@ -6,6 +6,8 @@ import { Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { Subject, takeUntil } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon';
+import { ErrorHandlerService } from '../../core/services/errorhandler.service';
+
 
 @Component({
   selector: 'app-account',
@@ -44,6 +46,7 @@ export class AccountComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private errorHandler = inject(ErrorHandlerService);
 
   constructor(private titleService: Title) {
     this.titleService.setTitle('Mi Cuenta | FolderFlow');

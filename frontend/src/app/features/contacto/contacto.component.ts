@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { FooterComponent } from "../footer/footer.component";
 import { PublicHeaderComponent } from "../public-header/public-header.component";
+import { ErrorHandlerService } from '../../../app/core/services/errorhandler.service';
 
 @Component({
   selector: 'app-contacto',
@@ -26,6 +27,7 @@ export class ContactoComponent implements OnInit {
   errorMessage: string | null = null;
 
   private fb = inject(FormBuilder);
+  private errorHandler = inject(ErrorHandlerService);
   
   constructor(private titleService: Title) {
     this.titleService.setTitle('Contacto | FolderFlow');
@@ -59,10 +61,9 @@ export class ContactoComponent implements OnInit {
     
     // Simulamos el envío del formulario (en producción, aquí se conectaría con un servicio real)
     setTimeout(() => {
-      this.isLoading = false;
-      this.successMessage = 'Tu mensaje ha sido enviado correctamente. Nos pondremos en contacto contigo lo antes posible.';
-      this.contactForm.reset();
-      this.submitted = false;
-    }, 1500);
+        this.isLoading = false;
+        this.successMessage = 'Tu mensaje ha sido enviado correctamente. Nos pondremos en contacto contigo pronto.';
+        this.contactForm.reset();
+      }, 2000);
   }
 }

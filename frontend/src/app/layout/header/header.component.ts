@@ -8,6 +8,8 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { AuthService } from '../../core/services/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
+import { ErrorHandlerService } from '../../../app/core/services/errorhandler.service';
+
 
 @Component({
   selector: 'app-header',
@@ -35,6 +37,8 @@ export class HeaderComponent implements OnInit {
   private router = inject(Router);
   private breakpointObserver = inject(BreakpointObserver);
   private snackBar = inject(MatSnackBar);
+  private errorHandler = inject(ErrorHandlerService);
+
 
   constructor() {}
 

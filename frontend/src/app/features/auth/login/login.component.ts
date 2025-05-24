@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Title } from '@angular/platform-browser';
 import { AuthService } from '../../../core/services/auth.service';
+import { ErrorHandlerService } from '../../../core/services/errorhandler.service';
 
 @Component({
   selector: 'app-login',
@@ -31,6 +32,8 @@ export class LoginComponent implements OnInit {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
+
+  private errorHandler = inject(ErrorHandlerService);
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
@@ -60,7 +63,7 @@ export class LoginComponent implements OnInit {
       },
       error: (error) => {
         this.isLoading = false;
-        this.errorMessage = error.message || 'Error al iniciar sesión. Verifica tus credenciales.';
+        this.errorMessage = error.message;
         console.error('Error en el login:', error);
       }
     });

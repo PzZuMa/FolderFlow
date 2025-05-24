@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild, NgZone, AfterViewInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild, NgZone, AfterViewInit, inject } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,6 +14,8 @@ import { Document } from '../../../core/models/document.model';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormsModule } from '@angular/forms';
+import { ErrorHandlerService } from '../../../core/services/errorhandler.service';
+
 
 // Usar esta interfaz más específica:
 declare global {
@@ -55,6 +57,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   errorMessage: string = '';
   isFullscreen: boolean = false;
   textContent: string = '';
+  private errorHandler = inject(ErrorHandlerService); // Para manejar errores de forma centralizada
 
   // Estado del PDF
   pdfLoaded: boolean = false;
@@ -730,8 +733,9 @@ private retryRender(maxAttempts: number, delayMs: number): Observable<boolean> {
   }
 
   private handleError(message: string): void {
-    this.isLoading = false;
+    console.error('Error en DocumentViewer:', message);
     this.loadError = true;
+    this.isLoading = false;
     this.errorMessage = message;
     this.cdRef.markForCheck();
   }

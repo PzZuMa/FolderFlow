@@ -26,6 +26,7 @@ import { MatListModule } from '@angular/material/list';
 
 import { UserPreferencesService } from '../../../core/services/preferences.service';
 import { RenameFolderDialogComponent, RenameFolderDialogData } from '../../../shared/components/rename-folder-dialog/rename-folder-dialog.component';
+import { ErrorHandlerService } from '../../../core/services/errorhandler.service';
 
 interface FolderWithCounts extends Folder {
   fileCount?: number;
@@ -53,6 +54,7 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   private router = inject(Router);
   private userPreferencesService = inject(UserPreferencesService);
+  private errorHandler = inject(ErrorHandlerService);
 
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;

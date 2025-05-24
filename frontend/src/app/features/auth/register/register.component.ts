@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common'; // Necesario para *ngIf, etc.
 import { AuthService } from '../../../core/services/auth.service'; // Ajusta la ruta si es necesario
-
+import { ErrorHandlerService } from '../../../core/services/errorhandler.service';
 @Component({
   selector: 'app-register',
   standalone: true,
@@ -28,6 +28,7 @@ export class RegisterComponent implements OnInit {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private errorHandler = inject(ErrorHandlerService);
 
   ngOnInit(): void {
     this.registerForm = this.fb.group({
@@ -68,7 +69,7 @@ export class RegisterComponent implements OnInit {
       },
       error: (error) => {
         this.isLoading = false;
-        this.errorMessage = error.message || 'Ocurrió un error durante el registro.';
+        this.errorMessage = error.message;
         console.error('Error en el registro:', error);
       }
     });
