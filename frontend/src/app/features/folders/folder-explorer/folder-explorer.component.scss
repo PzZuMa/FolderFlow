@@ -920,7 +920,7 @@ $folder-light: rgba(255, 202, 40, 0.1);
         letter-spacing: 0.5px;
         
         &.icon-header {
-          width: 60px;
+          width: 15px;
           padding-left: 20px;
         }
         
@@ -1463,6 +1463,10 @@ $folder-light: rgba(255, 202, 40, 0.1);
     .breadcrumb-button {
       font-size: 0.95rem;
     }
+
+    .header-actions {
+      display: none !important; // Ocultar completamente los botones del header en móvil
+    }
   }
   
   .header-actions {
@@ -1475,8 +1479,9 @@ $folder-light: rgba(255, 202, 40, 0.1);
     padding: 0 16px 16px;
   }
   
+  // 🔧 NUEVO: Mostrar botones flotantes solo en móvil
   .mobile-actions {
-    display: flex;
+    display: flex !important;
   }
   
   .grid-container {

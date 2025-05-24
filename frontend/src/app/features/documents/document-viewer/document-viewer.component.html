@@ -105,7 +105,7 @@
   <!-- Contenedor del visor -->
   <main class="viewer-main">
     <!-- Estado de carga -->
-    <div *ngIf="isLoading" class="loading-state">
+    <div *ngIf="isLoading && !document" class="loading-state">
       <div class="loading-content">
         <mat-spinner diameter="60" color="primary"></mat-spinner>
         <h3>Cargando documento</h3>
@@ -138,14 +138,19 @@
     <div class="document-content" *ngIf="!isLoading && !loadError" [ngSwitch]="fileType">
       <!-- Visor PDF -->
       <div *ngSwitchCase="'pdf'" class="pdf-container">
-      <div class="pdf-viewer" *ngIf="pdfLoaded && !isLoading">
-        <canvas #pdfCanvas class="pdf-canvas"></canvas>
+        <!-- Canvas PDF -->
+        <div class="pdf-viewer" *ngIf="pdfLoaded || !isLoading">
+          <canvas #pdfCanvas class="pdf-canvas" 
+                  [style.opacity]="isLoading ? 0.5 : 1"
+                  *ngIf="pdfLoaded"></canvas>
+        </div>
+
+        <!-- Loading overlay específico para PDF -->
+        <div class="pdf-loading" *ngIf="isLoading && fileType === 'pdf'">
+          <mat-spinner diameter="40" color="primary"></mat-spinner>
+          <p>Cargando PDF...</p>
+        </div>
       </div>
-      <div class="pdf-loading" *ngIf="!pdfLoaded || isLoading">
-        <mat-spinner diameter="40"></mat-spinner>
-        <p>Cargando PDF...</p>
-      </div>
-    </div>
 
       <!-- Visor de imágenes -->
       <div *ngSwitchCase="'image'" class="image-container">

@@ -8,14 +8,19 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DocumentService } from '../../../core/services/document.service';
 import { SafeUrlPipe } from '../../../shared/pipes/safe-url.pipe';
-import { catchError, finalize, switchMap, takeUntil, tap, delay, filter } from 'rxjs/operators';
-import { EMPTY, Subject, of, timer, fromEvent } from 'rxjs';
+import { catchError, finalize, switchMap, takeUntil, tap, delay, filter, map, take } from 'rxjs/operators';
+import { EMPTY, Subject, of, timer, fromEvent, Observable } from 'rxjs';
 import { Document } from '../../../core/models/document.model';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormsModule } from '@angular/forms';
 
-declare var pdfjsLib: any;
+// Usar esta interfaz más específica:
+declare global {
+  interface Window {
+    pdfjsLib: any;
+  }
+}
 
 @Component({
   selector: 'app-document-viewer',
@@ -82,12 +87,10 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
     private cdRef: ChangeDetectorRef,
     private snackBar: MatSnackBar,
     private ngZone: NgZone
-  ) {
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
-  }
+  ){}
 
   ngOnInit(): void {
-    this.initializePdfLibrary();
+    this.initializePdfLibrary().then(() => {
     this.route.paramMap.pipe(
       takeUntil(this.destroy$)
     ).subscribe(params => {
@@ -99,19 +102,21 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
         this.handleError('ID de documento no válido');
       }
     });
+  }).catch(error => {
+    console.error('Error initializing PDF.js:', error);
+    this.handleError('Error al inicializar el visor de documentos');
+  });
   }
 
   ngAfterViewInit(): void {
-    // Configurar observador de redimensionamiento
-    this.setupResizeObserver();
-    
-    // Señalar que la vista está inicializada
-    this.ngZone.runOutsideAngular(() => {
-      setTimeout(() => {
-        this.viewInitialized$.next();
-      }, 0);
-    });
-  }
+  // Simplificar - solo configurar el observador de redimensionamiento
+  this.setupResizeObserver();
+  
+  // Usar un enfoque más directo para detectar cuando la vista está lista
+  setTimeout(() => {
+    this.viewInitialized$.next();
+  }, 0);
+}
 
   ngOnDestroy(): void {
     this.cleanup();
@@ -167,42 +172,63 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
 
   // ===== INICIALIZACIÓN PDF.JS =====
   private async initializePdfLibrary(): Promise<void> {
-    if (this.pdfLibraryLoaded) return;
+  if (this.pdfLibraryLoaded) return;
 
-    try {
-      // Verificar si PDF.js ya está cargado
-      if (typeof pdfjsLib !== 'undefined') {
-        this.configurePdfJs();
-        this.pdfLibraryLoaded = true;
-        return;
-      }
-
-      // Cargar PDF.js dinámicamente
-      await this.loadPdfScript();
+  try {
+    // Verificar si PDF.js ya está cargado globalmente
+    if (typeof (window as any).pdfjsLib !== 'undefined') {
       this.configurePdfJs();
       this.pdfLibraryLoaded = true;
-      console.log('✅ PDF.js loaded successfully');
-    } catch (error) {
-      console.error('❌ Failed to load PDF.js:', error);
-      throw new Error('No se pudo cargar la librería PDF');
+      return;
     }
+
+    // Cargar PDF.js dinámicamente
+    await this.loadPdfScript();
+    
+    // Esperar un poco para asegurar que la librería se carga completamente
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    this.configurePdfJs();
+    this.pdfLibraryLoaded = true;
+    console.log('✅ PDF.js loaded successfully');
+  } catch (error) {
+    console.error('❌ Failed to load PDF.js:', error);
+    throw new Error('No se pudo cargar la librería PDF');
   }
+}
 
   private loadPdfScript(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const script = document.createElement('script');
-      script.src = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';
-      script.onload = () => resolve();
-      script.onerror = () => reject(new Error('Failed to load PDF.js script'));
-      document.head.appendChild(script);
-    });
+  return new Promise((resolve, reject) => {
+    // Verificar si el script ya existe
+    const existingScript = document.querySelector('script[src*="pdfjs-dist"]');
+    if (existingScript) {
+      resolve();
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';
+    script.async = true;
+    script.onload = () => {
+      console.log('PDF.js script loaded');
+      resolve();
+    };
+    script.onerror = () => {
+      reject(new Error('Failed to load PDF.js script'));
+    };
+    document.head.appendChild(script);
+  });
   }
 
   private configurePdfJs(): void {
-    if (typeof pdfjsLib !== 'undefined' && pdfjsLib.GlobalWorkerOptions) {
-      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
-    }
+  const pdfjsLib = (window as any).pdfjsLib;
+  if (pdfjsLib && pdfjsLib.GlobalWorkerOptions) {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+    console.log('PDF.js worker configured');
+  } else {
+    console.warn('PDF.js not available for configuration');
   }
+}
 
   // ===== CARGA DE DOCUMENTO =====
   loadDocument(documentId: string): void {
@@ -251,118 +277,190 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
 
   // ===== MANEJO DE PDF =====
   private async loadPdfDocument(): Promise<void> {
-    if (!this.documentUrl) {
-      this.handleError('URL del documento no disponible');
-      return;
-    }
-
-    try {
-      await this.initializePdfLibrary();
-
-      const loadingTask = pdfjsLib.getDocument({
-        url: this.documentUrl,
-        cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/cmaps/',
-        cMapPacked: true,
-      });
-
-      this.pdfDoc = await loadingTask.promise;
-      this.totalPages = this.pdfDoc.numPages;
-      this.currentPage = 1;
-      this.pdfLoaded = true;
-      
-      console.log(`✅ PDF loaded: ${this.totalPages} pages`);
-      this.cdRef.markForCheck();
-
-      // Esperar a que tanto la vista como el PDF estén listos
-      this.waitForViewAndRender();
-
-    } catch (error) {
-      console.error('❌ Error loading PDF:', error);
-      this.handleError('No se pudo cargar el documento PDF');
-    }
+  if (!this.documentUrl) {
+    this.handleError('URL del documento no disponible');
+    return;
   }
+
+  try {
+    console.log('📁 Loading PDF document...');
+    
+    // Asegurar que PDF.js esté cargado
+    await this.initializePdfLibrary();
+    
+    const pdfjsLib = (window as any).pdfjsLib;
+    if (!pdfjsLib) {
+      throw new Error('PDF.js library not available');
+    }
+
+    console.log('📡 Creating PDF loading task...');
+    const loadingTask = pdfjsLib.getDocument({
+      url: this.documentUrl,
+      cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/cmaps/',
+      cMapPacked: true,
+    });
+
+    console.log('⏳ Waiting for PDF to load...');
+    this.pdfDoc = await loadingTask.promise;
+    this.totalPages = this.pdfDoc.numPages;
+    this.currentPage = 1;
+    this.pdfLoaded = true;
+    
+    console.log(`✅ PDF loaded: ${this.totalPages} pages`);
+    
+    // Forzar detección de cambios inmediatamente
+    this.cdRef.detectChanges();
+    
+    // Dar un momento muy breve para que Angular actualice el DOM
+    setTimeout(() => {
+      this.waitForViewAndRender();
+    }, 50);
+
+  } catch (error) {
+    console.error('❌ Error loading PDF:', error);
+    this.handleError('No se pudo cargar el documento PDF');
+  }
+}
 
   private waitForViewAndRender(): void {
-    // Esperar a que la vista esté inicializada
-    this.viewInitialized$.pipe(
-      takeUntil(this.destroy$),
-      // Asegurar que el canvas existe
-      filter(() => !!this.pdfCanvas?.nativeElement),
-      // Pequeño delay para asegurar que el DOM esté completamente listo
-      switchMap(() => timer(50))
-    ).subscribe(() => {
-      this.ngZone.run(() => {
-        this.calculateInitialZoomAndRender();
-      });
-    });
-
-    // Respaldo: intentar después de un tiempo si la vista no se inicializa
-    timer(500).pipe(
-      takeUntil(this.destroy$),
-      filter(() => this.pdfLoaded && !this.isLoading)
-    ).subscribe(() => {
-      if (this.pdfCanvas?.nativeElement) {
-        this.ngZone.run(() => {
-          this.calculateInitialZoomAndRender();
-        });
-      }
-    });
+  console.log('🎯 Starting render process...');
+  
+  // Verificación inmediata más simple
+  if (this.canRenderNow()) {
+    console.log('✅ Resources ready immediately, starting render');
+    this.calculateInitialZoomAndRender();
+    return;
   }
 
-  private async calculateInitialZoomAndRender(): Promise<void> {
-    if (!this.pdfDoc || !this.pdfCanvas?.nativeElement || !this.viewerMain?.nativeElement) {
-      console.warn('⚠️ Resources not ready for initial render');
-      // Intentar de nuevo después de un breve delay
-      timer(100).pipe(
-        takeUntil(this.destroy$)
-      ).subscribe(() => {
-        if (this.pdfDoc && this.pdfCanvas?.nativeElement && this.viewerMain?.nativeElement) {
-          this.calculateInitialZoomAndRender();
-        } else {
-          // Usar valores por defecto si no podemos calcular
-          this.fallbackRender();
-        }
-      });
-      return;
-    }
-
-    try {
-      const page = await this.pdfDoc.getPage(1);
-      const viewport = page.getViewport({ scale: 1.0 });
-      const containerWidth = this.viewerMain.nativeElement.clientWidth - 48; // padding
-
-      // Calcular escala para ajustarse al contenedor
-      let scale = containerWidth / viewport.width;
-      scale = Math.max(0.25, Math.min(scale, 2.0)); // Limitar entre 25% y 200%
-      this.zoomLevel = Math.round(scale * 100);
-
-      console.log(`📏 Initial zoom calculated: ${this.zoomLevel}%`);
-      
-      this.isLoading = false;
-      this.cdRef.markForCheck();
-      
-      // Renderizar inmediatamente
-      await this.renderCurrentPage();
-      
-    } catch (error) {
-      console.error('❌ Error calculating initial zoom:', error);
+  // Suscribirse a viewInitialized$ con un timeout más agresivo
+  this.viewInitialized$.pipe(
+    takeUntil(this.destroy$),
+    // Dar tiempo al DOM para actualizarse
+    delay(50),
+    // Reintentar hasta 3 veces con intervalos cortos
+    switchMap(() => this.retryRender(3, 100))
+  ).subscribe({
+    next: (success) => {
+      if (success) {
+        console.log('✅ Render successful after view initialization');
+      } else {
+        console.log('⚠️ Using fallback render');
+        this.fallbackRender();
+      }
+    },
+    error: (error) => {
+      console.error('❌ Error in render process:', error);
       this.fallbackRender();
     }
+  });
+}
+
+private canRenderNow(): boolean {
+  return !!(this.pdfDoc && 
+           this.pdfLibraryLoaded && 
+           !this.isRendering &&
+           this.pdfLoaded);
+}
+
+private retryRender(maxAttempts: number, delayMs: number): Observable<boolean> {
+  return timer(0, delayMs).pipe(
+    map((attempt) => {
+      console.log(`🔄 Render attempt ${attempt + 1}/${maxAttempts}`);
+      
+      if (this.canRenderNow() && this.pdfCanvas?.nativeElement) {
+        console.log('✅ Resources ready, attempting render');
+        this.calculateInitialZoomAndRender();
+        return true;
+      }
+      
+      if (attempt >= maxAttempts - 1) {
+        console.log(`❌ Max attempts (${maxAttempts}) reached`);
+        return false;
+      }
+      
+      return null; // Continuar intentando
+    }),
+    filter(result => result !== null), // Solo emitir cuando tengamos un resultado
+    take(1) // Tomar solo el primer resultado exitoso o fallo
+  );
+}
+
+  private async calculateInitialZoomAndRender(): Promise<void> {
+  if (!this.canRenderNow()) {
+    console.warn('⚠️ Cannot render now - resources not ready');
+    return;
   }
 
-  private fallbackRender(): void {
-    console.log('🔄 Using fallback render');
-    this.zoomLevel = 100;
-    this.isLoading = false;
-    this.cdRef.markForCheck();
-    
-    // Intentar renderizar con zoom por defecto
-    timer(0).pipe(
-      takeUntil(this.destroy$)
-    ).subscribe(() => {
-      this.renderCurrentPage();
-    });
+  // Verificación adicional del canvas justo antes de renderizar
+  if (!this.pdfCanvas?.nativeElement) {
+    console.warn('⚠️ Canvas not available, waiting...');
+    // Intentar una vez más después de un delay muy corto
+    setTimeout(() => {
+      if (this.pdfCanvas?.nativeElement) {
+        this.calculateInitialZoomAndRender();
+      } else {
+        this.fallbackRender();
+      }
+    }, 100);
+    return;
   }
+
+  try {
+    console.log('📏 Calculating zoom and rendering...');
+    
+    const page = await this.pdfDoc.getPage(1);
+    const viewport = page.getViewport({ scale: 1.0 });
+    
+    // Obtener dimensiones del contenedor
+    const container = this.viewerMain?.nativeElement;
+    const containerWidth = container ? container.clientWidth - 48 : 800;
+    
+    // Calcular escala óptima
+    let scale = containerWidth / viewport.width;
+    scale = Math.max(0.25, Math.min(scale, 2.0));
+    this.zoomLevel = Math.round(scale * 100);
+
+    console.log(`📏 Zoom calculated: ${this.zoomLevel}%`);
+    
+    // Marcar como no cargando y actualizar UI
+    this.isLoading = false;
+    this.cdRef.detectChanges(); // Usar detectChanges en lugar de markForCheck para forzar actualización inmediata
+    
+    // Renderizar inmediatamente
+    await this.renderCurrentPage();
+    
+    console.log('✅ Render completed successfully');
+    
+  } catch (error) {
+    console.error('❌ Error in calculateInitialZoomAndRender:', error);
+    this.fallbackRender();
+  }
+}
+
+  private fallbackRender(): void {
+  console.log('🔄 Using fallback render');
+  
+  this.zoomLevel = 100;
+  this.isLoading = false;
+  this.cdRef.detectChanges();
+  
+  // Intentar renderizar si los recursos básicos están disponibles
+  if (this.pdfDoc && this.pdfLibraryLoaded && !this.isRendering) {
+    // Dar un tiempo muy corto para que el canvas esté disponible
+    setTimeout(() => {
+      if (this.pdfCanvas?.nativeElement) {
+        console.log('✅ Fallback: Canvas available, rendering');
+        this.renderCurrentPage();
+      } else {
+        console.error('❌ Fallback failed: Canvas still not available');
+        this.handleError('No se pudo inicializar el visor de PDF');
+      }
+    }, 200);
+  } else {
+    console.error('❌ Fallback failed: PDF resources not available');
+    this.handleError('No se pudo cargar el documento PDF');
+  }
+}
 
   private async renderCurrentPage(): Promise<void> {
     if (this.isRendering || !this.pdfDoc || !this.pdfLoaded) {
@@ -374,77 +472,83 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   private async renderPage(pageNumber: number): Promise<void> {
-    if (this.isRendering) {
-      console.warn(`⚠️ Already rendering, skipping page ${pageNumber}`);
-      return;
-    }
+  if (this.isRendering) {
+    console.warn(`⚠️ Already rendering, skipping page ${pageNumber}`);
+    return;
+  }
 
-    if (!this.pdfDoc || !this.pdfCanvas?.nativeElement) {
-      console.warn(`⚠️ Cannot render page ${pageNumber}: resources not available`);
-      return;
-    }
+  if (!this.pdfDoc || !this.pdfLibraryLoaded) {
+    console.error(`❌ Cannot render: PDF not ready`);
+    return;
+  }
 
-    this.isRendering = true;
+  if (!this.pdfCanvas?.nativeElement) {
+    console.error(`❌ Cannot render: Canvas not available`);
+    return;
+  }
 
-    try {
-      // Cancelar render anterior si existe
-      if (this.renderTask) {
-        this.renderTask.cancel();
-        this.renderTask = null;
-      }
+  this.isRendering = true;
+  console.log(`🎨 Rendering page ${pageNumber}...`);
 
-      const canvas = this.pdfCanvas.nativeElement;
-      const context = canvas.getContext('2d');
-      
-      if (!context) {
-        throw new Error('No se pudo obtener el contexto del canvas');
-      }
-
-      const page = await this.pdfDoc.getPage(pageNumber);
-      const desiredScale = this.zoomLevel / 100;
-      const viewport = page.getViewport({ scale: desiredScale });
-      const outputScale = window.devicePixelRatio || 1;
-
-      // Configurar dimensiones del canvas
-      canvas.width = Math.floor(viewport.width * outputScale);
-      canvas.height = Math.floor(viewport.height * outputScale);
-      canvas.style.width = `${Math.floor(viewport.width)}px`;
-      canvas.style.height = `${Math.floor(viewport.height)}px`;
-
-      // Limpiar canvas antes de renderizar
-      context.clearRect(0, 0, canvas.width, canvas.height);
-      context.setTransform(outputScale, 0, 0, outputScale, 0, 0);
-
-      // Fondo blanco para PDFs con transparencia
-      context.fillStyle = '#ffffff';
-      context.fillRect(0, 0, viewport.width, viewport.height);
-
-      // Renderizar página
-      const renderContext = {
-        canvasContext: context,
-        viewport: viewport
-      };
-
-      this.renderTask = page.render(renderContext);
-      await this.renderTask.promise;
-      
-      console.log(`✅ Page ${pageNumber} rendered successfully at ${this.zoomLevel}%`);
-      
-      // Forzar actualización visual
-      this.ngZone.run(() => {
-        this.cdRef.markForCheck();
-      });
-
-    } catch (error: any) {
-      if (error?.name !== 'RenderingCancelledException') {
-        console.error(`❌ Error rendering page ${pageNumber}:`, error);
-        this.handleError('Error al renderizar la página del PDF');
-      }
-    } finally {
-      this.isRendering = false;
+  try {
+    // Cancelar render anterior
+    if (this.renderTask) {
+      this.renderTask.cancel();
       this.renderTask = null;
     }
+
+    const canvas = this.pdfCanvas.nativeElement;
+    const context = canvas.getContext('2d');
+    
+    if (!context) {
+      throw new Error('No se pudo obtener el contexto 2D del canvas');
+    }
+
+    const page = await this.pdfDoc.getPage(pageNumber);
+    const scale = this.zoomLevel / 100;
+    const viewport = page.getViewport({ scale });
+    const outputScale = window.devicePixelRatio || 1;
+
+    // Configurar canvas más eficientemente
+    const canvasWidth = Math.floor(viewport.width * outputScale);
+    const canvasHeight = Math.floor(viewport.height * outputScale);
+    
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+    canvas.style.width = `${Math.floor(viewport.width)}px`;
+    canvas.style.height = `${Math.floor(viewport.height)}px`;
+
+    // Configurar contexto una sola vez
+    context.setTransform(outputScale, 0, 0, outputScale, 0, 0);
+    context.fillStyle = '#ffffff';
+    context.fillRect(0, 0, viewport.width, viewport.height);
+
+    // Renderizar
+    const renderContext = {
+      canvasContext: context,
+      viewport: viewport
+    };
+
+    this.renderTask = page.render(renderContext);
+    await this.renderTask.promise;
+    
+    console.log(`✅ Page ${pageNumber} rendered at ${this.zoomLevel}%`);
+    
+    // Actualizar UI de forma eficiente
+    this.ngZone.run(() => {
+      this.cdRef.markForCheck();
+    });
+
+  } catch (error: any) {
+    if (error?.name !== 'RenderingCancelledException') {
+      console.error(`❌ Error rendering page ${pageNumber}:`, error);
+      this.handleError(`Error al renderizar la página ${pageNumber}`);
+    }
+  } finally {
+    this.isRendering = false;
+    this.renderTask = null;
   }
+}
 
   // ===== CONTROLES PDF =====
   previousPage(): void {

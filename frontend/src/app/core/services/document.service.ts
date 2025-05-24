@@ -146,7 +146,6 @@ export class DocumentService {
  * @returns Observable con los detalles del documento
  */
 getDocumentById(documentId: string): Observable<Document> {
-  // URL corregida - quitamos "/documents" duplicado
   return this.http.get<Document>(`${this.apiUrl}/${documentId}`);
 }
 

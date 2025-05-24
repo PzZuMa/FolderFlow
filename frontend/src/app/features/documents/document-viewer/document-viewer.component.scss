@@ -460,13 +460,13 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
 // Contenido principal
 .viewer-main {
   flex: 1;
-  min-height: calc(100vh - 120px); // 🔧 Altura mínima considerando el header
+  min-height: calc(100vh - 120px);
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  background: $card-bg; // 🔧 Fondo blanco consistente
+  position: relative; // 🔧 Importante para el posicionamiento absoluto de los estados
+  background: $card-bg;
 }
 
 // Estados de carga y error mejorados
@@ -476,7 +476,12 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   justify-content: center;
   width: 100%;
   height: 100%;
-  min-height: 400px; // 🔧 Altura mínima para contenido
+  min-height: 400px;
+  position: absolute; // 🔧 Posicionamiento absoluto para cubrir todo el contenedor
+  top: 0;
+  left: 0;
+  background: rgba(248, 250, 252, 0.95); // 🔧 Fondo semi-transparente
+  z-index: 10; // 🔧 Asegurar que esté por encima del contenido
   
   .loading-content, .error-content {
     text-align: center;
@@ -485,9 +490,16 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
     border-radius: 20px;
     box-shadow: $shadow-xl;
     max-width: 400px;
+    width: 90%; // 🔧 Ancho responsive
+    
+    // 🔧 Centrado específico para el spinner
+    mat-spinner {
+      margin: 0 auto 24px auto; // 🔧 Centrado horizontal y espaciado inferior
+      display: block; // 🔧 Para que funcione el margin auto
+    }
     
     h3 {
-      margin: 24px 0 12px;
+      margin: 0 0 12px 0; // 🔧 Eliminar margen superior
       font-size: 1.5rem;
       font-weight: 600;
       color: $text-color;
@@ -530,37 +542,44 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
 .document-content {
   width: 100%;
   height: 100%;
-  min-height: calc(100vh - 140px); // 🔧 Altura mínima para el contenido
+  min-height: calc(100vh - 140px);
   overflow: auto;
   padding: 24px;
   background: #f0f3f7;
+  position: relative; // 🔧 Para que los overlays se posicionen correctamente
 }
 
 .pdf-container, .image-container, .text-container, 
 .html-container, .audio-container, .video-container {
   width: 100%;
   height: 100%;
-  min-height: 500px; // 🔧 Altura mínima para cada tipo de contenido
+  min-height: 500px;
   display: flex;
   justify-content: center;
+  position: relative; // 🔧 Para el overlay de loading
 }
 
 // PDF Viewer mejorado
 .pdf-viewer {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  
-  .pdf-canvas {
-    max-width: 100%;
-    max-height: 100%;
-    box-shadow: $shadow-xl;
-    border-radius: 12px;
-    background: white;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: auto;
+    padding: 16px;
+    
+    .pdf-canvas {
+      display: block;
+      margin: 0 auto;
+      max-width: 100%;
+      max-height: 100%;
+      box-shadow: $shadow-xl;
+      border-radius: 8px;
+      background: white;
+      transition: opacity 0.3s ease; // 🔧 Transición suave para el cambio de opacidad
+    }
   }
-}
 
 // Image Viewer mejorado
 .image-viewer {
@@ -711,14 +730,24 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   align-items: center;
   justify-content: center;
   min-height: 300px;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: rgba(255, 255, 255, 0.9);
+  z-index: 5;
   
   mat-spinner {
     margin-bottom: 16px;
+    display: block; // 🔧 Para asegurar el centrado
   }
   
   p {
     color: $text-muted;
     font-size: 0.875rem;
+    margin: 0; // 🔧 Eliminar márgenes por defecto
+    text-align: center;
   }
 }
 
