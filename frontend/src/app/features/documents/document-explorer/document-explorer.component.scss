@@ -344,14 +344,15 @@ $folder-light: rgba(255, 202, 40, 0.1);
   border-radius: 16px;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
   overflow: visible;
-  min-height: auto;
+  min-height: 0;
+  max-height: none;
   padding-bottom: 24px;
   margin-bottom: 24px;
   .document-table {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    table-layout: fixed;
+    table-layout: auto;
     min-height: auto;
     margin-bottom: 0;
     .table-header {

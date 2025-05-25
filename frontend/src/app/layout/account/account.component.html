@@ -20,7 +20,7 @@
         <div class="profile-image-actions">
           <label class="btn btn-secondary" for="profileImageInput">
             Seleccionar imagen
-            <input type="file" id="profileImageInput" hidden (change)="onFileSelected($event)" accept="image/*">
+            <input type="file" id="profileImageInput" hidden (change)="onFileSelected($event)" accept="image/png, image/jpeg, image/jpg">
           </label>
           <button *ngIf="selectedFile" class="btn btn-primary" (click)="uploadProfileImage()" [disabled]="isImageLoading">
             <span *ngIf="isImageLoading" class="loading-spinner"></span>

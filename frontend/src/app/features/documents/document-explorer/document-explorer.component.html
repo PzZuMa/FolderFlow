@@ -169,13 +169,13 @@
             <td class="date-cell">{{ doc.updatedAt | date:'dd MMM, yyyy' }}</td>
             <td class="actions-cell">
               <div class="document-actions">
-                <button mat-icon-button class="action-button favorite-btn" (click)="toggleFavorite(doc, $event)" 
-                    matTooltip="{{ doc.isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos' }}">
-                  <mat-icon>{{ doc.isFavorite ? 'star' : 'star_outline' }}</mat-icon>
-                </button>
                 <button mat-icon-button class="action-button move-btn" (click)="openMoveDialog(doc, 'document'); $event.stopPropagation()" 
                     matTooltip="Mover documento">
                   <mat-icon>drive_file_move</mat-icon>
+                </button>
+                <button mat-icon-button class="action-button favorite-btn" (click)="toggleFavorite(doc, $event)" 
+                    matTooltip="{{ doc.isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos' }}">
+                  <mat-icon>{{ doc.isFavorite ? 'star' : 'star_outline' }}</mat-icon>
                 </button>
                 <button mat-icon-button class="action-button delete-btn" (click)="openDeleteConfirmation(doc, 'document'); $event.stopPropagation()" 
                     matTooltip="Eliminar">

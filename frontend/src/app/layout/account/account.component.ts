@@ -120,16 +120,23 @@ export class AccountComponent implements OnInit, OnDestroy {
     if (input.files && input.files.length > 0) {
       this.imageErrorMessage = null;
       this.selectedFile = input.files[0];
+      if (!['image/png', 'image/jpeg', 'image/jpg'].includes(this.selectedFile.type)) {
+        this.imageErrorMessage = 'Solo se permiten imágenes PNG, JPG o JPEG';
+        this.selectedFile = null;
+        this.previewUrl = null;
+        return;
+      }
       if (this.selectedFile.size > 5000000) {
         this.imageErrorMessage = 'La imagen debe ser menor a 5MB';
         this.selectedFile = null;
+        this.previewUrl = null;
         return;
       }
-      if (!this.selectedFile.type.match(/image\/(jpeg|jpg|png|gif)/)) {
-        this.imageErrorMessage = 'El formato debe ser JPG, PNG o GIF';
-        this.selectedFile = null;
-        return;
-      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.previewUrl = reader.result as string;
+      };
+      reader.readAsDataURL(this.selectedFile);
       this.resizeAndPreview(this.selectedFile);
     }
   }
@@ -166,7 +173,6 @@ export class AccountComponent implements OnInit, OnDestroy {
             return;
           }
           this.selectedFile = optimizedFile;
-          this.createImagePreview();
         }
       }, 'image/jpeg', 0.8);
     };
