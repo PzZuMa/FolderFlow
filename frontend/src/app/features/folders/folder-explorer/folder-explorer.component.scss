@@ -1,4 +1,3 @@
-// Variables - Consistentes con componentes públicos
 $primary-color: #6b4fbb;
 $primary-hover: #5936b1;
 $primary-light: rgba(107, 79, 187, 0.1);
@@ -15,7 +14,6 @@ $folder-color: #ffca28;
 $folder-hover: #f5b300;
 $folder-light: rgba(255, 202, 40, 0.1);
 
-// Contenedor General
 .explorer-container {
   display: flex;
   flex-direction: column;
@@ -26,7 +24,6 @@ $folder-light: rgba(255, 202, 40, 0.1);
   overflow: auto;
 }
 
-// Barra de progreso global
 .global-progress {
   position: absolute;
   top: 0;
@@ -39,7 +36,6 @@ $folder-light: rgba(255, 202, 40, 0.1);
 .folder-card {
   .item-icon-container {
     background-color: rgba($folder-color, 0.1);
-    
     .folder-icon {
       color: $folder-color;
     }
@@ -51,7 +47,6 @@ $folder-light: rgba(255, 202, 40, 0.1);
   margin-bottom: 8px;
   position: relative;
   overflow: hidden;
-  
   &::after {
     content: '';
     position: absolute;
@@ -62,21 +57,17 @@ $folder-light: rgba(255, 202, 40, 0.1);
     background: linear-gradient(to right, transparent, white);
     pointer-events: none;
   }
-  
   .breadcrumb-scroll-wrapper {
     display: flex;
     align-items: center;
     overflow-x: auto;
     white-space: nowrap;
     scroll-behavior: smooth;
-    
     &::-webkit-scrollbar {
       display: none;
     }
-    
     scrollbar-width: none;
     -ms-overflow-style: none;
-    
     .breadcrumb-title-button {
       min-width: auto;
       padding: 0 8px;
@@ -86,19 +77,16 @@ $folder-light: rgba(255, 202, 40, 0.1);
       height: auto;
       line-height: 1.2;
       letter-spacing: -0.02em;
-      
       &:hover:not(:disabled) {
         background-color: $primary-light;
         color: $primary-color;
       }
-      
       &:disabled {
         color: $primary-color;
         font-weight: 700;
         opacity: 1;
       }
     }
-    
     .breadcrumb-separator {
       margin: 0 4px;
       font-size: 24px;
@@ -109,7 +97,6 @@ $folder-light: rgba(255, 202, 40, 0.1);
   }
 }
 
-// Encabezado de página
 .page-header {
   display: flex;
   flex-wrap: wrap;
@@ -119,14 +106,12 @@ $folder-light: rgba(255, 202, 40, 0.1);
   background-color: white;
   border-bottom: 1px solid rgba(0,0,0,0.06);
   margin-bottom: 24px;
-  
   .page-title {
     .breadcrumb-display-container {
       display: flex;
       margin-bottom: 8px;
       position: relative;
       overflow: hidden;
-      
       &::after {
         content: '';
         position: absolute;
@@ -137,21 +122,17 @@ $folder-light: rgba(255, 202, 40, 0.1);
         background: linear-gradient(to right, transparent, white);
         pointer-events: none;
       }
-      
       .breadcrumb-scroll-wrapper {
         display: flex;
         align-items: center;
         overflow-x: auto;
         white-space: nowrap;
         scroll-behavior: smooth;
-        
         &::-webkit-scrollbar {
           display: none;
         }
-        
         scrollbar-width: none;
         -ms-overflow-style: none;
-        
         .breadcrumb-button {
           min-width: auto;
           padding: 0 8px;
@@ -160,19 +141,16 @@ $folder-light: rgba(255, 202, 40, 0.1);
           color: $text-color;
           height: 36px;
           line-height: 1.2;
-          
           &:hover:not(:disabled) {
             background-color: $primary-light;
             color: $primary-color;
           }
-          
           &:disabled {
             color: $primary-color;
             font-weight: 700;
             opacity: 1;
           }
         }
-        
         .breadcrumb-separator {
           margin: 0 4px;
           font-size: 20px;
@@ -182,20 +160,16 @@ $folder-light: rgba(255, 202, 40, 0.1);
         }
       }
     }
-    
     .page-description {
       color: $text-muted;
       font-size: 1rem;
       margin: 0;
     }
   }
-  
   .header-actions {
     display: flex;
     gap: 16px;
     margin-top: 16px;
-    
-    // Estilos base para ambos botones
     .folder-btn, .upload-btn {
       padding: 0 24px;
       height: 48px;
@@ -204,31 +178,23 @@ $folder-light: rgba(255, 202, 40, 0.1);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       transition: all 0.3s ease;
       color: white;
-      
       &:hover {
         box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
         transform: translateY(-2px);
       }
-      
       mat-icon {
         margin-right: 8px;
       }
     }
-    
-    // Estilo específico para el botón de carpeta (amarillo)
     .folder-btn {
       background-color: $folder-color;
-      
       &:hover {
         background-color: $folder-hover;
         box-shadow: 0 6px 16px rgba(255, 202, 40, 0.25);
       }
     }
-    
-    // Estilo específico para el botón de subida (morado - se mantiene el estilo primario)
     .upload-btn {
       background-color: $primary-color;
-      
       &:hover {
         background-color: $primary-hover;
         box-shadow: 0 6px 16px rgba(107, 79, 187, 0.25);
@@ -237,7 +203,6 @@ $folder-light: rgba(255, 202, 40, 0.1);
   }
 }
 
-// Sección de subidas
 .upload-section {
   background: white;
   border-radius: 16px;
@@ -245,12 +210,10 @@ $folder-light: rgba(255, 202, 40, 0.1);
   margin: 0 24px 24px;
   padding: 20px 24px;
   overflow: hidden;
-  
   .section-title {
     display: flex;
     align-items: center;
     margin-bottom: 16px;
-    
     mat-icon {
       color: $primary-color;
       margin-right: 12px;
@@ -258,7 +221,6 @@ $folder-light: rgba(255, 202, 40, 0.1);
       height: 24px;
       width: 24px;
     }
-    
     h2 {
       font-size: 1.2rem;
       font-weight: 600;
@@ -281,23 +243,18 @@ $folder-light: rgba(255, 202, 40, 0.1);
   border-radius: 12px;
   padding: 12px;
   transition: all 0.3s ease;
-  
   &.upload-success {
     background-color: rgba($success-color, 0.1);
-    
     .upload-icon {
       color: $success-color;
     }
   }
-  
   &.upload-error {
     background-color: rgba($error-color, 0.1);
-    
     .upload-icon {
       color: $error-color;
     }
   }
-  
   .upload-icon-container {
     width: 48px;
     height: 48px;
@@ -308,7 +265,6 @@ $folder-light: rgba(255, 202, 40, 0.1);
     justify-content: center;
     margin-right: 16px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
-    
     .upload-icon {
       color: $secondary-color;
       font-size: 28px;
@@ -316,11 +272,9 @@ $folder-light: rgba(255, 202, 40, 0.1);
       width: 28px;
     }
   }
-  
   .upload-info {
     flex: 1;
     min-width: 0;
-    
     .upload-title {
       display: block;
       font-weight: 500;
@@ -331,7 +285,6 @@ $folder-light: rgba(255, 202, 40, 0.1);
       color: $text-color;
       margin-bottom: 4px;
     }
-    
     .upload-details {
       display: flex;
       align-items: center;
@@ -339,7 +292,6 @@ $folder-light: rgba(255, 202, 40, 0.1);
       gap: 8px;
       font-size: 0.85rem;
       color: $text-muted;
-      
       .status-indicator {
         display: inline-flex;
         align-items: center;
@@ -347,38 +299,31 @@ $folder-light: rgba(255, 202, 40, 0.1);
         border-radius: 12px;
         font-weight: 500;
         font-size: 0.8rem;
-        
         &.pending {
           background-color: rgba($secondary-color, 0.1);
           color: $secondary-color;
         }
-        
         &.uploading {
           background-color: rgba($info-color, 0.1);
           color: $info-color;
         }
-        
         &.confirming {
           background-color: rgba($warning-color, 0.1);
           color: $warning-color;
         }
-        
         &.success {
           background-color: rgba($success-color, 0.1);
           color: $success-color;
         }
-        
         &.error {
           background-color: rgba($error-color, 0.1);
           color: $error-color;
         }
       }
-      
       .file-size {
         color: $text-muted;
       }
     }
-    
     .upload-progress-bar {
       margin-top: 8px;
       height: 4px;
@@ -387,20 +332,17 @@ $folder-light: rgba(255, 202, 40, 0.1);
   }
 }
 
-// Área de contenido principal
 .content-area {
   flex: 1;
   padding: 0 24px 24px;
   overflow: visible;
 }
 
-// Búsqueda y Filtros
 .filters-container {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 24px;
-  
   .search-box {
     display: flex;
     align-items: center;
@@ -410,12 +352,10 @@ $folder-light: rgba(255, 202, 40, 0.1);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     width: 100%;
     max-width: 400px;
-    
     mat-icon {
       color: $text-muted;
       margin-right: 12px;
     }
-    
     input {
       border: none;
       outline: none;
@@ -423,23 +363,19 @@ $folder-light: rgba(255, 202, 40, 0.1);
       font-size: 0.95rem;
       color: $text-color;
       font-family: inherit;
-      
       &::placeholder {
         color: $text-muted;
       }
     }
   }
-  
   .view-options {
     display: flex;
     gap: 8px;
-    
     button {
       color: $text-muted;
       background-color: white;
       border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-      
       &.active, &:hover {
         color: $primary-color;
         background-color: $primary-light;
@@ -448,7 +384,6 @@ $folder-light: rgba(255, 202, 40, 0.1);
   }
 }
 
-// Grid de carpetas y documentos
 .grid-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -456,7 +391,6 @@ $folder-light: rgba(255, 202, 40, 0.1);
   margin-top: 16px;
 }
 
-// Tarjeta base - estilos compartidos
 .folder-card, .document-card {
   display: flex;
   flex-direction: column;
@@ -469,9 +403,8 @@ $folder-light: rgba(255, 202, 40, 0.1);
   border: 1px solid rgba(0, 0, 0, 0.04);
   background-color: rgba(255, 255, 255, 0.85);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-  height: 200px; // Fixed height
-  min-width: 280px; // Minimum width
-  
+  height: 200px;
+  min-width: 280px;
   &:hover {
     transform: translateY(-4px);
     box-shadow: 0 12px 24px rgba($primary-color, 0.12);
@@ -480,7 +413,6 @@ $folder-light: rgba(255, 202, 40, 0.1);
   }
 }
 
-// Estilos específicos para acciones de carpetas
 .folder-card {
   &:hover {
     .folder-actions {
@@ -488,7 +420,6 @@ $folder-light: rgba(255, 202, 40, 0.1);
       transform: translateY(0);
     }
   }
-  
   .folder-actions {
     position: absolute;
     top: 16px;
@@ -498,7 +429,6 @@ $folder-light: rgba(255, 202, 40, 0.1);
     opacity: 0;
     transform: translateY(-8px);
     transition: all 0.3s ease;
-    
     .action-button {
       display: flex;
       align-items: center;
@@ -512,7 +442,6 @@ $folder-light: rgba(255, 202, 40, 0.1);
       background-color: white;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
       transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      
       mat-icon {
         font-size: 18px;
         height: 18px;
@@ -521,44 +450,36 @@ $folder-light: rgba(255, 202, 40, 0.1);
         vertical-align: middle;
         line-height: 18px;
       }
-      
       &:hover {
         transform: translateY(-3px);
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
       }
-      
       &.move-btn {
         mat-icon {
           color: $info-color;
         }
-        
         &:hover {
           background-color: rgba($info-color, 0.1);
         }
       }
-      
       &.delete-btn {
         mat-icon {
           color: $error-color;
         }
-        
         &:hover {
           background-color: rgba($error-color, 0.1);
         }
       }
-
       .edit-btn {
-      mat-icon {
-        color: $warning-color; // Color naranja/amarillo para editar
+        mat-icon {
+          color: $warning-color;
+        }
+        &:hover {
+          background-color: rgba($warning-color, 0.1);
+        }
       }
-      
-      &:hover {
-        background-color: rgba($warning-color, 0.1);
-      }
-    }
     }
   }
-  
   .folder-icon {
     width: 64px;
     height: 64px;
@@ -568,8 +489,6 @@ $folder-light: rgba(255, 202, 40, 0.1);
     justify-content: center;
     margin-bottom: 16px;
     background-color: rgba($folder-color, 0.1);
-
-    
     .item-icon {
       font-size: 32px;
       width: 32px;
@@ -581,12 +500,10 @@ $folder-light: rgba(255, 202, 40, 0.1);
       color: $folder-color;
     }
   }
-  
   .folder-info {
     flex: 1;
     display: flex;
     flex-direction: column;
-    
     .folder-name {
       font-size: 1rem;
       font-weight: 600;
@@ -599,20 +516,17 @@ $folder-light: rgba(255, 202, 40, 0.1);
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
-    
     .folder-meta {
       display: flex;
       flex-wrap: wrap;
       gap: 16px;
       color: $text-muted;
       font-size: 0.85rem;
-      margin-top: auto; // Push to bottom
-      
+      margin-top: auto;
       .type, .date {
         display: flex;
         align-items: center;
       }
-      
       .type {
         background-color: rgba($folder-color, 0.1);
         color: darken($folder-color, 20%);
@@ -620,38 +534,32 @@ $folder-light: rgba(255, 202, 40, 0.1);
         border-radius: 12px;
         font-weight: 500;
       }
-
       .folder-counts {
         display: flex;
         gap: 12px;
-    
-      .file-count,
-      .subfolder-count {
-        display: flex;
-        align-items: center;
-        font-size: 0.8rem;
-
-        mat-icon {
-          font-size: 14px;
-          height: 14px;
-          width: 14px;
-          margin-right: 4px;
+        .file-count,
+        .subfolder-count {
+          display: flex;
+          align-items: center;
+          font-size: 0.8rem;
+          mat-icon {
+            font-size: 14px;
+            height: 14px;
+            width: 14px;
+            margin-right: 4px;
+          }
+        }
+        .file-count {
+          color: $primary-color;
+        }
+        .subfolder-count {
+          color: $folder-color;
         }
       }
-
-      .file-count {
-        color: $primary-color;
-      }
-
-      .subfolder-count {
-        color: $folder-color;
-      }
-    }
     }
   }
 }
 
-// Estilos específicos para acciones de documentos
 .document-card {
   display: flex;
   flex-direction: column;
@@ -664,19 +572,15 @@ $folder-light: rgba(255, 202, 40, 0.1);
   position: relative;
   padding: 0;
   cursor: pointer;
-  height: 170px; // Altura fija para todas las cards
-  
+  height: 170px;
   &:hover {
     transform: translateY(-8px);
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-    
     .document-actions {
       opacity: 1;
       transform: translateY(0);
     }
   }
-  
-  // Barra superior de color
   &::before {
     content: '';
     position: absolute;
@@ -687,23 +591,18 @@ $folder-light: rgba(255, 202, 40, 0.1);
     background: linear-gradient(90deg, $primary-color, lighten($primary-color, 20%));
     z-index: 1;
   }
-  
   &.folder-card::before {
     background: linear-gradient(90deg, $folder-color, lighten($folder-color, 20%));
   }
-  
   &.favorite-document::before {
     background: linear-gradient(90deg, $folder-color, lighten($folder-color, 20%));
   }
-  
-  // Contenido principal de la tarjeta
   .document-content {
     display: flex;
     align-items: flex-start;
     padding: 22px 20px;
-    height: calc(100% - 60px); // Altura ajustada para dejar espacio al footer
+    height: calc(100% - 60px);
   }
-  
   .document-icon {
     width: 54px;
     height: 54px;
@@ -714,20 +613,17 @@ $folder-light: rgba(255, 202, 40, 0.1);
     margin-right: 16px;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.12);
     flex-shrink: 0;
-    
     mat-icon {
       font-size: 26px;
       height: 26px;
       width: 26px;
     }
   }
-  
   .document-info {
     flex: 1;
     min-width: 0;
     display: flex;
     flex-direction: column;
-    
     .document-name {
       font-weight: 600;
       font-size: 1.05rem;
@@ -738,7 +634,6 @@ $folder-light: rgba(255, 202, 40, 0.1);
       margin: 0 0 12px 0;
       display: flex;
       align-items: center;
-      
       .favorite-indicator {
         flex-shrink: 0;
         font-size: 16px;
@@ -748,7 +643,6 @@ $folder-light: rgba(255, 202, 40, 0.1);
         color: $folder-color;
       }
     }
-    
     .document-meta {
       display: flex;
       align-items: center;
@@ -756,11 +650,9 @@ $folder-light: rgba(255, 202, 40, 0.1);
       gap: 12px;
       font-size: 0.85rem;
       color: $text-muted;
-      
       .document-size, .folder-stats {
         display: flex;
         align-items: center;
-        
         mat-icon {
           font-size: 16px;
           height: 16px;
@@ -768,15 +660,12 @@ $folder-light: rgba(255, 202, 40, 0.1);
           margin-right: 4px;
         }
       }
-      
       .folder-stats {
         display: flex;
         gap: 12px;
-        
         .file-count, .subfolder-count {
           display: flex;
           align-items: center;
-          
           mat-icon {
             font-size: 14px;
             height: 14px;
@@ -784,19 +673,15 @@ $folder-light: rgba(255, 202, 40, 0.1);
             margin-right: 4px;
           }
         }
-        
         .file-count {
           color: $primary-color;
         }
-        
         .subfolder-count {
           color: $folder-color;
         }
       }
     }
   }
-  
-  // Footer de la tarjeta
   .document-footer {
     display: flex;
     justify-content: space-between;
@@ -805,13 +690,11 @@ $folder-light: rgba(255, 202, 40, 0.1);
     border-top: 1px solid rgba(0, 0, 0, 0.04);
     margin-top: auto;
     background-color: rgba($bg-page, 0.3);
-    
     .document-date {
       display: flex;
       align-items: center;
       font-size: 0.8rem;
       color: $text-muted;
-      
       mat-icon {
         font-size: 14px;
         height: 14px;
@@ -819,11 +702,9 @@ $folder-light: rgba(255, 202, 40, 0.1);
         margin-right: 4px;
       }
     }
-    
     .document-actions {
       display: flex;
       gap: 8px;
-      
       .action-button {
         width: 32px;
         height: 32px;
@@ -834,82 +715,66 @@ $folder-light: rgba(255, 202, 40, 0.1);
         background-color: white;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
         transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        
         mat-icon {
           font-size: 18px;
           height: 18px;
           width: 18px;
           margin: 0;
         }
-        
         &:hover {
           transform: translateY(-3px);
           box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
       }
-      
-      // Estilos específicos para cada botón
       .favorite-btn {
         mat-icon {
           color: $folder-color;
         }
-        
         &:hover {
           background-color: rgba($folder-color, 0.1);
         }
       }
-      
       .move-btn {
         mat-icon {
           color: $info-color;
         }
-        
         &:hover {
           background-color: rgba($info-color, 0.1);
         }
       }
-      
       .delete-btn {
         mat-icon {
           color: $error-color;
         }
-        
         &:hover {
           background-color: rgba($error-color, 0.1);
         }
       }
-
       .edit-btn {
-      mat-icon {
-        color: $warning-color; // Color naranja/amarillo para editar
+        mat-icon {
+          color: $warning-color;
+        }
+        &:hover {
+          background-color: rgba($warning-color, 0.1);
+        }
       }
-      
-      &:hover {
-        background-color: rgba($warning-color, 0.1);
-      }
-    }
     }
   }
 }
 
-// Vista de lista - separando estilos de acciones
-// Vista de lista mejorada
 .list-container {
   background-color: white;
   border-radius: 16px;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
   overflow: hidden;
-  
   .document-table {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
     table-layout: fixed;
-    
     .table-header {
       border-bottom: 2px solid rgba(0, 0, 0, 0.08);
       background-color: rgba($bg-page, 0.6);
-      
       th {
         padding: 16px;
         text-align: left;
@@ -918,28 +783,23 @@ $folder-light: rgba(255, 202, 40, 0.1);
         color: $text-muted;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        
         &.icon-header {
           width: 15px;
           padding-left: 20px;
         }
-        
         &.title-header {
           width: 40%;
           min-width: 200px;
           padding-left: 0;
         }
-        
         &.info-header {
           width: 15%;
           text-align: center;
         }
-        
         &.date-header {
           width: 15%;
           text-align: center;
         }
-        
         &.actions-header {
           width: 140px;
           text-align: center;
@@ -947,41 +807,32 @@ $folder-light: rgba(255, 202, 40, 0.1);
         }
       }
     }
-    
-    // Estilos para las filas
     .document-row, .folder-row {
       border-bottom: 1px solid rgba(0, 0, 0, 0.04);
       transition: background-color 0.2s ease;
       cursor: pointer;
       height: 60px;
-      
       &:hover {
         background-color: $primary-light;
       }
-      
       &.favorite-row {
         background-color: rgba($folder-color, 0.05);
-        
         &:hover {
           background-color: rgba($folder-color, 0.1);
         }
       }
-      
       td {
         padding: 8px 16px;
         vertical-align: middle;
       }
-      
       .icon-cell {
         width: 60px;
         padding-left: 20px;
       }
-      
       .title-cell {
         width: 40%;
         min-width: 200px;
         padding-left: 0;
-        
         .item-title {
           display: flex;
           align-items: center;
@@ -991,7 +842,6 @@ $folder-light: rgba(255, 202, 40, 0.1);
           font-size: 1rem;
           font-weight: 500;
           color: $text-color;
-          
           .favorite-indicator {
             flex-shrink: 0;
             font-size: 16px;
@@ -1002,42 +852,35 @@ $folder-light: rgba(255, 202, 40, 0.1);
           }
         }
       }
-      
       .info-cell {
         width: 15%;
         color: $text-muted;
         font-size: 0.85rem;
         white-space: nowrap;
         text-align: center;
-        
         .folder-stats {
           display: flex;
           align-items: center;
           justify-content: center;
           gap: 12px;
-          
           .stat-item {
             display: flex;
             align-items: center;
-            
             mat-icon {
               font-size: 14px;
               height: 14px;
               width: 14px;
               margin-right: 4px;
             }
-            
             &.file-count {
               color: $primary-color;
             }
-            
             &.subfolder-count {
               color: $folder-color;
             }
           }
         }
       }
-      
       .date-cell {
         width: 15%;
         color: $text-muted;
@@ -1045,19 +888,16 @@ $folder-light: rgba(255, 202, 40, 0.1);
         white-space: nowrap;
         text-align: center;
       }
-      
       .actions-cell {
         width: 140px;
         text-align: right;
         padding-right: 20px;
-        
         .item-actions {
           display: flex;
           justify-content: center;
           gap: 8px;
-          
           .action-button {
-            width: 32px; // Aumentado de 28px a 32px
+            width: 32px;
             height: 32px;
             min-width: 32px;
             border-radius: 8px;
@@ -1070,12 +910,10 @@ $folder-light: rgba(255, 202, 40, 0.1);
             display: flex;
             align-items: center;
             justify-content: center;
-            
             &:focus {
               outline: none;
               box-shadow: 0 0 0 2px rgba($primary-color, 0.3);
             }
-            
             &::after {
               content: '';
               position: absolute;
@@ -1089,62 +927,50 @@ $folder-light: rgba(255, 202, 40, 0.1);
               transform: scale(1, 1) translate(-50%, -50%);
               transform-origin: 50% 50%;
             }
-            
             &:active::after {
               animation: ripple 0.6s ease-out;
             }
-            
             mat-icon {
-              font-size: 18px; // Aumentado de 16px a 18px
+              font-size: 18px;
               height: 18px;
               width: 18px;
               line-height: 18px;
               transition: transform 0.2s ease;
               margin: 0;
             }
-            
             &:hover {
               transform: translateY(-3px);
               box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             }
           }
-          
-          // Estilos específicos para cada tipo de botón (mejorando visibilidad de colores)
           .favorite-btn {
             mat-icon {
-              color: $folder-color; // Color amarillo para el icono de estrella
+              color: $folder-color;
             }
-            
             &:hover {
               background-color: rgba($folder-color, 0.1);
             }
           }
-          
           .move-btn {
             mat-icon {
               color: $info-color;
             }
-            
             &:hover {
               background-color: rgba($info-color, 0.1);
             }
           }
-          
           .delete-btn {
             mat-icon {
               color: $error-color;
             }
-            
             &:hover {
               background-color: rgba($error-color, 0.1);
             }
           }
-
           .edit-btn {
             mat-icon {
-              color: $warning-color; // Color naranja/amarillo para editar
+              color: $warning-color;
             }
-
             &:hover {
               background-color: rgba($warning-color, 0.1);
             }
@@ -1153,8 +979,6 @@ $folder-light: rgba(255, 202, 40, 0.1);
       }
     }
   }
-
-  // Estilos para los iconos en la vista de lista
   .list-icon {
     width: 36px;
     height: 36px;
@@ -1162,34 +986,27 @@ $folder-light: rgba(255, 202, 40, 0.1);
     align-items: center;
     justify-content: center;
     border-radius: 6px;
-    
     mat-icon {
       font-size: 20px;
       height: 20px;
       width: 20px;
     }
-    
     &.folder-icon {
       background-color: rgba($folder-color, 0.15);
-      
       mat-icon {
         color: $folder-color;
       }
     }
   }
-  
-  // Estado vacío 
   .empty-list {
     min-height: 300px;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 40px 0;
-    
     .empty-state-container {
       text-align: center;
       max-width: 400px;
-      
       .empty-icon-container {
         width: 80px;
         height: 80px;
@@ -1199,7 +1016,6 @@ $folder-light: rgba(255, 202, 40, 0.1);
         align-items: center;
         justify-content: center;
         margin: 0 auto 24px;
-        
         mat-icon {
           font-size: 40px;
           height: 40px;
@@ -1207,32 +1023,26 @@ $folder-light: rgba(255, 202, 40, 0.1);
           color: $primary-color;
         }
       }
-      
       h2 {
         font-size: 1.5rem;
         font-weight: 600;
         color: $text-color;
         margin: 0 0 12px;
       }
-      
       p {
         color: $text-muted;
         margin: 0 0 28px;
         font-size: 1rem;
       }
-      
       .empty-actions {
         display: flex;
         gap: 12px;
         justify-content: center;
-        
         button {
           min-width: 140px;
-          
           &.folder-btn {
             background-color: $folder-color;
             color: white;
-            
             &:hover {
               background-color: $folder-hover;
             }
@@ -1243,39 +1053,31 @@ $folder-light: rgba(255, 202, 40, 0.1);
   }
 }
 
-// Ajustes responsivos para la vista de lista
 @media (max-width: 768px) {
   .list-container {
     .document-table {
       .table-header {
         .info-header, .date-header {
-          display: none; // Ocultar columnas en pantallas pequeñas
+          display: none;
         }
-        
         .title-header {
-          width: 60%; // Más espacio para el título en móvil
+          width: 60%;
         }
-        
         .actions-header {
-          width: 120px; // Reducir en móvil
+          width: 120px;
         }
       }
-      
       .document-row, .folder-row {
         .info-cell, .date-cell {
-          display: none; // Ocultar columnas en pantallas pequeñas
+          display: none;
         }
-        
         .title-cell {
-          width: 60%; // Más espacio para el título en móvil
+          width: 60%;
         }
-        
         .actions-cell {
-          width: 120px; // Reducir en móvil
-          
+          width: 120px;
           .item-actions {
-            gap: 4px; // Menos espacio entre botones en móvil
-            
+            gap: 4px;
             .action-button {
               width: 30px;
               height: 30px;
@@ -1288,7 +1090,6 @@ $folder-light: rgba(255, 202, 40, 0.1);
   }
 }
 
-// Estilos para los iconos de la vista de lista
 .folder-list-icon, .document-list-icon {
   width: 36px;
   height: 36px;
@@ -1296,7 +1097,6 @@ $folder-light: rgba(255, 202, 40, 0.1);
   align-items: center;
   justify-content: center;
   border-radius: 6px;
-  
   mat-icon {
     font-size: 20px;
     height: 20px;
@@ -1304,17 +1104,14 @@ $folder-light: rgba(255, 202, 40, 0.1);
   }
 }
 
-// Estado vacío
 .empty-state {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 48px 0;
   min-height: 400px;
-  
   .empty-state-content {
     text-align: center;
-    
     .empty-icon {
       font-size: 72px;
       height: 72px;
@@ -1326,27 +1123,23 @@ $folder-light: rgba(255, 202, 40, 0.1);
       margin-bottom: 24px;
       box-shadow: 0 12px 24px rgba(107, 79, 187, 0.15);
     }
-    
     h2 {
       font-size: 1.5rem;
       font-weight: 700;
       color: $text-color;
       margin: 0 0 16px 0;
     }
-    
     p {
       color: $text-muted;
       margin: 0 0 24px 0;
       font-size: 1rem;
       max-width: 400px;
     }
-    
     .empty-state-actions {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       gap: 16px;
-      
       .empty-state-action {
         background-color: $primary-color;
         color: white;
@@ -1356,20 +1149,16 @@ $folder-light: rgba(255, 202, 40, 0.1);
         font-weight: 600;
         box-shadow: 0 4px 12px rgba(107, 79, 187, 0.15);
         transition: all 0.3s ease;
-        
         &:hover {
           background-color: $primary-hover;
           box-shadow: 0 6px 16px rgba(107, 79, 187, 0.25);
           transform: translateY(-2px);
         }
-        
         mat-icon {
           margin-right: 8px;
         }
-        
-        &:first-child { 
+        &:first-child {
           background-color: $folder-color;
-          
           &:hover {
             background-color: $folder-hover;
             box-shadow: 0 6px 16px rgba(255, 202, 40, 0.25);
@@ -1380,7 +1169,6 @@ $folder-light: rgba(255, 202, 40, 0.1);
   }
 }
 
-// Botones flotantes para móvil
 .mobile-actions {
   position: fixed;
   bottom: 24px;
@@ -1389,28 +1177,22 @@ $folder-light: rgba(255, 202, 40, 0.1);
   flex-direction: column;
   gap: 16px;
   z-index: 100;
-  
   .fab-action {
     background-color: $primary-color;
     box-shadow: 0 6px 16px rgba(107, 79, 187, 0.25);
-    
     &:hover {
       background-color: $primary-hover;
       transform: translateY(-2px);
       box-shadow: 0 8px 20px rgba(107, 79, 187, 0.3);
     }
-
-    &:first-child { // Botón de nueva carpeta
+    &:first-child {
       background-color: $folder-color;
-      
       &:hover {
         background-color: $folder-hover;
       }
     }
-    
-    &:last-child { // Botón de subir archivo
+    &:last-child {
       background-color: $primary-color;
-      
       &:hover {
         background-color: $primary-hover;
       }
@@ -1418,14 +1200,11 @@ $folder-light: rgba(255, 202, 40, 0.1);
   }
 }
 
-// Estilos del menú personalizado
 ::ng-deep .custom-menu {
   .mat-mdc-menu-item {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    
     &.warn-action {
       color: $error-color;
-      
       .mat-icon {
         color: $error-color;
       }
@@ -1444,7 +1223,6 @@ $folder-light: rgba(255, 202, 40, 0.1);
 .breadcrumb-display-container {
   margin-top: 8px;
   margin-bottom: 8px;
-  
   .breadcrumb-button {
     font-size: 1.2rem;
     font-weight: 600;
@@ -1454,51 +1232,40 @@ $folder-light: rgba(255, 202, 40, 0.1);
   }
 }
 
-// Responsive
 @media (max-width: 768px) {
   .page-header {
     padding: 16px 20px;
     margin-bottom: 16px;
-    
     .breadcrumb-button {
       font-size: 0.95rem;
     }
-
     .header-actions {
-      display: none !important; // Ocultar completamente los botones del header en móvil
+      display: none !important;
     }
   }
-  
   .header-actions {
     .action-btn, .upload-btn {
       display: none;
     }
   }
-  
   .content-area {
     padding: 0 16px 16px;
   }
-  
-  // 🔧 NUEVO: Mostrar botones flotantes solo en móvil
   .mobile-actions {
     display: flex !important;
   }
-  
   .grid-container {
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 16px;
   }
-  
   .document-card {
     .document-content {
       padding: 18px 16px;
     }
-    
     .document-footer {
       padding: 10px 16px;
     }
   }
-  
   .upload-items-container {
     grid-template-columns: 1fr;
   }

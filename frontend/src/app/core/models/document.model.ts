@@ -9,5 +9,5 @@ export interface Document {
   url?: string;
   createdAt?: string;
   updatedAt?: string;
-  isFavorite?: boolean; // Asegúrate de que esta propiedad esté definida
-  }
+  isFavorite?: boolean;
+}

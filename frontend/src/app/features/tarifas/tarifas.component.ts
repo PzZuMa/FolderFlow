@@ -13,12 +13,11 @@ import { PublicHeaderComponent } from "../public-header/public-header.component"
     RouterLink,
     FooterComponent,
     PublicHeaderComponent
-],
+  ],
   templateUrl: './tarifas.component.html',
   styleUrls: ['./tarifas.component.scss']
 })
 export class TarifasComponent implements OnInit {
-  // Planes de precios
   planes = [
     {
       nombre: 'Básico',
@@ -113,7 +112,5 @@ export class TarifasComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Aquí puedes cargar datos adicionales si es necesario
   }
-
 }

@@ -19,20 +19,17 @@ import { ErrorHandlerService } from '../../../core/services/errorhandler.service
 })
 export class LoginComponent implements OnInit {
   constructor(private titleService: Title) {
-    // Cambiar el título de la página al cargar el componente
     this.titleService.setTitle('Iniciar sesión | FolderFlow');
   }
-  
+
   loginForm!: FormGroup;
   isLoading = false;
   errorMessage: string | null = null;
   submitted = false;
 
-  // Inyección de dependencias moderna con inject()
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
-
   private errorHandler = inject(ErrorHandlerService);
 
   ngOnInit(): void {
@@ -44,9 +41,8 @@ export class LoginComponent implements OnInit {
 
   onSubmit(): void {
     this.submitted = true;
-    
+
     if (this.loginForm.invalid) {
-      console.log('Formulario inválido, mostrando errores.');
       return;
     }
 
@@ -57,19 +53,15 @@ export class LoginComponent implements OnInit {
     this.authService.login(credentials).subscribe({
       next: (response) => {
         this.isLoading = false;
-        console.log('Login exitoso, respuesta:', response);
-        // Redirigir al home o a donde sea necesario
         this.router.navigate(['/home']);
       },
       error: (error) => {
         this.isLoading = false;
         this.errorMessage = error.message;
-        console.error('Error en el login:', error);
       }
     });
   }
 
-  // Helper para acceder fácilmente a los controles en la plantilla
   get email() { return this.loginForm.get('email'); }
   get password() { return this.loginForm.get('password'); }
 }

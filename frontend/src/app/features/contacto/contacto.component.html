@@ -1,24 +1,20 @@
 <div class="contact-container">
-  
   <app-public-header></app-public-header>
-
   <div class="contact-content">
     <div class="contact-card">
       <div class="contact-info">
         <h2>Contacta con nosotros</h2>
         <p>Estamos aquí para ayudarte. Rellena el formulario y nos pondremos en contacto contigo lo antes posible.</p>
-        
         <div class="contact-details">
           <div class="contact-item">
             <div class="icon-container">
               <i class="material-icons">email</i>
             </div>
             <div class="text">
-                <h4>Email</h4>
-                <span>info&#64;folderflow.com</span> <!-- Corregido: usando span en vez de p -->
+              <h4>Email</h4>
+              <span>info&#64;folderflow.com</span>
             </div>
           </div>
-          
           <div class="contact-item">
             <div class="icon-container">
               <i class="material-icons">phone</i>
@@ -28,7 +24,6 @@
               <p>+34 910 123 456</p>
             </div>
           </div>
-          
           <div class="contact-item">
             <div class="icon-container">
               <i class="material-icons">location_on</i>
@@ -40,10 +35,8 @@
           </div>
         </div>
       </div>
-      
       <div class="contact-form-container">
         <h3>Envíanos un mensaje</h3>
-        
         <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" novalidate>
           <div class="form-field">
             <label for="nameInput">Nombre</label>
@@ -59,7 +52,6 @@
               <div *ngIf="name?.hasError('required')">El nombre es obligatorio.</div>
             </div>
           </div>
-          
           <div class="form-field">
             <label for="emailInput">Email</label>
             <input type="email"
@@ -75,7 +67,6 @@
               <div *ngIf="email?.hasError('email')">Introduce un formato de email válido.</div>
             </div>
           </div>
-          
           <div class="form-field">
             <label for="subjectInput">Asunto</label>
             <input type="text"
@@ -90,7 +81,6 @@
               <div *ngIf="subject?.hasError('required')">El asunto es obligatorio.</div>
             </div>
           </div>
-          
           <div class="form-field">
             <label for="messageInput">Mensaje</label>
             <textarea
@@ -107,15 +97,12 @@
               <div *ngIf="message?.hasError('minlength')">El mensaje debe tener al menos 10 caracteres.</div>
             </div>
           </div>
-          
           <div *ngIf="successMessage" class="success-message-container">
             <div class="success-message">{{ successMessage }}</div>
           </div>
-          
           <div *ngIf="errorMessage" class="error-message-container">
             <div class="error-message">{{ errorMessage }}</div>
           </div>
-          
           <div class="button-container">
             <button class="btn-primary" type="submit" [disabled]="isLoading">
               <span *ngIf="isLoading" class="loading-spinner"></span>
@@ -124,9 +111,7 @@
           </div>
         </form>
       </div>
-      
     </div>
-    
   </div>
-    <app-footer></app-footer>
+  <app-footer></app-footer>
 </div>

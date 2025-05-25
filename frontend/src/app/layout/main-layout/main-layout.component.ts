@@ -18,16 +18,14 @@ import { SidebarComponent } from '../sidebar/sidebar.component';
 })
 export class MainLayoutComponent implements OnInit {
   isSidebarCollapsed = false;
-  
+
   ngOnInit() {
-    // Recuperar el estado del sidebar del localStorage
     const savedState = localStorage.getItem('sidebarCollapsed');
     this.isSidebarCollapsed = savedState === 'true';
   }
 
   toggleSidebar() {
     this.isSidebarCollapsed = !this.isSidebarCollapsed;
-    // Guardar el estado en localStorage
     localStorage.setItem('sidebarCollapsed', this.isSidebarCollapsed.toString());
   }
 }

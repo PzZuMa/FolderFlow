@@ -19,7 +19,7 @@ import { PublicHeaderComponent } from '../public-header/public-header.component'
 })
 export class PoliticaCookiesComponent implements OnInit {
   currentYear: number = new Date().getFullYear();
-  
+
   constructor(private titleService: Title) {
     this.titleService.setTitle('Política de Cookies | FolderFlow');
   }

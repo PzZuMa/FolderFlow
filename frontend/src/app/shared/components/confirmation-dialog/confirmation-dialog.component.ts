@@ -10,8 +10,8 @@ export interface ConfirmationDialogData {
   message: string;
   confirmButtonText?: string;
   cancelButtonText?: string;
-  icon?: string; // Para permitir personalización del icono
-  type?: 'warning' | 'error' | 'info' | 'success'; // Tipo de diálogo
+  icon?: string;
+  type?: 'warning' | 'error' | 'info' | 'success';
 }
 
 @Component({
@@ -26,11 +26,9 @@ export interface ConfirmationDialogData {
         </div>
         <h2 mat-dialog-title *ngIf="data.title">{{ data.title }}</h2>
       </div>
-      
       <mat-dialog-content>
         <p class="dialog-message">{{ data.message }}</p>
       </mat-dialog-content>
-      
       <mat-dialog-actions align="end">
         <button mat-button class="cancel-button" (click)="onCancel()">
           {{ data.cancelButtonText || 'Cancelar' }}
@@ -49,14 +47,12 @@ export interface ConfirmationDialogData {
       border-radius: 12px;
       overflow: hidden;
     }
-    
     .dialog-header {
       display: flex;
       align-items: center;
       padding: 16px 24px 0;
       gap: 16px;
     }
-    
     .icon-container {
       display: flex;
       align-items: center;
@@ -66,13 +62,11 @@ export interface ConfirmationDialogData {
       border-radius: 50%;
       flex-shrink: 0;
     }
-    
     .dialog-message {
       font-size: 1rem;
       line-height: 1.6;
       color: #2c3e50;
     }
-    
     mat-dialog-title {
       margin: 0;
       font-size: 1.5rem;
@@ -80,20 +74,17 @@ export interface ConfirmationDialogData {
       color: #2c3e50;
       letter-spacing: -0.01em;
     }
-    
     mat-dialog-content {
       padding: 0 24px;
       margin: 16px 0;
       max-height: none;
     }
-    
     mat-dialog-actions {
       padding: 16px 24px;
       margin-bottom: 0;
       gap: 12px;
       border-top: 1px solid rgba(0,0,0,0.06);
     }
-    
     .confirm-button {
       display: flex;
       align-items: center;
@@ -103,46 +94,35 @@ export interface ConfirmationDialogData {
       font-weight: 500;
       border-radius: 8px;
     }
-    
     .cancel-button {
       font-weight: 500;
       border-radius: 8px;
       height: 40px;
     }
-    
-    /* Estilos específicos por tipo de diálogo */
     .warning .icon-container {
       background-color: rgba(255, 202, 40, 0.1);
     }
-    
     .warning .icon-container mat-icon {
       color: #ffca28;
     }
-    
     .error .icon-container {
       background-color: rgba(220, 53, 69, 0.1);
     }
-    
     .error .icon-container mat-icon {
       color: #dc3545;
     }
-    
     .success .icon-container {
       background-color: rgba(16, 185, 129, 0.1);
     }
-    
     .success .icon-container mat-icon {
       color: #10b981;
     }
-    
     .info .icon-container {
       background-color: rgba(107, 79, 187, 0.1);
     }
-    
     .info .icon-container mat-icon {
       color: #6b4fbb;
     }
-    
     @keyframes dialogFadeIn {
       from {
         opacity: 0;
@@ -166,7 +146,6 @@ export class ConfirmationDialogComponent {
   
   get dialogIcon(): string {
     if (this.data.icon) return this.data.icon;
-    
     switch (this.dialogType) {
       case 'error': return 'error_outline';
       case 'success': return 'check_circle_outline';

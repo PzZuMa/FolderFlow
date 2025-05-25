@@ -1,5 +1,4 @@
 <div class="viewer-container" [ngClass]="{'fullscreen-mode': isFullscreen}">
-  <!-- Header moderno -->
   <header class="viewer-header">
     <div class="header-content">
       <div class="header-left">
@@ -13,7 +12,6 @@
               {{ document?.name || 'Documento' }}
               <mat-icon class="edit-name-icon">edit</mat-icon>
             </h1>
-
             <div class="name-editor" *ngIf="isEditingName">
               <input 
                 type="text" 
@@ -40,11 +38,8 @@
           </div>
         </div>
       </div>
-      
       <div class="header-actions">
-        <!-- Grupo de controles específicos -->
         <div class="control-group" [ngSwitch]="fileType">
-          <!-- Controles PDF -->
           <ng-container *ngSwitchCase="'pdf'">
             <div class="zoom-controls">
               <button mat-icon-button class="control-btn" (click)="zoomOut()" matTooltip="Reducir zoom" [disabled]="zoomLevel <= 25">
@@ -65,8 +60,6 @@
               </button>
             </div>
           </ng-container>
-          
-          <!-- Controles Imagen -->
           <ng-container *ngSwitchCase="'image'">
             <div class="zoom-controls">
               <button mat-icon-button class="control-btn" (click)="zoomOut()" matTooltip="Reducir zoom" [disabled]="zoomLevel <= 25">
@@ -82,8 +75,6 @@
             </button>
           </ng-container>
         </div>
-
-        <!-- Botones de acción principales -->
         <div class="action-buttons">
           <button mat-stroked-button class="edit-btn disabled" 
                   matTooltip="Esta función no está disponible actualmente. Estará disponible en futuras actualizaciones."
@@ -92,7 +83,6 @@
             <mat-icon>edit</mat-icon>
             <span>Editar</span>
           </button>
-          
           <button mat-flat-button color="primary" class="download-btn" (click)="downloadFile()" matTooltip="Descargar archivo">
             <mat-icon>download</mat-icon>
             <span>Descargar</span>
@@ -101,10 +91,7 @@
       </div>
     </div>
   </header>
-
-  <!-- Contenedor del visor -->
   <main class="viewer-main">
-    <!-- Estado de carga -->
     <div *ngIf="isLoading && !document" class="loading-state">
       <div class="loading-content">
         <mat-spinner diameter="60" color="primary"></mat-spinner>
@@ -112,8 +99,6 @@
         <p>Preparando la vista previa...</p>
       </div>
     </div>
-
-    <!-- Estado de error -->
     <div *ngIf="loadError && !isLoading" class="error-state">
       <div class="error-content">
         <div class="error-icon">
@@ -133,26 +118,18 @@
         </div>
       </div>
     </div>
-
-    <!-- Contenido del documento -->
     <div class="document-content" *ngIf="!isLoading && !loadError" [ngSwitch]="fileType">
-      <!-- Visor PDF -->
       <div *ngSwitchCase="'pdf'" class="pdf-container">
-        <!-- Canvas PDF -->
         <div class="pdf-viewer" *ngIf="pdfLoaded || !isLoading">
           <canvas #pdfCanvas class="pdf-canvas" 
                   [style.opacity]="isLoading ? 0.5 : 1"
                   *ngIf="pdfLoaded"></canvas>
         </div>
-
-        <!-- Loading overlay específico para PDF -->
         <div class="pdf-loading" *ngIf="isLoading && fileType === 'pdf'">
           <mat-spinner diameter="40" color="primary"></mat-spinner>
           <p>Cargando PDF...</p>
         </div>
       </div>
-
-      <!-- Visor de imágenes -->
       <div *ngSwitchCase="'image'" class="image-container">
         <div class="image-viewer">
           <img [src]="documentUrl" 
@@ -162,15 +139,11 @@
                class="preview-image" />
         </div>
       </div>
-
-      <!-- Visor de texto -->
       <div *ngSwitchCase="'text'" class="text-container">
         <div class="text-viewer">
           <pre class="text-content">{{ textContent }}</pre>
         </div>
       </div>
-
-      <!-- Reproductor de audio -->
       <div *ngSwitchCase="'audio'" class="audio-container">
         <div class="audio-player">
           <div class="audio-info">
@@ -180,13 +153,9 @@
           <audio controls [src]="(documentUrl ?? '') | safeUrl" class="audio-control"></audio>
         </div>
       </div>
-
-      <!-- Reproductor de video -->
       <div *ngSwitchCase="'video'" class="video-container">
         <video controls [src]="(documentUrl ?? '') | safeUrl" class="video-player"></video>
       </div>
-
-      <!-- Formato no soportado (incluye HTML) -->
       <div *ngSwitchDefault class="unsupported-container">
         <div class="unsupported-content">
           <div class="unsupported-icon">

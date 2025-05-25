@@ -21,12 +21,11 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 })
 export class SidebarComponent {
   @Input() isCollapsed: boolean = false;
-  
-  // Esto añade la clase 'collapsed' al host cuando isCollapsed es true
+
   @HostBinding('class.collapsed') get collapsed() {
     return this.isCollapsed;
   }
-  
+
   menuItems = [
     { label: 'Inicio', icon: 'home', route: '/home' },
     { label: 'Mis documentos', icon: 'description', route: '/documents' },

@@ -1,15 +1,11 @@
 import express from 'express';
-// Importar todas las funciones exportadas del controlador
 import * as documentController from '../controllers/document.controller.js';
-// Asumiendo que authMiddleware se exporta como default o nombrado
 import { protect } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 
-// Aplicar autenticación a todas las rutas
 router.use(protect);
 
-// --- Rutas ---
 router.post('/upload-url', documentController.getUploadUrl);
 router.post('/confirm-upload', documentController.confirmUpload);
 router.get('/', documentController.listUserDocuments);
@@ -22,7 +18,6 @@ router.get('/favorites', documentController.getFavoriteDocs);
 router.get('/stats', documentController.getDocStats);
 router.patch('/:documentId/favorite', documentController.toggleFavorite);
 router.get('/:documentId', documentController.getDocumentById);
-router.patch('/:documentId/name', documentController.updateDocumentName); // Nueva ruta
+router.patch('/:documentId/name', documentController.updateDocumentName);
 
-// Exportación por defecto del router
 export default router;

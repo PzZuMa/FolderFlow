@@ -15,7 +15,7 @@ import { ErrorHandlerService } from '../../../app/core/services/errorhandler.ser
     ReactiveFormsModule,
     FooterComponent,
     PublicHeaderComponent
-],
+  ],
   templateUrl: './contacto.component.html',
   styleUrls: ['./contacto.component.scss']
 })
@@ -28,7 +28,7 @@ export class ContactoComponent implements OnInit {
 
   private fb = inject(FormBuilder);
   private errorHandler = inject(ErrorHandlerService);
-  
+
   constructor(private titleService: Title) {
     this.titleService.setTitle('Contacto | FolderFlow');
   }
@@ -42,7 +42,6 @@ export class ContactoComponent implements OnInit {
     });
   }
 
-  // Getters para la validación en el template
   get name() { return this.contactForm.get('name'); }
   get email() { return this.contactForm.get('email'); }
   get subject() { return this.contactForm.get('subject'); }
@@ -58,12 +57,11 @@ export class ContactoComponent implements OnInit {
     }
 
     this.isLoading = true;
-    
-    // Simulamos el envío del formulario (en producción, aquí se conectaría con un servicio real)
+
     setTimeout(() => {
-        this.isLoading = false;
-        this.successMessage = 'Tu mensaje ha sido enviado correctamente. Nos pondremos en contacto contigo pronto.';
-        this.contactForm.reset();
-      }, 2000);
+      this.isLoading = false;
+      this.successMessage = 'Tu mensaje ha sido enviado correctamente. Nos pondremos en contacto contigo pronto.';
+      this.contactForm.reset();
+    }, 2000);
   }
 }

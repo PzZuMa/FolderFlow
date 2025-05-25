@@ -1,11 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
-import { switchMap, map, catchError, concatMap, reduce, timeout } from 'rxjs/operators';
+import { switchMap, map, catchError } from 'rxjs/operators';
 import { Folder } from '../models/folder.model';
-import { environment } from '../../../environments/environment.development'; // Asegúrate que exista environment
+import { environment } from '../../../environments/environment.development';
 import { ErrorHandlerService } from './errorhandler.service';
-
 
 @Injectable({
   providedIn: 'root'
@@ -13,117 +12,90 @@ import { ErrorHandlerService } from './errorhandler.service';
 export class FolderService {
   private http = inject(HttpClient);
   private errorHandler = inject(ErrorHandlerService);
-  private apiUrl = `${environment.apiUrl}/folders`; // Define apiUrl en environment.ts
+  private apiUrl = `${environment.apiUrl}/folders`;
 
   private handleError(error: any): Observable<never> {
     const userMessage = this.errorHandler.getErrorMessage(error);
     return throwError(() => new Error(userMessage));
   }
 
-  // Obtener carpetas de un directorio padre
   getFolders(parentId: string | null): Observable<Folder[]> {
     let params = new HttpParams();
     if (parentId) {
       params = params.set('parentId', parentId);
-    } else {
-      // Asegurarse que si parentId es null, no se envíe el parámetro
-      // El backend debería interpretar la ausencia de parentId como la raíz
     }
     return this.http.get<Folder[]>(this.apiUrl, { params }).pipe(catchError(error => this.handleError(error)));
   }
 
-  // Obtener detalles de una carpeta específica
   getFolderDetails(folderId: string): Observable<Folder> {
     return this.http.get<Folder>(`${this.apiUrl}/${folderId}`).pipe(catchError(error => this.handleError(error)));
   }
 
-  // Crear una nueva carpeta
   createFolder(name: string, parentId: string | null): Observable<Folder> {
     return this.http.post<Folder>(this.apiUrl, { name, parentId }).pipe(catchError(error => this.handleError(error)));
   }
 
-  // Eliminar una carpeta
-  deleteFolder(folderId: string): Observable<any> { // O define una interfaz para la respuesta
+  deleteFolder(folderId: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${folderId}`).pipe(catchError(error => this.handleError(error)));
   }
 
-  // Método mejorado para obtener breadcrumbs, más robusto ante errores
-getBreadcrumbs(folderId: string | null): Observable<Folder[]> {
-    if (this.isRootId(folderId)) { // Usar el helper del componente o uno similar aquí
+  getBreadcrumbs(folderId: string | null): Observable<Folder[]> {
+    if (this.isRootId(folderId)) {
       return of([{ _id: null as any, name: 'Mis Carpetas', parentId: null, ownerId: '' }]);
     }
 
     return this.buildBreadcrumbPathRecursive(folderId).pipe(
       map(path => {
-        // path aquí debería ser [CarpetaActual, Padre, Abuelo, ...]
-        // Lo invertimos para que sea [..., Abuelo, Padre, CarpetaActual]
-        const orderedPath = [...path].reverse(); 
+        const orderedPath = [...path].reverse();
         const rootCrumb: Folder = { _id: null as any, name: 'Mis Carpetas', parentId: null, ownerId: '' };
-        console.debug('Breadcrumbs Service (Path Invertido + Raíz):', [rootCrumb, ...orderedPath].map(b => b.name));
         return [rootCrumb, ...orderedPath];
       }),
       catchError(error => this.handleError(error))
     );
   }
 
-// Cambiado el nombre para claridad y lógica ajustada
   private buildBreadcrumbPathRecursive(folderId: string | null): Observable<Folder[]> {
     if (this.isRootId(folderId)) {
-      return of([]); // Caso base: hemos llegado a la raíz (o más allá), no añadir más
+      return of([]);
     }
 
-    return this.getFolderDetails(folderId!).pipe( // folderId no será null aquí
+    return this.getFolderDetails(folderId!).pipe(
       switchMap(currentFolder => {
-        if (!currentFolder) { // No se encontró la carpeta
+        if (!currentFolder) {
           return of([]);
         }
-        // Recursivamente obtener el path del padre
         return this.buildBreadcrumbPathRecursive(currentFolder.parentId).pipe(
           map(parentPath => {
-            // Añadir la carpeta actual al final del path de sus padres
-            // El orden se construye de la raíz hacia abajo: [Raíz, Padre, Actual]
-            // No, al revés: [Actual, Padre, Abuelo]
             return [currentFolder, ...parentPath];
           })
         );
       }),
-      catchError(error => this.handleError(error)),
-      // No necesitas el timeout aquí si tu backend es razonablemente rápido y no hay ciclos.
+      catchError(error => this.handleError(error))
     );
   }
 
-  // Helper (puedes moverlo a un archivo de utilidades o mantenerlo aquí)
   private isRootId(id: string | null | undefined): boolean {
     return id === null || id === '' || id === undefined;
   }
 
   moveFolder(folderId: string, destinationParentId: string | null): Observable<Folder> {
     const url = `${this.apiUrl}/${folderId}/move`;
-    return this.http.patch<Folder>(url, { destinationParentId }).pipe(catchError(error => this.handleError(error))); // Enviar destino en el body
+    return this.http.patch<Folder>(url, { destinationParentId }).pipe(catchError(error => this.handleError(error)));
   }
 
-  /**
- * Obtiene estadísticas de carpetas
- * @param folderId ID de la carpeta específica o undefined para estadísticas globales
- */
-getFolderStats(folderId?: string | null): Observable<any> {
-  const params = folderId !== undefined 
-    ? new HttpParams().set('folderId', folderId || 'null') 
-    : new HttpParams();
-  
-  return this.http.get<any>(`${this.apiUrl}/stats`, { params }).pipe(catchError(error => this.handleError(error)));
-}
+  getFolderStats(folderId?: string | null): Observable<any> {
+    const params = folderId !== undefined
+      ? new HttpParams().set('folderId', folderId || 'null')
+      : new HttpParams();
+
+    return this.http.get<any>(`${this.apiUrl}/stats`, { params }).pipe(catchError(error => this.handleError(error)));
+  }
 
   getFoldersByIds(folderIds: string[]): Observable<Folder[]> {
-  return this.http.post<Folder[]>(`${this.apiUrl}/by-ids`, { folderIds }).pipe(catchError(error => this.handleError(error)));
-}
+    return this.http.post<Folder[]>(`${this.apiUrl}/by-ids`, { folderIds }).pipe(catchError(error => this.handleError(error)));
+  }
 
-/**
- * Actualiza el nombre de una carpeta
- */
-updateFolderName(folderId: string, newName: string): Observable<Folder> {
-  return this.http.patch<Folder>(`${this.apiUrl}/${folderId}/name`, { name: newName }).pipe(catchError(error => this.handleError(error)));
+  updateFolderName(folderId: string, newName: string): Observable<Folder> {
+    return this.http.patch<Folder>(`${this.apiUrl}/${folderId}/name`, { name: newName }).pipe(catchError(error => this.handleError(error)));
+  }
 }
-
-}
-

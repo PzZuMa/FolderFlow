@@ -1,14 +1,10 @@
 <div class="explorer-container">
-  <!-- Barra de Progreso de Carga Global -->
   <mat-progress-bar mode="indeterminate" *ngIf="isLoading && uploads.length === 0" class="global-progress"></mat-progress-bar>
-
-  <!-- Encabezado de la Página -->
   <div class="page-header">
     <div class="page-title">
-      <!-- Breadcrumbs como título principal siempre visible -->
       <div class="breadcrumb-title-container">
         <div class="breadcrumb-scroll-wrapper">
-          <ng-container *ngFor="let crumb of breadcrumbs; let isLast = last; let isFirst = first">  
+          <ng-container *ngFor="let crumb of breadcrumbs; let isLast = last; let isFirst = first">
             <button mat-button class="breadcrumb-title-button"
                     (click)="navigateToBreadcrumb(isRootId(crumb._id) ? null : crumb._id)"
                     [disabled]="isLast">
@@ -21,27 +17,21 @@
       <p class="page-description">Organiza y gestiona tus carpetas y archivos</p>
     </div>
     <div class="header-actions">
-      <!-- Botón Nueva Carpeta (siempre visible, estilo amarillo) -->
       <button mat-raised-button class="folder-btn create-btn" (click)="openCreateFolderDialog()">
         <mat-icon>create_new_folder</mat-icon>
         <span>Nueva Carpeta</span>
       </button>
-      
-      <!-- Botón Subir Archivo (solo visible dentro de una carpeta) -->
       <button *ngIf="currentFolderId !== null" mat-raised-button color="primary" class="upload-btn" (click)="triggerFileInputClick()">
         <mat-icon>upload_file</mat-icon>
         <span>Subir Archivo</span>
       </button>
     </div>
   </div>
-
-  <!-- Lista de Subidas en Progreso -->
   <div *ngIf="uploads.length > 0" class="upload-section">
     <div class="section-title">
       <mat-icon>cloud_upload</mat-icon>
       <h2>Subidas en progreso</h2>
     </div>
-    
     <div class="upload-items-container">
       <div *ngFor="let upload of uploads; let i = index" class="upload-item"
            [ngClass]="{'upload-success': upload.status === 'success', 'upload-error': upload.status === 'error'}">
@@ -59,247 +49,221 @@
             <span class="file-size">{{ formatBytes(upload.file.size) }}</span>
           </span>
           <mat-progress-bar *ngIf="upload.status === 'uploading' || upload.status === 'confirming'"
-                          mode="determinate" [value]="upload.progress" class="upload-progress-bar">
+                            mode="determinate" [value]="upload.progress" class="upload-progress-bar">
           </mat-progress-bar>
         </div>
       </div>
     </div>
   </div>
-
-  <!-- Contenido Principal -->
   <div class="content-area">
-    <!-- Filtros y Búsqueda -->
     <div class="filters-container">
       <div class="search-box">
         <mat-icon>search</mat-icon>
         <input type="text" placeholder="Buscar carpetas y archivos..." (input)="filterItems($event)">
       </div>
-      
-      <!-- Controles de tipo de vista -->
       <div class="view-options">
         <button mat-icon-button [class.active]="viewType === 'grid'" (click)="setViewType('grid')" 
-            matTooltip="Vista de cuadrícula">
+                matTooltip="Vista de cuadrícula">
           <mat-icon>grid_view</mat-icon>
         </button>
         <button mat-icon-button [class.active]="viewType === 'list'" (click)="setViewType('list')" 
-            matTooltip="Vista de lista">
+                matTooltip="Vista de lista">
           <mat-icon>view_list</mat-icon>
         </button>
       </div>
     </div>
-    
-    <!-- Vista de Cuadrícula -->
     <div *ngIf="!isLoading && viewType === 'grid'" class="grid-container">
-  <!-- Cards de Carpetas con nuevo diseño -->
-  <mat-card *ngFor="let folder of folders" class="document-card folder-card" (click)="navigateToFolder(folder._id)">
-    <!-- Barra superior de color para carpetas -->
-    <div class="document-content">
-      <div class="document-icon" [ngStyle]="{'background-color': 'rgba(255, 202, 40, 0.15)'}">
-        <mat-icon style="color: #ffca28">folder</mat-icon>
-      </div>
-      <div class="document-info">
-        <div class="document-name">
-          {{ folder.name }}
-        </div>
-        <div class="document-meta">
-          <!-- Estadísticas de la carpeta -->
-          <span class="folder-stats" *ngIf="folder.fileCount !== undefined || folder.folderCount !== undefined">
-            <span *ngIf="folder.fileCount !== undefined" class="file-count">
-              <mat-icon>insert_drive_file</mat-icon>{{ folder.fileCount }}
-            </span>
-            <span *ngIf="folder.folderCount !== undefined" class="subfolder-count">
-              <mat-icon>folder</mat-icon>{{ folder.folderCount }}
-            </span>
-          </span>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Footer con fecha y acciones -->
-    <div class="document-footer">
-      <div class="document-date">
-        <mat-icon>schedule</mat-icon>{{ folder.updatedAt | date:'dd MMM, yyyy' }}
-      </div>
-      <div class="document-actions">
-        <button mat-icon-button class="action-button move-btn" (click)="openMoveDialog(folder, 'folder'); $event.stopPropagation()" 
-            matTooltip="Mover carpeta">
-          <mat-icon>drive_file_move</mat-icon>
-        </button>
-        <button mat-icon-button class="action-button edit-btn" (click)="openEditFolderNameDialog(folder, $event)" matTooltip="Editar nombre">
-          <mat-icon>edit</mat-icon>
-        </button>
-        <button mat-icon-button class="action-button delete-btn" (click)="openDeleteConfirmation(folder, 'folder'); $event.stopPropagation()" 
-            matTooltip="Eliminar">
-          <mat-icon>delete_outline</mat-icon>
-        </button>
-      </div>
-    </div>
-  </mat-card>
-
-  <!-- Cards de Documentos con nuevo diseño -->
-  <mat-card *ngFor="let document of documents" class="document-card" 
-          [class.favorite-document]="document.isFavorite" 
-          (click)="openDocumentViewer(document)">
-    <div class="document-content">
-      <div class="document-icon" [ngStyle]="{'background-color': 'rgba(' + getColorForMimeType(document.mimeType) + ', 0.15)'}">
-        <mat-icon [ngStyle]="{'color': 'rgb(' + getColorForMimeType(document.mimeType) + ')'}">
-          {{ getIconForMimeType(document.mimeType) }}
-        </mat-icon>
-      </div>
-      <div class="document-info">
-        <div class="document-name">
-          {{ document.name }}
-          <mat-icon *ngIf="document.isFavorite" class="favorite-indicator">star</mat-icon>
-        </div>
-        <div class="document-meta">
-          <span class="document-size">
-            <mat-icon>storage</mat-icon>{{ formatBytes(document.size) }}
-          </span>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Footer con fecha y acciones -->
-    <div class="document-footer">
-      <div class="document-date">
-        <mat-icon>schedule</mat-icon>{{ document.updatedAt | date:'dd MMM, yyyy' }}
-      </div>
-      <div class="document-actions">
-        <button mat-icon-button class="action-button move-btn" (click)="openMoveDialog(document, 'document'); $event.stopPropagation()" 
-            matTooltip="Mover documento">
-          <mat-icon>drive_file_move</mat-icon>
-        </button>
-        <button mat-icon-button class="action-button favorite-btn" (click)="toggleFavorite(document, $event)" 
-            matTooltip="{{ document.isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos' }}">
-          <mat-icon>{{ document.isFavorite ? 'star' : 'star_outline' }}</mat-icon>
-        </button>
-        <button mat-icon-button class="action-button delete-btn" (click)="openDeleteConfirmation(document, 'document'); $event.stopPropagation()" 
-            matTooltip="Eliminar">
-          <mat-icon>delete_outline</mat-icon>
-        </button>
-      </div>
-    </div>
-  </mat-card>
-</div>
-
-    <!-- Nueva Vista de Lista -->
-    <div *ngIf="!isLoading && viewType === 'list'" class="list-container">
-  <table class="document-table">
-    <thead>
-      <tr class="table-header">
-        <th class="icon-header"></th>
-        <th class="title-header">Nombre</th>
-        <th class="info-header">Información</th>
-        <th class="date-header">Fecha</th>
-        <th class="actions-header">Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- Filas de Carpetas -->
-      <tr *ngFor="let folder of folders" class="folder-row" (click)="navigateToFolder(folder._id)">
-        <td class="icon-cell">
-          <div class="list-icon folder-icon" style="color: #ffca28; background-color: rgba(255, 202, 40, 0.15)">
-            <mat-icon>folder</mat-icon>
+      <mat-card *ngFor="let folder of folders" class="document-card folder-card" (click)="navigateToFolder(folder._id)">
+        <div class="document-content">
+          <div class="document-icon" [ngStyle]="{'background-color': 'rgba(255, 202, 40, 0.15)'}">
+            <mat-icon style="color: #ffca28">folder</mat-icon>
           </div>
-        </td>
-        <td class="title-cell">
-          <div class="item-title">{{ folder.name }}</div>
-        </td>
-        <td class="info-cell">
-          <div class="folder-stats">
-            <span *ngIf="folder.fileCount !== undefined" class="stat-item file-count">
-              <mat-icon>insert_drive_file</mat-icon>{{ folder.fileCount }}
-            </span>
-            <span *ngIf="folder.folderCount !== undefined" class="stat-item subfolder-count">
-              <mat-icon>folder</mat-icon>{{ folder.folderCount }}
-            </span>
+          <div class="document-info">
+            <div class="document-name">
+              {{ folder.name }}
+            </div>
+            <div class="document-meta">
+              <span class="folder-stats" *ngIf="folder.fileCount !== undefined || folder.folderCount !== undefined">
+                <span *ngIf="folder.fileCount !== undefined" class="file-count">
+                  <mat-icon>insert_drive_file</mat-icon>{{ folder.fileCount }}
+                </span>
+                <span *ngIf="folder.folderCount !== undefined" class="subfolder-count">
+                  <mat-icon>folder</mat-icon>{{ folder.folderCount }}
+                </span>
+              </span>
+            </div>
           </div>
-        </td>
-        <td class="date-cell">{{ folder.updatedAt | date:'dd MMM, yyyy' }}</td>
-        <td class="actions-cell">
-          <div class="item-actions">
-            <button mat-icon-button class="action-button move-btn" 
-                    (click)="openMoveDialog(folder, 'folder'); $event.stopPropagation()"
+        </div>
+        <div class="document-footer">
+          <div class="document-date">
+            <mat-icon>schedule</mat-icon>{{ folder.updatedAt | date:'dd MMM, yyyy' }}
+          </div>
+          <div class="document-actions">
+            <button mat-icon-button class="action-button move-btn" (click)="openMoveDialog(folder, 'folder'); $event.stopPropagation()" 
                     matTooltip="Mover carpeta">
               <mat-icon>drive_file_move</mat-icon>
             </button>
             <button mat-icon-button class="action-button edit-btn" (click)="openEditFolderNameDialog(folder, $event)" matTooltip="Editar nombre">
               <mat-icon>edit</mat-icon>
             </button>
-            <button mat-icon-button class="action-button delete-btn" 
-                    (click)="openDeleteConfirmation(folder, 'folder'); $event.stopPropagation()"
+            <button mat-icon-button class="action-button delete-btn" (click)="openDeleteConfirmation(folder, 'folder'); $event.stopPropagation()" 
                     matTooltip="Eliminar">
               <mat-icon>delete_outline</mat-icon>
             </button>
           </div>
-        </td>
-      </tr>
-
-      <!-- Filas de Documentos -->
-      <tr *ngFor="let doc of documents" class="document-row" 
-          [class.favorite-row]="doc.isFavorite"
-          (click)="openDocumentViewer(doc)">
-        <td class="icon-cell">
-          <div class="list-icon document-icon" 
-               [ngStyle]="{'color': 'rgb(' + getColorForMimeType(doc.mimeType) + ')', 
-                          'background-color': 'rgba(' + getColorForMimeType(doc.mimeType) + ', 0.15)'}">
-            <mat-icon>{{ getIconForMimeType(doc.mimeType) }}</mat-icon>
+        </div>
+      </mat-card>
+      <mat-card *ngFor="let document of documents" class="document-card" 
+                [class.favorite-document]="document.isFavorite" 
+                (click)="openDocumentViewer(document)">
+        <div class="document-content">
+          <div class="document-icon" [ngStyle]="{'background-color': 'rgba(' + getColorForMimeType(document.mimeType) + ', 0.15)'}">
+            <mat-icon [ngStyle]="{'color': 'rgb(' + getColorForMimeType(document.mimeType) + ')'}">
+              {{ getIconForMimeType(document.mimeType) }}
+            </mat-icon>
           </div>
-        </td>
-        <td class="title-cell">
-          <div class="item-title">
-            {{ doc.name }}
-            <mat-icon *ngIf="doc.isFavorite" class="favorite-indicator">star</mat-icon>
+          <div class="document-info">
+            <div class="document-name">
+              {{ document.name }}
+              <mat-icon *ngIf="document.isFavorite" class="favorite-indicator">star</mat-icon>
+            </div>
+            <div class="document-meta">
+              <span class="document-size">
+                <mat-icon>storage</mat-icon>{{ formatBytes(document.size) }}
+              </span>
+            </div>
           </div>
-        </td>
-        <td class="info-cell">{{ formatBytes(doc.size) }}</td>
-        <td class="date-cell">{{ doc.updatedAt | date:'dd MMM, yyyy' }}</td>
-        <td class="actions-cell">
-          <div class="item-actions">
-            <button mat-icon-button class="action-button move-btn" 
-                    (click)="openMoveDialog(doc, 'document'); $event.stopPropagation()"
+        </div>
+        <div class="document-footer">
+          <div class="document-date">
+            <mat-icon>schedule</mat-icon>{{ document.updatedAt | date:'dd MMM, yyyy' }}
+          </div>
+          <div class="document-actions">
+            <button mat-icon-button class="action-button move-btn" (click)="openMoveDialog(document, 'document'); $event.stopPropagation()" 
                     matTooltip="Mover documento">
               <mat-icon>drive_file_move</mat-icon>
             </button>
-            <button mat-icon-button class="action-button favorite-btn" 
-                    (click)="toggleFavorite(doc, $event)"
-                    matTooltip="{{ doc.isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos' }}">
-              <mat-icon>{{ doc.isFavorite ? 'star' : 'star_outline' }}</mat-icon>
+            <button mat-icon-button class="action-button favorite-btn" (click)="toggleFavorite(document, $event)" 
+                    matTooltip="{{ document.isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos' }}">
+              <mat-icon>{{ document.isFavorite ? 'star' : 'star_outline' }}</mat-icon>
             </button>
-            <button mat-icon-button class="action-button delete-btn" 
-                    (click)="openDeleteConfirmation(doc, 'document'); $event.stopPropagation()"
+            <button mat-icon-button class="action-button delete-btn" (click)="openDeleteConfirmation(document, 'document'); $event.stopPropagation()" 
                     matTooltip="Eliminar">
               <mat-icon>delete_outline</mat-icon>
             </button>
           </div>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  
-  <!-- Estado vacío -->
-  <div *ngIf="folders.length === 0 && documents.length === 0" class="empty-list">
-    <div class="empty-state-container">
-      <div class="empty-icon-container">
-        <mat-icon>folder_off</mat-icon>
-      </div>
-      <h2>No hay contenido</h2>
-      <p *ngIf="currentFolderId !== null">Esta carpeta está vacía</p>
-      <p *ngIf="currentFolderId === null">No hay carpetas disponibles</p>
+        </div>
+      </mat-card>
     </div>
-  </div>
-</div>
-
-  <!-- Input oculto para subida -->
-  <input type="file" #fileInput style="display:none" (change)="onFileSelected($event)" multiple>
-  
-  <!-- Botones flotantes para móvil -->
-  <div class="mobile-actions">
-    <button mat-fab color="primary" class="fab-action" (click)="openCreateFolderDialog()" matTooltip="Nueva carpeta">
-      <mat-icon>create_new_folder</mat-icon>
-    </button>
-    <button mat-fab color="primary" class="fab-action" (click)="triggerFileInputClick()" matTooltip="Subir archivo">
-      <mat-icon>upload_file</mat-icon>
-    </button>
+    <div *ngIf="!isLoading && viewType === 'list'" class="list-container">
+      <table class="document-table">
+        <thead>
+          <tr class="table-header">
+            <th class="icon-header"></th>
+            <th class="title-header">Nombre</th>
+            <th class="info-header">Información</th>
+            <th class="date-header">Fecha</th>
+            <th class="actions-header">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let folder of folders" class="folder-row" (click)="navigateToFolder(folder._id)">
+            <td class="icon-cell">
+              <div class="list-icon folder-icon" style="color: #ffca28; background-color: rgba(255, 202, 40, 0.15)">
+                <mat-icon>folder</mat-icon>
+              </div>
+            </td>
+            <td class="title-cell">
+              <div class="item-title">{{ folder.name }}</div>
+            </td>
+            <td class="info-cell">
+              <div class="folder-stats">
+                <span *ngIf="folder.fileCount !== undefined" class="stat-item file-count">
+                  <mat-icon>insert_drive_file</mat-icon>{{ folder.fileCount }}
+                </span>
+                <span *ngIf="folder.folderCount !== undefined" class="stat-item subfolder-count">
+                  <mat-icon>folder</mat-icon>{{ folder.folderCount }}
+                </span>
+              </div>
+            </td>
+            <td class="date-cell">{{ folder.updatedAt | date:'dd MMM, yyyy' }}</td>
+            <td class="actions-cell">
+              <div class="item-actions">
+                <button mat-icon-button class="action-button move-btn" 
+                        (click)="openMoveDialog(folder, 'folder'); $event.stopPropagation()"
+                        matTooltip="Mover carpeta">
+                  <mat-icon>drive_file_move</mat-icon>
+                </button>
+                <button mat-icon-button class="action-button edit-btn" (click)="openEditFolderNameDialog(folder, $event)" matTooltip="Editar nombre">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button class="action-button delete-btn" 
+                        (click)="openDeleteConfirmation(folder, 'folder'); $event.stopPropagation()"
+                        matTooltip="Eliminar">
+                  <mat-icon>delete_outline</mat-icon>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngFor="let doc of documents" class="document-row" 
+              [class.favorite-row]="doc.isFavorite"
+              (click)="openDocumentViewer(doc)">
+            <td class="icon-cell">
+              <div class="list-icon document-icon" 
+                   [ngStyle]="{'color': 'rgb(' + getColorForMimeType(doc.mimeType) + ')', 
+                              'background-color': 'rgba(' + getColorForMimeType(doc.mimeType) + ', 0.15)'}">
+                <mat-icon>{{ getIconForMimeType(doc.mimeType) }}</mat-icon>
+              </div>
+            </td>
+            <td class="title-cell">
+              <div class="item-title">
+                {{ doc.name }}
+                <mat-icon *ngIf="doc.isFavorite" class="favorite-indicator">star</mat-icon>
+              </div>
+            </td>
+            <td class="info-cell">{{ formatBytes(doc.size) }}</td>
+            <td class="date-cell">{{ doc.updatedAt | date:'dd MMM, yyyy' }}</td>
+            <td class="actions-cell">
+              <div class="item-actions">
+                <button mat-icon-button class="action-button move-btn" 
+                        (click)="openMoveDialog(doc, 'document'); $event.stopPropagation()"
+                        matTooltip="Mover documento">
+                  <mat-icon>drive_file_move</mat-icon>
+                </button>
+                <button mat-icon-button class="action-button favorite-btn" 
+                        (click)="toggleFavorite(doc, $event)"
+                        matTooltip="{{ doc.isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos' }}">
+                  <mat-icon>{{ doc.isFavorite ? 'star' : 'star_outline' }}</mat-icon>
+                </button>
+                <button mat-icon-button class="action-button delete-btn" 
+                        (click)="openDeleteConfirmation(doc, 'document'); $event.stopPropagation()"
+                        matTooltip="Eliminar">
+                  <mat-icon>delete_outline</mat-icon>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div *ngIf="folders.length === 0 && documents.length === 0" class="empty-list">
+        <div class="empty-state-container">
+          <div class="empty-icon-container">
+            <mat-icon>folder_off</mat-icon>
+          </div>
+          <h2>No hay contenido</h2>
+          <p *ngIf="currentFolderId !== null">Esta carpeta está vacía</p>
+          <p *ngIf="currentFolderId === null">No hay carpetas disponibles</p>
+        </div>
+      </div>
+    </div>
+    <input type="file" #fileInput style="display:none" (change)="onFileSelected($event)" multiple>
+    <div class="mobile-actions">
+      <button mat-fab color="primary" class="fab-action" (click)="openCreateFolderDialog()" matTooltip="Nueva carpeta">
+        <mat-icon>create_new_folder</mat-icon>
+      </button>
+      <button mat-fab color="primary" class="fab-action" (click)="triggerFileInputClick()" matTooltip="Subir archivo">
+        <mat-icon>upload_file</mat-icon>
+      </button>
+    </div>
   </div>
 </div>

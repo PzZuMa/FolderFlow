@@ -1,4 +1,3 @@
-// Variables - Consistentes con el header
 $primary-color: #6b4fbb;
 $primary-hover: #5936b1;
 $primary-light: rgba(107, 79, 187, 0.1);
@@ -11,8 +10,6 @@ $text-muted: #6c757d;
 $box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 $box-shadow-hover: 0 8px 25px rgba(107, 79, 187, 0.15);
 $accent-yellow: #ffca28;
-
-// Nuevas variables para efectos mejorados
 $border-radius: 12px;
 $item-height: 52px;
 $transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -23,14 +20,13 @@ $transition-quick: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   height: 100%;
   background: linear-gradient(145deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.8) 100%);
   overflow: hidden;
-  width: 260px; // Ligeramente más ancho para mejor espaciado
+  width: 260px;
   flex-shrink: 0;
   transition: $transition-smooth;
   border-right: 1px solid rgba($primary-color, 0.08);
   backdrop-filter: blur(12px);
   position: relative;
-  
-  // Añadir un sutil efecto de gradiente en el borde
+
   &::before {
     content: '';
     position: absolute;
@@ -47,7 +43,7 @@ $transition-quick: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 :host(.collapsed) {
-  width: 76px; // Ligeramente más ancho para mejor centrado
+  width: 76px;
 }
 
 .sidebar-container {
@@ -56,20 +52,19 @@ $transition-quick: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   overflow-y: auto;
   padding: 20px 16px;
   position: relative;
-  
-  // Scroll mejorado con estilo más moderno
+
   &::-webkit-scrollbar {
     width: 4px;
   }
-  
+
   &::-webkit-scrollbar-track {
     background: transparent;
   }
-  
+
   &::-webkit-scrollbar-thumb {
     background: rgba($primary-color, 0.2);
     border-radius: 2px;
-    
+
     &:hover {
       background: rgba($primary-color, 0.3);
     }
@@ -82,8 +77,7 @@ $transition-quick: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   transition: $transition-quick;
   overflow: hidden;
   position: relative;
-  
-  // Efecto de brillo sutil en hover
+
   &::before {
     content: '';
     position: absolute;
@@ -100,13 +94,12 @@ $transition-quick: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 1;
     pointer-events: none;
   }
-  
+
   &:hover::before {
     left: 100%;
   }
 }
 
-// Estilos mejorados para el texto
 .nav-text {
   white-space: nowrap;
   opacity: 1;
@@ -127,7 +120,6 @@ $transition-quick: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   transform: translateX(-10px);
 }
 
-// Estilos mejorados del mat-list-item
 .mat-mdc-list-item {
   color: $text-color;
   border-radius: $border-radius;
@@ -135,8 +127,7 @@ $transition-quick: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   transition: $transition-quick;
   position: relative;
   overflow: hidden;
-  
-  // Línea inferior amarilla
+
   &::before {
     content: '';
     position: absolute;
@@ -149,8 +140,7 @@ $transition-quick: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     transform: translateX(-50%);
     border-radius: 1px;
   }
-  
-  // Efecto de fondo con gradiente sutil
+
   &::after {
     content: '';
     position: absolute;
@@ -163,7 +153,7 @@ $transition-quick: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     transition: opacity 0.3s ease;
     z-index: -1;
   }
-  
+
   .mat-icon {
     color: $text-muted;
     font-size: 22px;
@@ -171,47 +161,44 @@ $transition-quick: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     transform: scale(1);
     filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
   }
-  
+
   &:hover {
     background-color: $primary-light;
     transform: translateY(-1px);
     box-shadow: $box-shadow-hover;
-    
-    // Mostrar línea amarilla en hover
+
     &::before {
       width: 80%;
     }
-    
+
     .mat-icon {
       color: $primary-color;
       transform: scale(1.08);
     }
-    
+
     .nav-text {
       color: $primary-color;
       transform: translateX(2px);
     }
   }
-  
-  // Efecto de presión al hacer clic
+
   &:active {
     transform: translateY(0px) scale(0.98);
   }
 }
 
-// Ajustes para el estado colapsado
 :host(.collapsed) .mat-mdc-list-item {
   padding: 0;
   display: flex;
   justify-content: center;
-  min-height: 56px; // Ligeramente más alto para mejor proporción
-  
+  min-height: 56px;
+
   ::ng-deep .mdc-list-item__content {
     padding: 0;
     justify-content: center;
     width: 100%;
   }
-  
+
   ::ng-deep .mat-mdc-list-item-unscoped-content {
     display: flex;
     justify-content: center;
@@ -219,7 +206,7 @@ $transition-quick: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     width: 100%;
     padding: 0;
   }
-  
+
   mat-icon {
     margin: 0 auto !important;
     padding: 0 !important;
@@ -228,7 +215,7 @@ $transition-quick: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     align-items: center !important;
     width: 100% !important;
   }
-  
+
   ::ng-deep .mdc-list-item__start {
     margin: 0 auto !important;
   }
@@ -244,59 +231,54 @@ $transition-quick: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   margin-right: auto !important;
 }
 
-// Estilo mejorado para el item activo
 .active-link {
   background: $primary-gradient !important;
   box-shadow: $box-shadow-hover;
   transform: translateY(-1px);
-  
-  // Línea amarilla siempre visible en estado activo
+
   &::before {
     width: 90% !important;
     background: $accent-yellow !important;
     height: 3px !important;
   }
-  
+
   &::after {
     opacity: 1;
   }
-  
+
   .mat-icon, 
   .nav-text {
     color: white !important;
     font-weight: 600;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   }
-  
+
   .mat-icon {
     transform: scale(1.05);
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
   }
 }
 
-// Hover effect mejorado para active-link
 .active-link:hover {
   background: linear-gradient(135deg, $primary-hover 0%, #9d6bc3 100%) !important;
   transform: translateY(-2px);
   box-shadow: 0 12px 30px rgba(107, 79, 187, 0.25);
-  
-  // Línea amarilla más prominente en hover del elemento activo
+
   &::before {
     width: 95% !important;
     height: 3px !important;
     box-shadow: 0 2px 8px rgba(255, 202, 40, 0.4);
   }
-  
+
   .mat-icon {
     transform: scale(1.1);
   }
-  
+
   .nav-text {
     transform: translateX(1px);
   }
 }
 
-// Animaciones mejoradas
 @keyframes slideInFromLeft {
   from {
     opacity: 0;
@@ -321,7 +303,7 @@ $transition-quick: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   animation: slideInFromLeft 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   animation-delay: calc(0.08s * var(--index, 0));
   opacity: 0;
-  
+
   &:nth-child(1) { --index: 1; }
   &:nth-child(2) { --index: 2; }
   &:nth-child(3) { --index: 3; }
@@ -329,12 +311,10 @@ $transition-quick: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   &:nth-child(5) { --index: 5; }
 }
 
-// Efecto especial para iconos en hover
 .nav-item:hover .mat-icon {
   animation: pulseIcon 0.6s ease-in-out;
 }
 
-// Responsive improvements
 @media (max-width: 768px) {
   :host {
     width: 100%;
@@ -348,40 +328,39 @@ $transition-quick: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     backdrop-filter: blur(20px);
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
   }
-  
+
   .sidebar-container {
     padding: 12px 16px;
     display: flex;
     overflow-x: auto;
     overflow-y: hidden;
   }
-  
+
   .nav-item {
     margin: 0 4px;
     min-width: 60px;
     flex-shrink: 0;
   }
-  
+
   .mat-mdc-list-item {
     flex-direction: column;
     text-align: center;
     padding: 8px 4px;
     min-height: 60px;
   }
-  
+
   .nav-text {
     font-size: 0.75rem;
     margin-top: 4px;
     opacity: 0.8;
   }
-  
+
   .mat-icon {
     font-size: 20px;
     margin-bottom: 2px;
   }
 }
 
-// Efecto de carga suave para todo el sidebar
 :host {
   animation: fadeInSidebar 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }

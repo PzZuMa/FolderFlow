@@ -1,4 +1,3 @@
-// Variables - Consistentes con el resto de componentes
 $primary-color: #6b4fbb;
 $primary-hover: #5936b1;
 $primary-light: rgba(107, 79, 187, 0.1);
@@ -14,7 +13,6 @@ $box-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.12);
 $success-color: #10b981;
 $warning-color: #f59e0b;
 
-// Reset y estilos base
 * {
   margin: 0;
   padding: 0;
@@ -32,7 +30,6 @@ $warning-color: #f59e0b;
   color: $text-color;
 }
 
-// Estilos de botones
 .btn {
   padding: 0.75rem 1.5rem;
   border: none;
@@ -52,7 +49,7 @@ $warning-color: #f59e0b;
   &.btn-primary {
     background-color: $primary-color;
     color: #fff;
-    
+
     &::before {
       content: '';
       position: absolute;
@@ -66,12 +63,12 @@ $warning-color: #f59e0b;
       transition: width 0.5s ease, height 0.5s ease;
       z-index: 0;
     }
-    
+
     &:hover {
       background-color: $primary-hover;
       transform: translateY(-2px);
       box-shadow: 0 4px 15px rgba($primary-color, 0.3);
-      
+
       &::before {
         width: 300px;
         height: 300px;
@@ -86,27 +83,25 @@ $warning-color: #f59e0b;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     box-shadow: 0 4px 16px rgba($primary-color, 0.2);
-    
+
     &:hover {
       box-shadow: 0 6px 24px rgba($primary-color, 0.3);
     }
   }
 }
 
-// Contenedor principal
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 2rem;
 }
 
-// Banner cookies
 .cookies-banner {
   background: linear-gradient(135deg, $primary-color 0%, darken($primary-color, 20%) 100%);
   padding: 6rem 0;
   color: white;
   text-align: center;
-  
+
   h1 {
     font-size: 3.5rem;
     font-weight: 900;
@@ -116,7 +111,7 @@ $warning-color: #f59e0b;
     margin-left: auto;
     margin-right: auto;
   }
-  
+
   .subtitle {
     font-size: 1.5rem;
     opacity: 0.9;
@@ -125,10 +120,9 @@ $warning-color: #f59e0b;
   }
 }
 
-// Sección de contenido
 .cookies-section {
   padding: 4rem 0;
-  
+
   .cookies-card {
     background-color: $card-bg;
     border-radius: 16px;
@@ -136,38 +130,38 @@ $warning-color: #f59e0b;
     padding: 3rem;
     margin-bottom: 3rem;
   }
-  
+
   .cookies-block {
     margin-bottom: 2.5rem;
-    
+
     &:last-child {
       margin-bottom: 0;
     }
-    
+
     h2 {
       font-size: 1.75rem;
       font-weight: 700;
       margin-bottom: 1.5rem;
       color: $text-color;
     }
-    
+
     h3 {
       font-size: 1.25rem;
       font-weight: 600;
       margin: 1.5rem 0 1rem;
       color: $text-color;
     }
-    
+
     p {
       font-size: 1.05rem;
       line-height: 1.8;
       color: $text-muted;
       margin-bottom: 1.2rem;
-      
+
       &:last-child {
         margin-bottom: 0;
       }
-      
+
       &.warning-text {
         background-color: rgba($warning-color, 0.1);
         border-left: 4px solid $warning-color;
@@ -178,21 +172,21 @@ $warning-color: #f59e0b;
         font-weight: 500;
       }
     }
-    
+
     ul, ol {
       margin: 1.2rem 0 1.5rem 1.5rem;
-      
+
       li {
         margin-bottom: 0.75rem;
         color: $text-muted;
         font-size: 1.05rem;
         line-height: 1.8;
-        
+
         strong {
           color: $text-color;
           font-weight: 600;
         }
-        
+
         &:last-child {
           margin-bottom: 0;
         }
@@ -205,11 +199,11 @@ $warning-color: #f59e0b;
       gap: 1rem;
       list-style-type: none;
       margin: 1.5rem 0;
-      
+
       li {
         margin: 0;
       }
-      
+
       a {
         display: inline-block;
         padding: 0.75rem 1.5rem;
@@ -219,7 +213,7 @@ $warning-color: #f59e0b;
         color: $text-color;
         font-weight: 500;
         transition: all 0.2s ease;
-        
+
         &:hover {
           background-color: $primary-light;
           color: $primary-color;
@@ -228,19 +222,19 @@ $warning-color: #f59e0b;
         }
       }
     }
-    
+
     a {
       color: $primary-color;
       text-decoration: none;
       font-weight: 500;
       transition: color 0.2s ease;
-      
+
       &:hover {
         color: $primary-hover;
         text-decoration: underline;
       }
     }
-    
+
     .info-box {
       background-color: white;
       border-radius: 12px;
@@ -249,7 +243,7 @@ $warning-color: #f59e0b;
       box-shadow: 0 6px 20px rgba(107, 79, 187, 0.08);
       border: 1px solid rgba(107, 79, 187, 0.2);
       position: relative;
-      
+
       &::before {
         content: '';
         position: absolute;
@@ -261,27 +255,27 @@ $warning-color: #f59e0b;
         border-top-left-radius: 12px;
         border-bottom-left-radius: 12px;
       }
-      
+
       .cookie-provider {
         padding-left: 1rem;
         margin-bottom: 2rem;
         position: relative;
-        
+
         &:last-child {
           margin-bottom: 0;
         }
-        
+
         h3 {
           margin-top: 0;
         }
-        
+
         p {
           margin-bottom: 0.5rem;
-          
+
           &:last-child {
             margin-bottom: 0;
           }
-          
+
           strong {
             color: $text-color;
             font-weight: 600;
@@ -291,24 +285,24 @@ $warning-color: #f59e0b;
         }
       }
     }
-    
+
     .table-container {
       margin: 1.5rem 0;
       overflow-x: auto;
     }
-    
+
     .cookies-table {
       width: 100%;
       border-collapse: collapse;
       border-radius: 8px;
       overflow: hidden;
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
-      
+
       th, td {
         padding: 1rem 1.5rem;
         text-align: left;
       }
-      
+
       th {
         background-color: rgba($primary-color, 0.1);
         color: $text-color;
@@ -317,15 +311,15 @@ $warning-color: #f59e0b;
         font-size: 0.85rem;
         letter-spacing: 0.05em;
       }
-      
+
       tr {
         border-bottom: 1px solid rgba($text-muted, 0.1);
-        
+
         &:last-child {
           border-bottom: none;
         }
       }
-      
+
       td {
         color: $text-muted;
         font-size: 1rem;
@@ -335,13 +329,13 @@ $warning-color: #f59e0b;
           font-weight: 600;
         }
       }
-      
+
       tr:nth-child(even) {
         background-color: rgba($bg-page, 0.3);
       }
     }
   }
-  
+
   .cookies-footer {
     margin-top: 3rem;
     padding-top: 2rem;
@@ -352,14 +346,13 @@ $warning-color: #f59e0b;
   }
 }
 
-// Sección de contacto
 .cookies-contact-section {
   background: linear-gradient(135deg, $primary-color 0%, darken($primary-color, 20%) 100%);
   text-align: center;
   padding: 4rem 0;
   margin-bottom: 0;
   color: white;
-  
+
   h2 {
     font-size: 2.2rem;
     font-weight: 700;
@@ -369,7 +362,7 @@ $warning-color: #f59e0b;
     margin-left: auto;
     margin-right: auto;
   }
-  
+
   p {
     font-size: 1.2rem;
     color: rgba(255, 255, 255, 0.9);
@@ -378,12 +371,12 @@ $warning-color: #f59e0b;
     margin-left: auto;
     margin-right: auto;
   }
-  
+
   .btn-primary {
     background-color: white;
     color: $primary-color;
     font-weight: 700;
-    
+
     &:hover {
       background-color: rgba(255, 255, 255, 0.9);
       color: darken($primary-color, 10%);
@@ -392,12 +385,11 @@ $warning-color: #f59e0b;
   }
 }
 
-// Media Queries
 @media (max-width: 992px) {
   .cookies-section .cookies-card {
     padding: 2.5rem;
   }
-  
+
   .cookies-banner h1 {
     font-size: 3rem;
   }
@@ -406,69 +398,69 @@ $warning-color: #f59e0b;
 @media (max-width: 768px) {
   .cookies-banner {
     padding: 4rem 0;
-    
+
     h1 {
       font-size: 2.5rem;
     }
-    
+
     .subtitle {
       font-size: 1.25rem;
     }
   }
-  
+
   .cookies-section {
     padding: 3rem 0;
-    
+
     .cookies-card {
       padding: 2rem;
     }
-    
+
     .cookies-block {
       h2 {
         font-size: 1.5rem;
       }
-      
+
       h3 {
         font-size: 1.15rem;
       }
-      
+
       p, ul li, ol li {
         font-size: 1rem;
       }
-      
+
       .browser-links {
         flex-direction: column;
         gap: 0.5rem;
-        
+
         a {
           width: 100%;
           text-align: center;
         }
       }
-      
+
       .cookies-table {
         th, td {
           padding: 0.8rem 1rem;
         }
-        
+
         th {
           font-size: 0.8rem;
         }
-        
+
         td {
           font-size: 0.9rem;
         }
       }
     }
   }
-  
+
   .cookies-contact-section {
     padding: 3rem 0;
-    
+
     h2 {
       font-size: 1.8rem;
     }
-    
+
     p {
       font-size: 1.1rem;
     }
@@ -479,33 +471,33 @@ $warning-color: #f59e0b;
   .container {
     padding: 0 1.5rem;
   }
-  
+
   .cookies-section .cookies-card {
     padding: 1.5rem;
   }
-  
+
   .cookies-banner {
     h1 {
       font-size: 2rem;
     }
-    
+
     .subtitle {
       font-size: 1.1rem;
     }
   }
-  
+
   .btn.btn-cta {
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
   }
-  
+
   .cookies-block {
     .info-box {
       padding: 1.5rem;
-      
+
       .cookie-provider {
         padding-left: 0.5rem;
-        
+
         p strong {
           min-width: auto;
           margin-right: 0.5rem;

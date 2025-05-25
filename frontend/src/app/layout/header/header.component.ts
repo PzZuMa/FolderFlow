@@ -10,7 +10,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
 import { ErrorHandlerService } from '../../../app/core/services/errorhandler.service';
 
-
 @Component({
   selector: 'app-header',
   standalone: true,
@@ -28,17 +27,16 @@ import { ErrorHandlerService } from '../../../app/core/services/errorhandler.ser
 export class HeaderComponent implements OnInit {
   @Output() sidebarToggle = new EventEmitter<void>();
   @Input() isSidebarCollapsed = false;
-  
+
   isMobileView = false;
   userName: string = '';
   userProfileImage: string | null = null;
-  
+
   private authService = inject(AuthService);
   private router = inject(Router);
   private breakpointObserver = inject(BreakpointObserver);
   private snackBar = inject(MatSnackBar);
   private errorHandler = inject(ErrorHandlerService);
-
 
   constructor() {}
 
@@ -60,18 +58,11 @@ export class HeaderComponent implements OnInit {
     this.authService.currentUser$.subscribe(user => {
       if (user) {
         this.userName = user.name || '';
-        
-        // Si la imagen de perfil comienza con 'data:', es un string base64
         if (user.profileImage && user.profileImage.startsWith('data:')) {
           this.userProfileImage = user.profileImage;
-        } 
-        // Si comienza con 'assets/' o 'http', es una URL de imagen
-        else if (user.profileImage && (user.profileImage.startsWith('assets/') || user.profileImage.startsWith('http'))) {
+        } else if (user.profileImage && (user.profileImage.startsWith('assets/') || user.profileImage.startsWith('http'))) {
           this.userProfileImage = user.profileImage;
-        }
-        // Si es la imagen por defecto o no hay imagen
-        else {
-          // Usar la ruta correcta para la imagen por defecto
+        } else {
           this.userProfileImage = 'assets/images/pfp-default.png';
         }
       }
@@ -83,13 +74,10 @@ export class HeaderComponent implements OnInit {
     this.router.navigate(['/login']);
   }
 
-  // Método renombrado para mayor claridad
   navigateToAccount(): void {
-    // Navegar al componente de cuenta
     this.router.navigate(['/account']);
   }
 
-  // Antiguo método de navegación a ajustes, ahora redirige a account
   navigateToSettings(): void {
     this.navigateToAccount();
   }
@@ -97,7 +85,7 @@ export class HeaderComponent implements OnInit {
   navigateToDashboard(): void {
     this.router.navigate(['/dashboard']);
   }
-  
+
   isActive(route: string): boolean {
     return this.router.url.includes(route);
   }
@@ -105,7 +93,7 @@ export class HeaderComponent implements OnInit {
   private showSuccess(message: string): void {
     this.snackBar.open(message, 'Cerrar', { duration: 3000, panelClass: ['snackbar-success'] });
   }
-  
+
   private showError(message: string): void {
     this.snackBar.open(message, 'Cerrar', { duration: 3000, panelClass: ['snackbar-error'] });
   }

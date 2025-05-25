@@ -1,10 +1,8 @@
 <div class="auth-container">
   <a href="/dashboard" class="back-to-dashboard">Volver al Dashboard</a>
-  
   <div class="auth-card">
     <h2 class="titulo">INICIAR SESIÓN</h2>
     <p class="subtitle">Bienvenido de vuelta a FolderFlow</p>
-
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
       <div class="form-field">
         <label for="emailInput">Email</label>
@@ -21,7 +19,6 @@
           <div *ngIf="email?.hasError('email')">Introduce un formato de email válido.</div>
         </div>
       </div>
-
       <div class="form-field">
         <label for="passwordInput">Contraseña</label>
         <input type="password"
@@ -37,11 +34,9 @@
           <div *ngIf="password?.hasError('minlength')">La contraseña debe tener al menos 6 caracteres.</div>
         </div>
       </div>
-
       <div *ngIf="errorMessage && !isLoading" class="error-message-container">
         <div class="error-message">{{ errorMessage }}</div>
       </div>
-
       <div class="button-container">
         <button type="submit" [disabled]="isLoading">
           <span *ngIf="isLoading" class="loading-spinner"></span>
@@ -49,7 +44,6 @@
         </button>
       </div>
     </form>
-
     <div class="auth-footer">
       ¿No tienes cuenta? <a routerLink="/register" class="auth-link">Regístrate aquí</a>
     </div>

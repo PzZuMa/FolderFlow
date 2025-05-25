@@ -1,24 +1,22 @@
 <header class="landing-header">
-    <a class="logo" [routerLink]="['/dashboard']">
-      <img src="assets/logo-removebg-preview.png" alt="Folder Flow Logo">
-    </a>
-    
-    <nav class="navigation">
-      <ul>
-        <li>
-          <a [routerLink]="['/contacto']" [class.active]="isActive('/contacto')">CONTACTO</a>
-        </li>
-        <li>
-          <a [routerLink]="['/tarifas']" [class.active]="isActive('/tarifas')">TARIFAS</a>
-        </li>
-        <li>
-          <a [routerLink]="['/info']" [class.active]="isActive('/info')">QUIÉNES SOMOS</a>
-        </li>
-      </ul>
-    </nav>
-    
-    <div class="actions">
-      <button class="btn btn-secondary" (click)="onLoginClick()">INICIAR SESIÓN</button>
-      <button class="btn btn-primary" (click)="onRegisterClick()">REGISTRARSE</button>
-    </div>
+  <a class="logo" [routerLink]="['/dashboard']">
+    <img src="assets/logo-removebg-preview.png" alt="Folder Flow Logo">
+  </a>
+  <nav class="navigation">
+    <ul>
+      <li>
+        <a [routerLink]="['/contacto']" [class.active]="isActive('/contacto')">CONTACTO</a>
+      </li>
+      <li>
+        <a [routerLink]="['/tarifas']" [class.active]="isActive('/tarifas')">TARIFAS</a>
+      </li>
+      <li>
+        <a [routerLink]="['/info']" [class.active]="isActive('/info')">QUIÉNES SOMOS</a>
+      </li>
+    </ul>
+  </nav>
+  <div class="actions">
+    <button class="btn btn-secondary" (click)="onLoginClick()">INICIAR SESIÓN</button>
+    <button class="btn btn-primary" (click)="onRegisterClick()">REGISTRARSE</button>
+  </div>
 </header>

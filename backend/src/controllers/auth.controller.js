@@ -1,4 +1,10 @@
-import { registerUser, loginUser, updateUserProfile, changeUserPassword, updateUserProfileImage } from '../services/auth.service.js';
+import {
+  registerUser,
+  loginUser,
+  updateUserProfile,
+  changeUserPassword,
+  updateUserProfileImage,
+} from '../services/auth.service.js';
 
 export const register = async (req, res) => {
   try {
@@ -20,9 +26,8 @@ export const login = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
   try {
-    const userId = req.user.id; // Del middleware protect
-    const profileData = req.body; // { name, email }
-
+    const userId = req.user.id;
+    const profileData = req.body;
     const updatedUser = await updateUserProfile(userId, profileData);
     res.status(200).json(updatedUser);
   } catch (error) {
@@ -35,7 +40,6 @@ export const updateProfileImage = async (req, res) => {
   try {
     const userId = req.user.id;
     const { profileImage } = req.body;
-
     const updatedUser = await updateUserProfileImage(userId, profileImage);
     res.status(200).json(updatedUser);
   } catch (error) {
@@ -46,9 +50,8 @@ export const updateProfileImage = async (req, res) => {
 
 export const changePassword = async (req, res) => {
   try {
-    const userId = req.user.id; // Del middleware protect
-    const passwordData = req.body; // { currentPassword, newPassword }
-
+    const userId = req.user.id;
+    const passwordData = req.body;
     const result = await changeUserPassword(userId, passwordData);
     res.status(200).json(result);
   } catch (error) {

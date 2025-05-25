@@ -13,13 +13,13 @@ import { PublicHeaderComponent } from '../../features/public-header/public-heade
     RouterLink,
     FooterComponent,
     PublicHeaderComponent
-],
+  ],
   templateUrl: './aviso-legal.component.html',
   styleUrls: ['./aviso-legal.component.scss']
 })
 export class AvisoLegalComponent implements OnInit {
   currentYear: number = new Date().getFullYear();
-  
+
   constructor(private titleService: Title) {
     this.titleService.setTitle('Aviso Legal | FolderFlow');
   }

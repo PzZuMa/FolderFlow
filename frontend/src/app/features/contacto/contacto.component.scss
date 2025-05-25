@@ -1,4 +1,3 @@
-// Variables - Consistentes con el resto de la aplicación
 $primary-color: #6b4fbb;
 $primary-hover: #5936b1;
 $primary-light: rgba(107, 79, 187, 0.1);
@@ -16,7 +15,6 @@ $input-invalid-border-color: $error-color;
 $box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 $box-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.12);
 
-// Reset y estilos base
 * {
   margin: 0;
   padding: 0;
@@ -36,7 +34,6 @@ $box-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.12);
   color: $text-color;
 }
 
-// Contenido principal
 .contact-content {
   flex-grow: 1;
   padding: 4rem 2rem;
@@ -62,33 +59,32 @@ $box-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.12);
   }
 }
 
-// Sección de información de contacto
 .contact-info {
   width: 40%;
   background: linear-gradient(135deg, $primary-color 0%, $primary-hover 100%);
   color: white;
   padding: 3rem;
-  
+
   h2 {
     font-size: 2.5rem;
     font-weight: 800;
     margin-bottom: 1.5rem;
     letter-spacing: -0.02em;
   }
-  
+
   p {
     font-size: 1.1rem;
     margin-bottom: 3rem;
     opacity: 0.9;
     line-height: 1.6;
   }
-  
+
   .contact-details {
     .contact-item {
       display: flex;
       align-items: flex-start;
       margin-bottom: 2rem;
-      
+
       .icon-container {
         background: rgba(255, 255, 255, 0.2);
         width: 48px;
@@ -99,19 +95,19 @@ $box-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.12);
         justify-content: center;
         margin-right: 1rem;
         flex-shrink: 0;
-        
+
         i {
           font-size: 24px;
         }
       }
-      
+
       .text {
         h4 {
           font-size: 1.2rem;
           margin-bottom: 0.5rem;
           font-weight: 600;
         }
-        
+
         p {
           font-size: 1rem;
           margin-bottom: 0;
@@ -122,11 +118,10 @@ $box-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.12);
   }
 }
 
-// Formulario de contacto
 .contact-form-container {
   width: 60%;
   padding: 3rem;
-  
+
   h3 {
     font-size: 1.8rem;
     color: $text-color;
@@ -135,7 +130,6 @@ $box-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.12);
     letter-spacing: -0.02em;
   }
 
-  // Estructura para cada campo del formulario
   .form-field {
     width: 100%;
     margin-bottom: 1.5rem;
@@ -151,7 +145,6 @@ $box-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.12);
     }
   }
 
-  // Estilo del input y textarea
   .form-input {
     display: block;
     width: 100%;
@@ -164,7 +157,7 @@ $box-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.12);
     border-radius: 10px;
     transition: all 0.2s ease;
     font-family: inherit;
-    resize: vertical; // Para textarea
+    resize: vertical;
 
     &::placeholder {
       color: lighten($text-muted, 10%);
@@ -190,7 +183,6 @@ $box-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.12);
     }
   }
 
-  // Mensaje de error debajo de cada campo
   .field-error-message {
     color: $error-color;
     font-size: 0.85rem;
@@ -198,14 +190,13 @@ $box-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.12);
     display: flex;
     align-items: center;
     gap: 0.3rem;
-    
+
     &::before {
       content: '⚠';
       font-size: 0.9rem;
     }
   }
 
-  // Contenedores para mensajes generales
   .success-message-container,
   .error-message-container {
     margin: 1.5rem 0;
@@ -240,10 +231,9 @@ $box-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.12);
     border: 1px solid rgba($error-color, 0.2);
   }
 
-  // Contenedor del botón
   .button-container {
     margin-top: 2rem;
-    
+
     button {
       width: 100%;
       padding: 1rem 2rem;
@@ -261,7 +251,7 @@ $box-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.12);
       gap: 0.5rem;
       position: relative;
       overflow: hidden;
-      
+
       &::before {
         content: '';
         position: absolute;
@@ -274,12 +264,12 @@ $box-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.12);
         transform: translate(-50%, -50%);
         transition: width 0.6s ease, height 0.6s ease;
       }
-      
+
       &:hover {
         background-color: $primary-hover;
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba($primary-color, 0.3);
-        
+
         &::before {
           width: 900px;
           height: 300px;
@@ -298,7 +288,6 @@ $box-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.12);
   }
 }
 
-// Animación de carga
 .loading-spinner {
   display: inline-block;
   width: 16px;
@@ -314,28 +303,26 @@ $box-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.12);
   to { transform: rotate(360deg); }
 }
 
-// Media Queries para responsividad
 @media (max-width: 992px) {
   .contact-card {
     flex-direction: column;
   }
-  
+
   .contact-info,
   .contact-form-container {
     width: 100%;
   }
-  
+
   .contact-info {
     padding: 2.5rem;
   }
 }
 
 @media (max-width: 768px) {
-  
   .contact-content {
     padding: 2rem 1rem;
   }
-  
+
   .contact-info h2 {
     font-size: 2rem;
   }
@@ -346,12 +333,12 @@ $box-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.12);
   .contact-form-container {
     padding: 2rem 1.5rem;
   }
-  
+
   .contact-info {
     h2 {
       font-size: 1.8rem;
     }
-    
+
     p {
       font-size: 1rem;
     }

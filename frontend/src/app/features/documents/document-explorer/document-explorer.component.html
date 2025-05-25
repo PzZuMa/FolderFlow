@@ -1,8 +1,5 @@
 <div class="explorer-container">
-  <!-- Barra de Progreso de Carga Global -->
   <mat-progress-bar mode="indeterminate" *ngIf="isLoading && uploads.length === 0" class="global-progress"></mat-progress-bar>
-
-  <!-- Encabezado de la Página -->
   <div class="page-header">
     <div class="page-title">
       <h1>Mis documentos</h1>
@@ -15,14 +12,11 @@
       </button>
     </div>
   </div>
-
-  <!-- Lista de Subidas en Progreso -->
   <div *ngIf="uploads.length > 0" class="upload-section">
     <div class="section-title">
       <mat-icon>cloud_upload</mat-icon>
       <h2>Subidas en progreso</h2>
     </div>
-    
     <div class="upload-items-container">
       <div *ngFor="let upload of uploads; let i = index" class="upload-item"
            [ngClass]="{'upload-success': upload.status === 'success', 'upload-error': upload.status === 'error'}">
@@ -46,48 +40,36 @@
       </div>
     </div>
   </div>
-
-  <!-- Contenido Principal -->
   <div class="content-area">
-    <!-- Filtros y Búsqueda -->
     <div class="filters-container">
       <div class="search-box">
         <mat-icon>search</mat-icon>
         <input type="text" placeholder="Buscar documentos..." (input)="filterDocuments($event)">
       </div>
-      
-      <!-- Nuevos controles de filtro y vista -->
       <div class="filter-actions">
-        <!-- Botón para filtrar solo favoritos -->
         <button mat-button class="filter-btn" [class.active]="showOnlyFavorites" (click)="toggleFavoritesFilter()" 
             matTooltip="Mostrar solo documentos favoritos">
           <mat-icon>{{ showOnlyFavorites ? 'star' : 'star_outline' }}</mat-icon>
           <span>Favoritos</span>
         </button>
-        
-        <!-- Separador visual -->
         <div class="filter-separator"></div>
-        
-        <!-- Controles de tipo de vista -->
         <div class="view-options">
-  <button mat-icon-button [class.active]="viewType === 'grid'" (click)="setViewType('grid')" 
-      matTooltip="Vista de cuadrícula">
-    <mat-icon>grid_view</mat-icon>
-  </button>
-  <button mat-icon-button [class.active]="viewType === 'list'" (click)="setViewType('list')" 
-      matTooltip="Vista de lista">
-    <mat-icon>view_list</mat-icon>
-  </button>
-</div>
+          <button mat-icon-button [class.active]="viewType === 'grid'" (click)="setViewType('grid')" 
+              matTooltip="Vista de cuadrícula">
+            <mat-icon>grid_view</mat-icon>
+          </button>
+          <button mat-icon-button [class.active]="viewType === 'list'" (click)="setViewType('list')" 
+              matTooltip="Vista de lista">
+            <mat-icon>view_list</mat-icon>
+          </button>
+        </div>
       </div>
     </div>
-    
-    <!-- Vista de Cuadrícula (Grid) -->
     <div *ngIf="!isLoading && viewType === 'grid'" class="document-list">
-<mat-card class="document-card" 
+      <mat-card class="document-card" 
           [class.favorite-document]="doc.isFavorite" 
           *ngFor="let doc of documents" 
-          (click)="openDocumentViewer(doc)">        <!-- Contenido principal del documento -->
+          (click)="openDocumentViewer(doc)">
         <div class="document-content">
           <div class="document-icon" [ngStyle]="{'background-color': 'rgba(' + getColorForMimeType(doc.mimeType) + ', 0.15)'}">
             <mat-icon [ngStyle]="{'color': getColorForMimeType(doc.mimeType)}">
@@ -105,147 +87,125 @@
                 <mat-icon>folder</mat-icon>
                 {{ getFolderName(doc.folderId) }}
               </span>
-              <!-- Otros metadatos que puedas tener -->
             </div>
           </div>
         </div>
-        
-        <!-- Footer con fecha y acciones -->
         <div class="document-footer">
           <div class="document-date">
             <mat-icon>schedule</mat-icon>{{ doc.updatedAt | date:'dd MMM, yyyy' }}
           </div>
           <div class="document-actions">
-            <!-- Botón para mover el documento -->
             <button mat-icon-button class="action-button move-btn" (click)="openMoveDialog(doc, 'document'); $event.stopPropagation()" matTooltip="Mover documento">
               <mat-icon>drive_file_move</mat-icon>
             </button>
-            
-            <!-- Botón para marcar/desmarcar como favorito -->
             <button mat-icon-button class="action-button favorite-btn" (click)="toggleFavorite(doc, $event)" matTooltip="{{ doc.isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos' }}">
               <mat-icon>{{ doc.isFavorite ? 'star' : 'star_outline' }}</mat-icon>
             </button>
-            
-            <!-- Botón para eliminar el documento -->
             <button mat-icon-button class="action-button delete-btn" (click)="openDeleteConfirmation(doc, 'document'); $event.stopPropagation()" matTooltip="Eliminar">
               <mat-icon>delete_outline</mat-icon>
             </button>
           </div>
         </div>
       </mat-card>
-
-      <!-- Estado vacío para vista de cuadrícula -->
       <div class="empty-documents" *ngIf="documents.length === 0">
-  <div class="empty-state-container">
-    <div class="empty-icon-container" [ngClass]="{'favorites-empty': showOnlyFavorites}">
-      <mat-icon *ngIf="!showOnlyFavorites">description_off</mat-icon>
-      <mat-icon *ngIf="showOnlyFavorites">star</mat-icon>
+        <div class="empty-state-container">
+          <div class="empty-icon-container" [ngClass]="{'favorites-empty': showOnlyFavorites}">
+            <mat-icon *ngIf="!showOnlyFavorites">description_off</mat-icon>
+            <mat-icon *ngIf="showOnlyFavorites">star</mat-icon>
+          </div>
+          <h2>{{ showOnlyFavorites ? 'No tienes documentos favoritos' : 'No hay documentos' }}</h2>
+          <p *ngIf="showOnlyFavorites">Añade documentos a favoritos para acceder rápidamente a ellos desde aquí</p>
+          <p *ngIf="!showOnlyFavorites">Parece que aún no tienes documentos en esta ubicación</p>
+          <button mat-flat-button color="primary" (click)="triggerFileInputClick()">
+            Subir documento
+          </button>
+          <button *ngIf="showOnlyFavorites" mat-stroked-button color="primary" (click)="toggleFavoritesFilter()" class="secondary-btn">
+            Ver todos los documentos
+          </button>
+        </div>
+      </div>
     </div>
-    <h2>{{ showOnlyFavorites ? 'No tienes documentos favoritos' : 'No hay documentos' }}</h2>
-    <p *ngIf="showOnlyFavorites">Añade documentos a favoritos para acceder rápidamente a ellos desde aquí</p>
-    <p *ngIf="!showOnlyFavorites">Parece que aún no tienes documentos en esta ubicación</p>
-    <button mat-flat-button color="primary" (click)="triggerFileInputClick()">
-      Subir documento
-    </button>
-    <button *ngIf="showOnlyFavorites" mat-stroked-button color="primary" (click)="toggleFavoritesFilter()" class="secondary-btn">
-      Ver todos los documentos
-    </button>
-  </div>
-</div>
-    </div>
-    
-    <!-- Nueva Vista de Lista -->
     <div *ngIf="!isLoading && viewType === 'list'" class="list-container">
-  <table class="document-table">
-    <thead>
-      <tr class="table-header">
-        <th class="icon-header"></th>
-        <th class="title-header">Nombre del documento</th>
-        <th class="folder-header">Carpeta</th>
-        <th class="size-header">Tamaño</th>
-        <th class="date-header">Fecha</th>
-        <th class="actions-header">Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let doc of documents" 
-          class="document-row" 
-          [class.favorite-row]="doc.isFavorite" 
-          (click)="openDocumentViewer(doc)">
-        <td class="icon-cell">
-          <div class="document-list-icon" [ngStyle]="{'color': getColorForMimeType(doc.mimeType), 'background-color': 'rgba(' + getColorForMimeType(doc.mimeType) + ', 0.15)'}">
-            <mat-icon>{{ getIconForMimeType(doc.mimeType) }}</mat-icon>
+      <table class="document-table">
+        <thead>
+          <tr class="table-header">
+            <th class="icon-header"></th>
+            <th class="title-header">Nombre del documento</th>
+            <th class="folder-header">Carpeta</th>
+            <th class="size-header">Tamaño</th>
+            <th class="date-header">Fecha</th>
+            <th class="actions-header">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let doc of documents" 
+              class="document-row" 
+              [class.favorite-row]="doc.isFavorite" 
+              (click)="openDocumentViewer(doc)">
+            <td class="icon-cell">
+              <div class="document-list-icon" [ngStyle]="{'color': getColorForMimeType(doc.mimeType), 'background-color': 'rgba(' + getColorForMimeType(doc.mimeType) + ', 0.15)'}">
+                <mat-icon>{{ getIconForMimeType(doc.mimeType) }}</mat-icon>
+              </div>
+            </td>
+            <td class="title-cell">
+              <div class="document-title">
+                {{ doc.name }}
+                <mat-icon *ngIf="doc.isFavorite" class="favorite-indicator">star</mat-icon>
+              </div>
+            </td>
+            <td class="folder-cell">
+              <div class="folder-info" *ngIf="doc.folderId; else rootFolder">
+                <mat-icon>folder</mat-icon>
+                <span>{{ getFolderName(doc.folderId) }}</span>
+              </div>
+              <ng-template #rootFolder>
+                <div class="folder-info root-folder">
+                  <mat-icon>home</mat-icon>
+                  <span>Raíz</span>
+                </div>
+              </ng-template>
+            </td>
+            <td class="size-cell">{{ formatBytes(doc.size) }}</td>
+            <td class="date-cell">{{ doc.updatedAt | date:'dd MMM, yyyy' }}</td>
+            <td class="actions-cell">
+              <div class="document-actions">
+                <button mat-icon-button class="action-button favorite-btn" (click)="toggleFavorite(doc, $event)" 
+                    matTooltip="{{ doc.isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos' }}">
+                  <mat-icon>{{ doc.isFavorite ? 'star' : 'star_outline' }}</mat-icon>
+                </button>
+                <button mat-icon-button class="action-button move-btn" (click)="openMoveDialog(doc, 'document'); $event.stopPropagation()" 
+                    matTooltip="Mover documento">
+                  <mat-icon>drive_file_move</mat-icon>
+                </button>
+                <button mat-icon-button class="action-button delete-btn" (click)="openDeleteConfirmation(doc, 'document'); $event.stopPropagation()" 
+                    matTooltip="Eliminar">
+                  <mat-icon>delete_outline</mat-icon>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="empty-list" *ngIf="documents.length === 0">
+        <div class="empty-state-container">
+          <div class="empty-icon-container" [ngClass]="{'favorites-empty': showOnlyFavorites}">
+            <mat-icon *ngIf="!showOnlyFavorites">description_off</mat-icon>
+            <mat-icon *ngIf="showOnlyFavorites">star</mat-icon>
           </div>
-        </td>
-        <td class="title-cell">
-          <div class="document-title">
-            {{ doc.name }}
-            <mat-icon *ngIf="doc.isFavorite" class="favorite-indicator">star</mat-icon>
-          </div>
-        </td>
-        <td class="folder-cell">
-          <div class="folder-info" *ngIf="doc.folderId; else rootFolder">
-            <mat-icon>folder</mat-icon>
-            <span>{{ getFolderName(doc.folderId) }}</span>
-          </div>
-          <ng-template #rootFolder>
-            <div class="folder-info root-folder">
-              <mat-icon>home</mat-icon>
-              <span>Raíz</span>
-            </div>
-          </ng-template>
-        </td>
-        <td class="size-cell">{{ formatBytes(doc.size) }}</td>
-        <td class="date-cell">{{ doc.updatedAt | date:'dd MMM, yyyy' }}</td>
-        <td class="actions-cell">
-          <div class="document-actions">
-            <!-- Botón de favoritos con clase específica -->
-            <button mat-icon-button class="action-button favorite-btn" (click)="toggleFavorite(doc, $event)" 
-                matTooltip="{{ doc.isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos' }}">
-              <mat-icon>{{ doc.isFavorite ? 'star' : 'star_outline' }}</mat-icon>
-            </button>
-            
-            <!-- Botón de mover con clase específica -->
-            <button mat-icon-button class="action-button move-btn" (click)="openMoveDialog(doc, 'document'); $event.stopPropagation()" 
-                matTooltip="Mover documento">
-              <mat-icon>drive_file_move</mat-icon>
-            </button>
-            
-            <!-- Botón de eliminar con clase específica -->
-            <button mat-icon-button class="action-button delete-btn" (click)="openDeleteConfirmation(doc, 'document'); $event.stopPropagation()" 
-                matTooltip="Eliminar">
-              <mat-icon>delete_outline</mat-icon>
-            </button>
-          </div>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  
-  <!-- Estado vacío para vista de lista (sin cambios) -->
-  <div class="empty-list" *ngIf="documents.length === 0">
-  <div class="empty-state-container">
-    <div class="empty-icon-container" [ngClass]="{'favorites-empty': showOnlyFavorites}">
-      <mat-icon *ngIf="!showOnlyFavorites">description_off</mat-icon>
-      <mat-icon *ngIf="showOnlyFavorites">star</mat-icon>
+          <h2>{{ showOnlyFavorites ? 'No tienes documentos favoritos' : 'No hay documentos' }}</h2>
+          <p *ngIf="showOnlyFavorites">Añade documentos a favoritos para acceder rápidamente a ellos desde aquí</p>
+          <p *ngIf="!showOnlyFavorites">Parece que aún no tienes documentos en esta ubicación</p>
+          <button mat-flat-button color="primary" (click)="triggerFileInputClick()">
+            Subir documento
+          </button>
+          <button *ngIf="showOnlyFavorites" mat-stroked-button color="primary" (click)="toggleFavoritesFilter()" class="secondary-btn">
+            Ver todos los documentos
+          </button>
+        </div>
+      </div>
     </div>
-    <h2>{{ showOnlyFavorites ? 'No tienes documentos favoritos' : 'No hay documentos' }}</h2>
-    <p *ngIf="showOnlyFavorites">Añade documentos a favoritos para acceder rápidamente a ellos desde aquí</p>
-    <p *ngIf="!showOnlyFavorites">Parece que aún no tienes documentos en esta ubicación</p>
-    <button mat-flat-button color="primary" (click)="triggerFileInputClick()">
-      Subir documento
-    </button>
-    <button *ngIf="showOnlyFavorites" mat-stroked-button color="primary" (click)="toggleFavoritesFilter()" class="secondary-btn">
-      Ver todos los documentos
-    </button>
   </div>
-</div>
-</div>
-
-  <!-- Input oculto para subida -->
   <input type="file" #fileInput style="display:none" (change)="onFileSelected($event)" multiple>
-  
-  <!-- Botón flotante para subir (visible en móvil) -->
   <button mat-fab color="primary" class="upload-fab" (click)="triggerFileInputClick()">
     <mat-icon>upload_file</mat-icon>
   </button>

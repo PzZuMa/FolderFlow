@@ -5,54 +5,43 @@
       <p class="page-description">Gestiona tu perfil y configuración de seguridad</p>
     </div>
     <div class="header-actions">
-      <!-- Aquí podríamos añadir botones de acciones rápidas en el futuro -->
     </div>
   </div>
-
   <div class="account-content">
-    <!-- Nueva sección para imagen de perfil -->
     <div class="account-card">
       <h2>Imagen de Perfil</h2>
       <p class="card-description">Personaliza tu foto de perfil</p>
-      
       <div class="profile-image-container">
-  <div class="profile-image-preview">
-    <img *ngIf="previewUrl" [src]="previewUrl" alt="Vista previa de foto de perfil">
-    <img *ngIf="!previewUrl && currentProfileImage && !isDefaultImage" [src]="currentProfileImage" alt="Foto de perfil actual">
-    <img *ngIf="!previewUrl && (isDefaultImage || !currentProfileImage)" src="assets/images/pfp-default.png" alt="Foto de perfil predeterminada">
-  </div>
-  
-  <div class="profile-image-actions">
-    <label class="btn btn-secondary" for="profileImageInput">
-      Seleccionar imagen
-      <input type="file" id="profileImageInput" hidden (change)="onFileSelected($event)" accept="image/*">
-    </label>
-    <button *ngIf="selectedFile" class="btn btn-primary" (click)="uploadProfileImage()" [disabled]="isImageLoading">
-      <span *ngIf="isImageLoading" class="loading-spinner"></span>
-      <span>{{ isImageLoading ? 'Subiendo...' : 'Guardar imagen' }}</span>
-    </button>
-    <!-- Botón para eliminar la foto de perfil -->
-    <button *ngIf="!isDefaultImage && !selectedFile" class="btn btn-danger" (click)="removeProfileImage()" [disabled]="isImageLoading">
-      <span *ngIf="isImageLoading" class="loading-spinner"></span>
-      <span>{{ isImageLoading ? 'Restableciendo...' : 'Eliminar foto' }}</span>
-    </button>
-  </div>
-</div>
-
+        <div class="profile-image-preview">
+          <img *ngIf="previewUrl" [src]="previewUrl" alt="Vista previa de foto de perfil">
+          <img *ngIf="!previewUrl && currentProfileImage && !isDefaultImage" [src]="currentProfileImage" alt="Foto de perfil actual">
+          <img *ngIf="!previewUrl && (isDefaultImage || !currentProfileImage)" src="assets/images/pfp-default.png" alt="Foto de perfil predeterminada">
+        </div>
+        <div class="profile-image-actions">
+          <label class="btn btn-secondary" for="profileImageInput">
+            Seleccionar imagen
+            <input type="file" id="profileImageInput" hidden (change)="onFileSelected($event)" accept="image/*">
+          </label>
+          <button *ngIf="selectedFile" class="btn btn-primary" (click)="uploadProfileImage()" [disabled]="isImageLoading">
+            <span *ngIf="isImageLoading" class="loading-spinner"></span>
+            <span>{{ isImageLoading ? 'Subiendo...' : 'Guardar imagen' }}</span>
+          </button>
+          <button *ngIf="!isDefaultImage && !selectedFile" class="btn btn-danger" (click)="removeProfileImage()" [disabled]="isImageLoading">
+            <span *ngIf="isImageLoading" class="loading-spinner"></span>
+            <span>{{ isImageLoading ? 'Restableciendo...' : 'Eliminar foto' }}</span>
+          </button>
+        </div>
+      </div>
       <div *ngIf="imageSuccessMessage" class="success-message-container">
         <div class="success-message">{{ imageSuccessMessage }}</div>
       </div>
-
       <div *ngIf="imageErrorMessage" class="error-message-container">
         <div class="error-message">{{ imageErrorMessage }}</div>
       </div>
     </div>
-
-    <!-- Sección de información de perfil -->
     <div class="account-card">
       <h2>Información Personal</h2>
       <p class="card-description">Mantén actualizada tu información de contacto</p>
-      
       <form [formGroup]="profileForm" (ngSubmit)="onSubmitProfile()" novalidate>
         <div class="form-field">
           <label for="nameInput">Nombre</label>
@@ -68,7 +57,6 @@
             <div *ngIf="name?.hasError('required')">El nombre es obligatorio.</div>
           </div>
         </div>
-
         <div class="form-field">
           <label for="emailInput">Email</label>
           <input type="email"
@@ -84,15 +72,12 @@
             <div *ngIf="email?.hasError('email')">Introduce un formato de email válido.</div>
           </div>
         </div>
-
         <div *ngIf="successMessage" class="success-message-container">
           <div class="success-message">{{ successMessage }}</div>
         </div>
-
         <div *ngIf="errorMessage" class="error-message-container">
           <div class="error-message">{{ errorMessage }}</div>
         </div>
-
         <div class="button-container">
           <button type="submit" [disabled]="isLoading">
             <span *ngIf="isLoading" class="loading-spinner"></span>
@@ -101,12 +86,9 @@
         </div>
       </form>
     </div>
-    
-    <!-- Sección de cambio de contraseña -->
     <div class="account-card">
       <h2>Cambiar contraseña</h2>
       <p class="card-description">Actualiza tu contraseña para mantener segura tu cuenta</p>
-      
       <form [formGroup]="passwordForm" (ngSubmit)="onSubmitPassword()" novalidate>
         <div class="form-field">
           <label for="currentPasswordInput">Contraseña actual</label>
@@ -131,8 +113,6 @@
             <div *ngIf="currentPassword?.hasError('required')">La contraseña actual es obligatoria.</div>
           </div>
         </div>
-
-        <!-- Para la nueva contraseña -->
         <div class="form-field">
           <label for="newPasswordInput">Nueva contraseña</label>
           <div class="password-input-container">
@@ -157,8 +137,6 @@
             <div *ngIf="newPassword?.hasError('minlength')">La contraseña debe tener al menos 6 caracteres.</div>
           </div>
         </div>
-
-        <!-- Para la confirmación de contraseña -->
         <div class="form-field">
           <label for="confirmPasswordInput">Confirmar contraseña</label>
           <div class="password-input-container">
@@ -183,15 +161,12 @@
             <div *ngIf="confirmPassword?.hasError('passwordMismatch')">Las contraseñas no coinciden.</div>
           </div>
         </div>
-
         <div *ngIf="passwordSuccessMessage" class="success-message-container">
           <div class="success-message">{{ passwordSuccessMessage }}</div>
         </div>
-
         <div *ngIf="passwordErrorMessage" class="error-message-container">
           <div class="error-message">{{ passwordErrorMessage }}</div>
         </div>
-
         <div class="button-container">
           <button type="submit" [disabled]="isPasswordLoading">
             <span *ngIf="isPasswordLoading" class="loading-spinner"></span>
@@ -200,12 +175,9 @@
         </div>
       </form>
     </div>
-    
-    <!-- Sección de preferencias de cuenta (opcional para futuras implementaciones) -->
     <div class="account-card">
       <h2>Preferencias</h2>
       <p class="card-description">Personaliza tu experiencia en FolderFlow</p>
-      
       <div class="coming-soon">
         <div class="coming-soon-icon">🔄</div>
         <p>Próximamente disponible</p>

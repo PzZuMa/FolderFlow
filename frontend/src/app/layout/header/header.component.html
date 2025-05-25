@@ -4,29 +4,20 @@
       <mat-icon>menu</mat-icon>
     </button>
   </div>
-
   <div class="logo-container" (click)="navigateToDashboard()" role="button" tabindex="0">
     <span class="logo-text">FolderFlow</span>
   </div>
-
   <span class="header-spacer"></span>
-
-  <!-- Nombre de usuario en mayúsculas -->
   <div class="user-name" *ngIf="userName">{{ userName.toUpperCase() }}</div>
-  
-  <!-- Botón de cerrar sesión -->
   <button mat-icon-button class="logout-button" (click)="logout()" aria-label="Cerrar sesión">
     <mat-icon>logout</mat-icon>
   </button>
-
-  <!-- Profile button - último elemento -->
   <div class="profile-container">
     <button (click)="navigateToAccount()" aria-label="User menu" class="profile-button">
       <img *ngIf="userProfileImage" [src]="userProfileImage" class="profile-image" alt="Foto de perfil">
       <mat-icon *ngIf="!userProfileImage" class="profile-icon">account_circle</mat-icon>
     </button>
   </div>
-
   <mat-menu #userMenu="matMenu">
     <button mat-menu-item (click)="navigateToAccount()">
       <mat-icon>settings</mat-icon>

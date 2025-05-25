@@ -1,4 +1,3 @@
-// Variables mejoradas
 $primary-color: #6b4fbb;
 $primary-hover: #5936b1;
 $primary-light: rgba(107, 79, 187, 0.1);
@@ -21,11 +20,10 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
 .viewer-container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; // 🔧 Altura mínima añadida
+  min-height: 100vh;
   width: 100%;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   position: relative;
-  
   &.fullscreen-mode {
     position: fixed;
     top: 0;
@@ -37,13 +35,11 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   }
 }
 
-// Header moderno
 .viewer-header {
   background: $card-bg;
   border-bottom: 1px solid $border-color;
   box-shadow: $shadow-sm;
   z-index: 100;
-  
   .header-content {
     display: flex;
     justify-content: space-between;
@@ -51,168 +47,145 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
     padding: 16px 24px;
     max-width: 100%;
   }
-  
   .header-left {
     display: flex;
     align-items: center;
     gap: 16px;
     flex: 1;
     min-width: 0;
-    
     .back-btn {
       background: $primary-light;
       color: $primary-color;
       border-radius: 12px;
       transition: all 0.2s ease;
-      width: 44px; // 🔧 Tamaño fijo para centrado
-      height: 44px; // 🔧 Tamaño fijo para centrado
-      display: flex; // 🔧 Para centrar el icono
-      align-items: center; // 🔧 Para centrar el icono
-      justify-content: center; // 🔧 Para centrar el icono
-      
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       &:hover {
         background: rgba(107, 79, 187, 0.15);
         transform: translateX(-2px);
       }
-      
       mat-icon {
-        margin: 0; // 🔧 Quitar márgenes para centrado perfecto
+        margin: 0;
       }
     }
-    
     .document-meta {
       min-width: 0;
       flex: 1;
-      
       .document-title-container {
         position: relative;
-        display: inline-block; // 🔧 Cambio clave para ajustar al contenido
-        
-    .document-title {
-      margin: 0;
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: $text-color;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      line-height: 1.2;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.2s ease;
-      padding: 4px 8px;
-      border-radius: 8px;
-      max-width: 100%;
-      
-      &:hover {
-        background-color: rgba($primary-color, 0.05);
-        color: $primary-color;
-        
-        .edit-name-icon {
-          opacity: 1;
-          transform: scale(1);
+        display: inline-block;
+        .document-title {
+          margin: 0;
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: $text-color;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          line-height: 1.2;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          transition: all 0.2s ease;
+          padding: 4px 8px;
+          border-radius: 8px;
+          max-width: 100%;
+          &:hover {
+            background-color: rgba($primary-color, 0.05);
+            color: $primary-color;
+            .edit-name-icon {
+              opacity: 1;
+              transform: scale(1);
+            }
+          }
+          .edit-name-icon {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.2s ease;
+            color: $text-muted;
+            flex-shrink: 0;
+          }
         }
-      }
-      
-      .edit-name-icon {
-        font-size: 18px;
-        width: 18px;
-        height: 18px;
-        opacity: 0;
-        transform: scale(0.8);
-        transition: all 0.2s ease;
-        color: $text-muted;
-        flex-shrink: 0;
-      }
-    }
-    
-    .name-editor {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: $card-bg;
-      border: 2px solid $primary-color;
-      border-radius: 12px;
-      padding: 8px 12px;
-      box-shadow: $shadow-md;
-      min-width: 250px;
-      max-width: 100%;
-      
-      .name-input {
-        flex: 1;
-        border: none;
-        outline: none;
-        background: transparent;
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: $text-color;
-        font-family: inherit;
-        min-width: 150px;
-        
-        
-        
-        &::placeholder {
-          color: $text-light;
-          font-weight: 400;
-        }
-      }
-      
-      .name-editor-actions {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        flex-shrink: 0;
-        
-        .save-btn, .cancel-btn {
-          width: 32px; // Aumentado de 28px a 32px
-            height: 32px;
-            min-width: 32px;
-            border-radius: 8px;
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            overflow: hidden;
-            background-color: rgba(255, 255, 255, 0.8);
-            border: 1px solid rgba(0, 0, 0, 0.04);
-            padding: 0;
+        .name-editor {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          background: $card-bg;
+          border: 2px solid $primary-color;
+          border-radius: 12px;
+          padding: 8px 12px;
+          box-shadow: $shadow-md;
+          min-width: 250px;
+          max-width: 100%;
+          .name-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: $text-color;
+            font-family: inherit;
+            min-width: 150px;
+            &::placeholder {
+              color: $text-light;
+              font-weight: 400;
+            }
+          }
+          .name-editor-actions {
             display: flex;
             align-items: center;
-            justify-content: center;
-          
-          mat-icon {
-              font-size: 18px; // Aumentado de 16px a 18px
-              height: 18px;
-              width: 18px;
-              line-height: 18px;
-              transition: transform 0.2s ease;
-              margin: 0;
+            gap: 4px;
+            flex-shrink: 0;
+            .save-btn, .cancel-btn {
+              width: 32px;
+              height: 32px;
+              min-width: 32px;
+              border-radius: 8px;
+              transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+              position: relative;
+              overflow: hidden;
+              background-color: rgba(255, 255, 255, 0.8);
+              border: 1px solid rgba(0, 0, 0, 0.04);
+              padding: 0;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              mat-icon {
+                font-size: 18px;
+                height: 18px;
+                width: 18px;
+                line-height: 18px;
+                transition: transform 0.2s ease;
+                margin: 0;
+              }
             }
-        }
-        
-        .save-btn {
-          background: $success-color;
-          color: white;
-          
-          &:hover {
-            background: darken($success-color, 10%);
-            transform: scale(1.05);
-          }
-        }
-        
-        .cancel-btn {
-          background: $error-color;
-          color: white;
-          
-          &:hover {
-            background: darken($error-color, 10%);
-            transform: scale(1.05);
+            .save-btn {
+              background: $success-color;
+              color: white;
+              &:hover {
+                background: darken($success-color, 10%);
+                transform: scale(1.05);
+              }
+            }
+            .cancel-btn {
+              background: $error-color;
+              color: white;
+              &:hover {
+                background: darken($error-color, 10%);
+                transform: scale(1.05);
+              }
+            }
           }
         }
       }
-    }
-  }
-      
       .document-details {
         display: flex;
         align-items: center;
@@ -220,21 +193,17 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
         margin-top: 4px;
         font-size: 0.875rem;
         color: $text-muted;
-        
         span {
           display: flex;
           align-items: center;
-          
           &:not(:last-child)::after {
             margin-left: 12px;
             color: $text-light;
           }
         }
-        
         .file-size {
           font-weight: 500;
         }
-        
         .file-type {
           background: $primary-light;
           color: $primary-color;
@@ -247,12 +216,10 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
       }
     }
   }
-  
   .header-actions {
     display: flex;
     align-items: center;
     gap: 16px;
-    
     .control-group {
       display: flex;
       align-items: center;
@@ -261,12 +228,10 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
       background: #f8fafc;
       border-radius: 12px;
       border: 1px solid $border-color;
-      
       .zoom-controls, .page-controls {
         display: flex;
         align-items: center;
         gap: 8px;
-        
         .zoom-display, .page-display {
           font-size: 0.875rem;
           font-weight: 600;
@@ -279,9 +244,8 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
           border: 1px solid $border-color;
         }
       }
-      
       .control-btn {
-        width: 32px; // Aumentado de 28px a 32px
+        width: 32px;
         height: 32px;
         min-width: 32px;
         border-radius: 8px;
@@ -294,21 +258,18 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
         display: flex;
         align-items: center;
         justify-content: center;
-        
         &:hover:not(:disabled) {
           background: $primary-light;
           color: $primary-color;
           border-color: $primary-color;
           transform: translateY(-1px);
         }
-        
         &:disabled {
           opacity: 0.5;
           cursor: not-allowed;
         }
-        
         mat-icon {
-          font-size: 18px; // Aumentado de 16px a 18px
+          font-size: 18px;
           height: 18px;
           width: 18px;
           line-height: 18px;
@@ -316,24 +277,20 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
           margin: 0;
         }
       }
-      
       .rotate-btn {
         background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
         color: #92400e;
         border-color: #fbbf24;
-        
         &:hover {
           background: linear-gradient(135deg, #fde68a 0%, #fcd34d 100%);
           transform: translateY(-1px) rotate(90deg);
         }
       }
     }
-    
     .action-buttons {
       display: flex;
       align-items: center;
       gap: 12px;
-      
       .edit-btn {
         border: 2px dashed $border-color;
         color: $text-muted;
@@ -343,28 +300,24 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
         font-weight: 500;
         position: relative;
         transition: all 0.2s ease;
-        display: flex; // 🔧 Para alinear iconos y texto
-        align-items: center; // 🔧 Para alinear iconos y texto
-        
+        display: flex;
+        align-items: center;
         &.disabled {
           cursor: not-allowed;
-          
           .coming-soon-icon {
             color: $warning-color;
             font-size: 16px;
             margin-left: 4px;
           }
         }
-        
         mat-icon:first-child {
           margin-right: 8px;
           opacity: 0.7;
-          font-size: 18px; // 🔧 Tamaño consistente
-          width: 18px; // 🔧 Ancho consistente
-          height: 18px; // 🔧 Alto consistente
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
         }
       }
-      
       .download-btn {
         background: linear-gradient(135deg, $primary-color 0%, $primary-hover 100%);
         color: white;
@@ -373,23 +326,20 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
         font-weight: 600;
         box-shadow: $shadow-md;
         transition: all 0.2s ease;
-        display: flex; // 🔧 Para alinear iconos y texto
-        align-items: center; // 🔧 Para alinear iconos y texto
-        
+        display: flex;
+        align-items: center;
         &:hover {
           background: linear-gradient(135deg, $primary-hover 0%, #4c2c91 100%);
           transform: translateY(-2px);
           box-shadow: $shadow-lg;
         }
-        
         mat-icon {
           margin-right: 8px;
-          font-size: 18px; // 🔧 Tamaño consistente
-          width: 18px; // 🔧 Ancho consistente
-          height: 18px; // 🔧 Alto consistente
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
         }
       }
-      
       .fullscreen-btn, .menu-btn {
         width: 44px;
         height: 44px;
@@ -398,20 +348,18 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
         color: $text-color;
         border: 1px solid $border-color;
         transition: all 0.2s ease;
-        display: flex; // 🔧 Para centrar el icono
-        align-items: center; // 🔧 Para centrar el icono
-        justify-content: center; // 🔧 Para centrar el icono
-        
+        display: flex;
+        align-items: center;
+        justify-content: center;
         &:hover {
           background: $primary-light;
           color: $primary-color;
           border-color: $primary-color;
           transform: translateY(-1px);
         }
-        
         mat-icon {
-          margin: 0; // 🔧 Quitar márgenes para centrado perfecto
-          font-size: 20px; // 🔧 Tamaño ligeramente mayor para botones redondos
+          margin: 0;
+          font-size: 20px;
           width: 20px;
           height: 20px;
         }
@@ -420,7 +368,6 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   }
 }
 
-// 🔧 Tooltip personalizado para el botón de editar
 ::ng-deep .edit-tooltip {
   background-color: #fef3c7 !important;
   color: #92400e !important;
@@ -430,18 +377,15 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   font-size: 0.875rem !important;
   font-weight: 500 !important;
   max-width: 250px !important;
-  
   .mat-tooltip-arrow {
     border-top-color: #fef3c7 !important;
   }
 }
 
-// Menú de acciones mejorado
 .actions-menu {
   .coming-soon-item {
     position: relative;
     opacity: 0.6;
-    
     .coming-soon-text {
       position: absolute;
       right: 12px;
@@ -457,7 +401,6 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   }
 }
 
-// Contenido principal
 .viewer-main {
   flex: 1;
   min-height: calc(100vh - 120px);
@@ -465,11 +408,10 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative; // 🔧 Importante para el posicionamiento absoluto de los estados
+  position: relative;
   background: $card-bg;
 }
 
-// Estados de carga y error mejorados
 .loading-state, .error-state {
   display: flex;
   align-items: center;
@@ -477,12 +419,11 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   width: 100%;
   height: 100%;
   min-height: 400px;
-  position: absolute; // 🔧 Posicionamiento absoluto para cubrir todo el contenedor
+  position: absolute;
   top: 0;
   left: 0;
-  background: rgba(248, 250, 252, 0.95); // 🔧 Fondo semi-transparente
-  z-index: 10; // 🔧 Asegurar que esté por encima del contenido
-  
+  background: rgba(248, 250, 252, 0.95);
+  z-index: 10;
   .loading-content, .error-content {
     text-align: center;
     padding: 48px 32px;
@@ -490,28 +431,23 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
     border-radius: 20px;
     box-shadow: $shadow-xl;
     max-width: 400px;
-    width: 90%; // 🔧 Ancho responsive
-    
-    // 🔧 Centrado específico para el spinner
+    width: 90%;
     mat-spinner {
-      margin: 0 auto 24px auto; // 🔧 Centrado horizontal y espaciado inferior
-      display: block; // 🔧 Para que funcione el margin auto
+      margin: 0 auto 24px auto;
+      display: block;
     }
-    
     h3 {
-      margin: 0 0 12px 0; // 🔧 Eliminar margen superior
+      margin: 0 0 12px 0;
       font-size: 1.5rem;
       font-weight: 600;
       color: $text-color;
     }
-    
     p {
       color: $text-muted;
       margin-bottom: 32px;
       line-height: 1.6;
     }
   }
-  
   .error-icon {
     width: 80px;
     height: 80px;
@@ -521,7 +457,6 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
     display: flex;
     align-items: center;
     justify-content: center;
-    
     mat-icon {
       font-size: 40px;
       width: 40px;
@@ -529,7 +464,6 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
       color: $error-color;
     }
   }
-  
   .error-actions {
     display: flex;
     gap: 12px;
@@ -538,7 +472,6 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   }
 }
 
-// Contenedores de documentos
 .document-content {
   width: 100%;
   height: 100%;
@@ -546,7 +479,7 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   overflow: auto;
   padding: 24px;
   background: #f0f3f7;
-  position: relative; // 🔧 Para que los overlays se posicionen correctamente
+  position: relative;
 }
 
 .pdf-container, .image-container, .text-container, 
@@ -556,39 +489,35 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   min-height: 500px;
   display: flex;
   justify-content: center;
-  position: relative; // 🔧 Para el overlay de loading
+  position: relative;
 }
 
-// PDF Viewer mejorado
 .pdf-viewer {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: auto;
-    padding: 16px;
-    
-    .pdf-canvas {
-      display: block;
-      margin: 0 auto;
-      max-width: 100%;
-      max-height: 100%;
-      box-shadow: $shadow-xl;
-      border-radius: 8px;
-      background: white;
-      transition: opacity 0.3s ease; // 🔧 Transición suave para el cambio de opacidad
-    }
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  padding: 16px;
+  .pdf-canvas {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    max-height: 100%;
+    box-shadow: $shadow-xl;
+    border-radius: 8px;
+    background: white;
+    transition: opacity 0.3s ease;
   }
+}
 
-// Image Viewer mejorado
 .image-viewer {
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  
   .preview-image {
     max-width: 100%;
     max-height: 100%;
@@ -599,7 +528,6 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   }
 }
 
-// Text Viewer mejorado
 .text-viewer {
   width: 100%;
   height: 100%;
@@ -607,7 +535,6 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   border-radius: 16px;
   box-shadow: $shadow-lg;
   overflow: auto;
-  
   .text-content {
     padding: 32px;
     margin: 0;
@@ -620,7 +547,6 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   }
 }
 
-// HTML Frame mejorado
 .html-frame {
   width: 100%;
   height: 100%;
@@ -629,7 +555,6 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   box-shadow: $shadow-lg;
 }
 
-// Audio Player mejorado
 .audio-player {
   background: $card-bg;
   padding: 32px;
@@ -638,10 +563,8 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   text-align: center;
   max-width: 500px;
   width: 100%;
-  
   .audio-info {
     margin-bottom: 24px;
-    
     .audio-icon {
       font-size: 48px;
       width: 48px;
@@ -649,7 +572,6 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
       color: $primary-color;
       margin-bottom: 16px;
     }
-    
     h3 {
       margin: 0;
       font-size: 1.25rem;
@@ -657,14 +579,12 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
       color: $text-color;
     }
   }
-  
   .audio-control {
     width: 100%;
     border-radius: 12px;
   }
 }
 
-// Video Player mejorado
 .video-player {
   max-width: 100%;
   max-height: 100%;
@@ -672,7 +592,6 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   box-shadow: $shadow-xl;
 }
 
-// Formato no soportado mejorado
 .unsupported-content {
   display: flex;
   flex-direction: column;
@@ -683,7 +602,6 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   border-radius: 20px;
   box-shadow: $shadow-xl;
   max-width: 400px;
-  
   .unsupported-icon {
     width: 80px;
     height: 80px;
@@ -693,7 +611,6 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
     display: flex;
     align-items: center;
     justify-content: center;
-    
     mat-icon {
       font-size: 40px;
       width: 40px;
@@ -701,20 +618,17 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
       color: $primary-color;
     }
   }
-  
   h3 {
     margin: 0 0 16px;
     font-size: 1.5rem;
     font-weight: 600;
     color: $text-color;
   }
-  
   p {
     color: $text-muted;
     margin-bottom: 32px;
     line-height: 1.6;
   }
-  
   .unsupported-actions {
     display: flex;
     gap: 12px;
@@ -723,7 +637,6 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   }
 }
 
-// 🔧 Estilos adicionales para la carga del PDF
 .pdf-loading {
   display: flex;
   flex-direction: column;
@@ -737,21 +650,18 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   left: 0;
   background: rgba(255, 255, 255, 0.9);
   z-index: 5;
-  
   mat-spinner {
     margin-bottom: 16px;
-    display: block; // 🔧 Para asegurar el centrado
+    display: block;
   }
-  
   p {
     color: $text-muted;
     font-size: 0.875rem;
-    margin: 0; // 🔧 Eliminar márgenes por defecto
+    margin: 0;
     text-align: center;
   }
 }
 
-// 🔧 Mejoras para el canvas PDF
 .pdf-canvas {
   display: block;
   margin: 0 auto;
@@ -772,13 +682,11 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   padding: 16px;
 }
 
-// 🔧 Estilos mejorados para archivos no soportados
 .unsupported-content {
   h3 {
     color: $text-color;
     margin-bottom: 16px;
   }
-  
   p {
     text-align: center;
     color: $text-muted;
@@ -788,28 +696,22 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   }
 }
 
-// Responsive design
 @media (max-width: 1024px) {
   .viewer-header .header-content {
     padding: 12px 16px;
-    
     .header-left {
       gap: 12px;
-      
       .document-meta .document-title {
         font-size: 1.25rem;
       }
     }
-    
     .header-actions {
       gap: 8px;
-      
       .control-group {
         padding: 6px 8px;
       }
     }
   }
-  
   .document-content {
     padding: 16px;
   }
@@ -820,17 +722,14 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
     flex-direction: column;
     gap: 16px;
     align-items: stretch;
-    
     .header-left {
       .document-meta .document-details {
         flex-wrap: wrap;
         gap: 8px;
       }
     }
-    
     .header-actions {
       justify-content: space-between;
-      
       .action-buttons {
         .download-btn span,
         .edit-btn span {
@@ -839,7 +738,6 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
       }
     }
   }
-  
   .document-content {
     padding: 12px;
   }

@@ -13,7 +13,7 @@ import { PublicHeaderComponent } from "../public-header/public-header.component"
     RouterLink,
     FooterComponent,
     PublicHeaderComponent
-],
+  ],
   templateUrl: './info.component.html',
   styleUrls: ['./info.component.scss']
 })

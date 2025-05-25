@@ -1,4 +1,3 @@
-// Variables - Consistentes con el resto de componentes
 $primary-color: #6b4fbb;
 $primary-hover: #5936b1;
 $primary-light: rgba(107, 79, 187, 0.1);
@@ -13,7 +12,6 @@ $box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 $box-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.12);
 $success-color: #10b981;
 
-// Reset y estilos base
 * {
   margin: 0;
   padding: 0;
@@ -33,7 +31,6 @@ $success-color: #10b981;
   color: $text-color;
 }
 
-// Estilos de botones (consistentes con login/register)
 .btn {
   padding: 0.75rem 1.5rem;
   border: none;
@@ -49,11 +46,9 @@ $success-color: #10b981;
   font-family: inherit;
   font-size: 0.95rem;
   letter-spacing: -0.01em;
-
   &.btn-primary {
     background-color: $primary-color;
     color: #fff;
-    
     &::before {
       content: '';
       position: absolute;
@@ -66,36 +61,30 @@ $success-color: #10b981;
       transform: translate(-50%, -50%);
       transition: width 0.4s ease, height 0.4s ease;
     }
-
     &:hover {
       background-color: $primary-hover;
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba($primary-color, 0.3);
-      
       &::before {
         width: 500px;
         height: 300px;
       }
     }
-
     &:active {
       transform: translateY(0);
     }
   }
-
   &.btn-secondary {
     background-color: rgba($primary-color, 0.08);
     color: $primary-color;
     border: 2px solid transparent;
     position: relative;
-    
     &:hover {
       background-color: rgba($primary-color, 0.12);
       border-color: $primary-color;
       transform: translateY(-1px);
     }
   }
-
   &.btn-cta {
     padding: 1rem 2.5rem;
     font-size: 1.1rem;
@@ -103,14 +92,12 @@ $success-color: #10b981;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     box-shadow: 0 4px 16px rgba($primary-color, 0.2);
-    
     &:hover {
       box-shadow: 0 6px 24px rgba($primary-color, 0.3);
     }
   }
 }
 
-// Estilos generales para el contenido
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -120,14 +107,12 @@ $success-color: #10b981;
 .section-header {
   text-align: center;
   margin-bottom: 3rem;
-  
   h2 {
     font-size: 2.5rem;
     font-weight: 800;
     color: $text-color;
     letter-spacing: -0.03em;
   }
-  
   .divider {
     width: 80px;
     height: 4px;
@@ -137,13 +122,11 @@ $success-color: #10b981;
   }
 }
 
-// Sección de introducción
 .intro-section {
   background: linear-gradient(135deg, $primary-color 0%, darken($primary-color, 20%) 100%);
   padding: 6rem 0;
   color: white;
   text-align: center;
-  
   h1 {
     font-size: 3.5rem;
     font-weight: 900;
@@ -153,7 +136,6 @@ $success-color: #10b981;
     margin-left: auto;
     margin-right: auto;
   }
-  
   .subtitle {
     font-size: 1.5rem;
     opacity: 0.9;
@@ -162,40 +144,32 @@ $success-color: #10b981;
   }
 }
 
-// Sección de historia
 .story-section {
   padding: 3rem 0;
   margin-bottom: 3rem;
-  
   .content-block {
     display: flex;
     gap: 3rem;
     align-items: center;
-    
     .text-content {
       flex: 1;
-      
       p {
         font-size: 1.1rem;
         line-height: 1.6;
         margin-bottom: 1.5rem;
         color: $text-muted;
-        
         &:last-child {
           margin-bottom: 0;
         }
       }
     }
-    
     .image-content {
       flex: 1;
-      
       img {
         width: 100%;
         border-radius: 10px;
         box-shadow: $box-shadow;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
-        
         &:hover {
           transform: translateY(-5px);
           box-shadow: $box-shadow-hover;
@@ -205,28 +179,23 @@ $success-color: #10b981;
   }
 }
 
-// Sección de misión y valores
 .mission-section {
   padding: 3rem 0;
   background-color: $card-bg;
-  
   .mission-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 2.5rem;
-    
     .mission-item {
       background: $bg-page;
       padding: 2rem;
       border-radius: 12px;
       transition: all 0.3s ease;
       text-align: center;
-      
       &:hover {
         transform: translateY(-5px);
         box-shadow: $box-shadow;
       }
-      
       .icon-container {
         width: 80px;
         height: 80px;
@@ -236,19 +205,16 @@ $success-color: #10b981;
         align-items: center;
         justify-content: center;
         margin: 0 auto 1.5rem;
-        
         i {
           font-size: 36px;
           color: $primary-color;
         }
       }
-      
       h3 {
         font-size: 1.5rem;
         margin-bottom: 1rem;
         font-weight: 700;
       }
-      
       p {
         color: $text-muted;
         line-height: 1.6;
@@ -258,16 +224,13 @@ $success-color: #10b981;
   }
 }
 
-// Sección del equipo
 .team-section {
   padding: 3rem 0;
   margin-bottom: 3rem;
-  
   .team-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 3rem;
-    
     .team-member {
       display: flex;
       gap: 2rem;
@@ -276,17 +239,14 @@ $success-color: #10b981;
       padding: 2rem;
       box-shadow: $box-shadow;
       transition: all 0.3s ease;
-      
       &:hover {
         transform: translateY(-5px);
         box-shadow: $box-shadow-hover;
       }
-      
       .member-image {
         flex-shrink: 0;
         width: 120px;
         height: 120px;
-        
         img {
           width: 100%;
           height: 100%;
@@ -295,23 +255,19 @@ $success-color: #10b981;
           border: 3px solid $primary-light;
         }
       }
-      
       .member-info {
         flex-grow: 1;
-        
         h3 {
           font-size: 1.3rem;
           font-weight: 700;
           margin-bottom: 0.5rem;
         }
-        
         .position {
           color: $primary-color;
           font-weight: 600;
           font-size: 0.95rem;
           margin-bottom: 1rem;
         }
-        
         .description {
           color: $text-muted;
           font-size: 0.95rem;
@@ -322,60 +278,50 @@ $success-color: #10b981;
   }
 }
 
-// Sección de tecnologías
 .tech-section {
   padding: 3rem 0;
   background-color: $card-bg;
-  
   .tech-description {
     text-align: center;
     max-width: 800px;
     margin: 0 auto 3rem;
-    
     p {
       color: $text-muted;
       font-size: 1.1rem;
       line-height: 1.6;
     }
   }
-  
   .tech-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 2rem;
     margin-bottom: 3rem;
-    
     .tech-item {
       text-align: center;
       padding: 2rem;
       border-radius: 12px;
       background: $bg-page;
       transition: all 0.3s ease;
-      
       &:hover {
         transform: translateY(-8px);
         box-shadow: $box-shadow;
       }
-      
       .tech-icon {
         height: 80px;
         margin-bottom: 1.5rem;
         display: flex;
         align-items: center;
         justify-content: center;
-        
         img {
           max-height: 100%;
           max-width: 100%;
         }
       }
-      
       h3 {
         margin-bottom: 0.8rem;
         font-weight: 700;
         font-size: 1.3rem;
       }
-      
       p {
         color: $text-muted;
         font-size: 0.95rem;
@@ -383,10 +329,8 @@ $success-color: #10b981;
       }
     }
   }
-  
   .tech-footer {
     text-align: center;
-    
     p {
       color: $text-muted;
       font-size: 1rem;
@@ -395,16 +339,13 @@ $success-color: #10b981;
   }
 }
 
-// Sección por qué elegirnos
 .why-us-section {
   padding: 3rem 0;
   margin-bottom: 3rem;
-  
   .features-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
-    
     .feature {
       background-color: $card-bg;
       border-radius: 12px;
@@ -412,12 +353,10 @@ $success-color: #10b981;
       text-align: center;
       box-shadow: $box-shadow;
       transition: all 0.3s ease;
-      
       &:hover {
         transform: translateY(-5px);
         box-shadow: $box-shadow-hover;
       }
-      
       .icon-container {
         width: 70px;
         height: 70px;
@@ -427,19 +366,16 @@ $success-color: #10b981;
         align-items: center;
         justify-content: center;
         margin: 0 auto 1.5rem;
-        
         i {
           font-size: 32px;
           color: $primary-color;
         }
       }
-      
       h3 {
         font-size: 1.3rem;
         margin-bottom: 1rem;
         font-weight: 700;
       }
-      
       p {
         color: $text-muted;
         font-size: 0.95rem;
@@ -449,20 +385,17 @@ $success-color: #10b981;
   }
 }
 
-// CTA final
 .cta-section {
   background: linear-gradient(135deg, $primary-color 0%, darken($primary-color, 20%) 100%);
   padding: 5rem 0;
   text-align: center;
   color: white;
-  
   h2 {
     font-size: 2.5rem;
     font-weight: 800;
     margin-bottom: 1.5rem;
     letter-spacing: -0.03em;
   }
-  
   p {
     font-size: 1.2rem;
     opacity: 0.9;
@@ -471,16 +404,13 @@ $success-color: #10b981;
     margin-left: auto;
     margin-right: auto;
   }
-  
   .cta-buttons {
     display: flex;
     justify-content: center;
     gap: 1.5rem;
-    
     .btn-secondary {
       background-color: rgba(255, 255, 255, 0.15);
       color: white;
-      
       &:hover {
         background-color: rgba(255, 255, 255, 0.25);
         border-color: white;
@@ -489,12 +419,10 @@ $success-color: #10b981;
   }
 }
 
-// Media queries para responsividad
 @media (max-width: 992px) {
   .story-section .content-block {
     flex-direction: column;
   }
-
   .mission-grid,
   .team-grid,
   .tech-grid,
@@ -506,16 +434,13 @@ $success-color: #10b981;
 @media (max-width: 768px) {
   .intro-section {
     padding: 4rem 0;
-    
     h1 {
       font-size: 2.5rem;
     }
-    
     .subtitle {
       font-size: 1.2rem;
     }
   }
-
   .team-grid {
     grid-template-columns: 1fr;
   }
@@ -527,20 +452,16 @@ $success-color: #10b981;
   .features-grid {
     grid-template-columns: 1fr;
   }
-
   .team-member {
     flex-direction: column;
     align-items: center;
     text-align: center;
   }
-
   .cta-section {
     padding: 3rem 1rem;
-    
     h2 {
       font-size: 2rem;
     }
-    
     .cta-buttons {
       flex-direction: column;
       gap: 1rem;
@@ -548,7 +469,6 @@ $success-color: #10b981;
   }
 }
 
-// Animaciones
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }

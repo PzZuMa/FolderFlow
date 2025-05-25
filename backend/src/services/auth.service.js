@@ -12,7 +12,7 @@ export const registerUser = async ({ name, email, password }) => {
 
   const user = await User.create({ name, email, password: hashedPassword });
 
-  const { password: _, ...userData } = user.toObject(); // Excluye contraseña
+  const { password: _, ...userData } = user.toObject();
   return userData;
 };
 
@@ -31,8 +31,7 @@ export const loginUser = async ({ email, password }) => {
     expiresIn: '24h'
   });
 
-  // Devolver el token junto con la información básica del usuario
-  return { 
+  return {
     token,
     user: {
       id: user._id,
@@ -44,13 +43,11 @@ export const loginUser = async ({ email, password }) => {
 };
 
 export const updateUserProfile = async (userId, { name, email }) => {
-  // Verificar si existe otro usuario con ese email
   const existingUserWithEmail = await User.findOne({ email, _id: { $ne: userId } });
   if (existingUserWithEmail) {
     throw new Error('Este correo electrónico ya está en uso');
   }
 
-  // Actualizar el usuario
   const updatedUser = await User.findByIdAndUpdate(
     userId,
     { name, email },
@@ -65,7 +62,6 @@ export const updateUserProfile = async (userId, { name, email }) => {
 };
 
 export const updateUserProfileImage = async (userId, profileImage) => {
-  // Actualizar solo la imagen de perfil
   const updatedUser = await User.findByIdAndUpdate(
     userId,
     { profileImage },
@@ -80,22 +76,18 @@ export const updateUserProfileImage = async (userId, profileImage) => {
 };
 
 export const changeUserPassword = async (userId, { currentPassword, newPassword }) => {
-  // Obtener el usuario con la contraseña
   const user = await User.findById(userId);
   if (!user) {
     throw new Error('Usuario no encontrado');
   }
 
-  // Verificar la contraseña actual
   const isMatch = await bcrypt.compare(currentPassword, user.password);
   if (!isMatch) {
     throw new Error('La contraseña actual es incorrecta');
   }
 
-  // Hash de la nueva contraseña
   const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-  // Actualizar la contraseña
   user.password = hashedPassword;
   await user.save();
 

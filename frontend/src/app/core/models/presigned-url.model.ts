@@ -1,8 +1,8 @@
 export interface PresignedUrlResponse {
-    signedUrl: string;
-    s3Key: string; // Para subida
-  }
-  
-  export interface PresignedDownloadUrlResponse {
-      downloadUrl: string; // Para descarga
-  }
+  signedUrl: string;
+  s3Key: string;
+}
+
+export interface PresignedDownloadUrlResponse {
+  downloadUrl: string;
+}

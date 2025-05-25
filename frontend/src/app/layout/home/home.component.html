@@ -1,89 +1,80 @@
 <div class="home-container">
-  <!-- Encabezado de bienvenida mejorado -->
-<div class="page-header">
-  <div class="header-content">
-    <div class="header-title">
-      <h1>BIENVENIDO {{ userName ? ', ' + userName.toUpperCase() : '' }}</h1>
-      <p class="header-subtitle">Tu espacio de trabajo está listo</p>
-      
-      <!-- Información adicional del usuario -->
-      <div class="header-meta">
-        <div class="welcome-time">
-          <mat-icon>schedule</mat-icon>
-          {{ getWelcomeMessage() }}
-        </div>
-        <div class="user-status">
-          En línea
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-title">
+        <h1>BIENVENIDO {{ userName ? ', ' + userName.toUpperCase() : '' }}</h1>
+        <p class="header-subtitle">Tu espacio de trabajo está listo</p>
+        <div class="header-meta">
+          <div class="welcome-time">
+            <mat-icon>schedule</mat-icon>
+            {{ getWelcomeMessage() }}
+          </div>
+          <div class="user-status">
+            En línea
+          </div>
         </div>
       </div>
-    </div>
-    
-    <!-- Decoración lateral con indicadores -->
-    <div class="header-decoration">
-      <div class="welcome-icon">
-        <mat-icon>dashboard</mat-icon>
-      </div>
-    </div>
-  </div>
-</div>
-
-  <!-- Tarjetas de estadísticas -->
-<div class="stats-cards">
-  <div class="stat-card documents-card">
-    <div class="stat-icon-wrapper">
-      <div class="stat-icon files-icon">
-        <mat-icon>description</mat-icon>
-      </div>
-    </div>
-    <div class="stat-content">
-      <div class="stat-value-container">
-        <div class="stat-value">{{ totalDocuments }}</div>
-        <div class="stat-trend">
-          <mat-icon>arrow_upward</mat-icon>
+      <div class="header-decoration">
+        <div class="welcome-icon">
+          <mat-icon>dashboard</mat-icon>
         </div>
       </div>
-      <div class="stat-label">Documentos</div>
-      <div class="stat-description">Total de archivos en tu cuenta</div>
     </div>
   </div>
 
-  <div class="stat-card folders-card">
-    <div class="stat-icon-wrapper">
-      <div class="stat-icon folders-icon">
-        <mat-icon>folder</mat-icon>
+  <div class="stats-cards">
+    <div class="stat-card documents-card">
+      <div class="stat-icon-wrapper">
+        <div class="stat-icon files-icon">
+          <mat-icon>description</mat-icon>
+        </div>
+      </div>
+      <div class="stat-content">
+        <div class="stat-value-container">
+          <div class="stat-value">{{ totalDocuments }}</div>
+          <div class="stat-trend">
+            <mat-icon>arrow_upward</mat-icon>
+          </div>
+        </div>
+        <div class="stat-label">Documentos</div>
+        <div class="stat-description">Total de archivos en tu cuenta</div>
       </div>
     </div>
-    <div class="stat-content">
-      <div class="stat-value-container">
-        <div class="stat-value">{{ totalFolders }}</div>
+
+    <div class="stat-card folders-card">
+      <div class="stat-icon-wrapper">
+        <div class="stat-icon folders-icon">
+          <mat-icon>folder</mat-icon>
+        </div>
       </div>
-      <div class="stat-label">Carpetas</div>
-      <div class="stat-description">Organizadas en tu espacio</div>
+      <div class="stat-content">
+        <div class="stat-value-container">
+          <div class="stat-value">{{ totalFolders }}</div>
+        </div>
+        <div class="stat-label">Carpetas</div>
+        <div class="stat-description">Organizadas en tu espacio</div>
+      </div>
+    </div>
+
+    <div class="stat-card storage-card">
+      <div class="storage-percentage">{{ ((storageUsed / storageLimit) * 100).toFixed(1) }}%</div>
+      <div class="stat-icon-wrapper">
+        <div class="stat-icon storage-icon">
+          <mat-icon>cloud_done</mat-icon>
+        </div>
+      </div>
+      <div class="stat-content">
+        <div class="stat-value-container">
+          <div class="stat-value">{{ formatBytes(storageUsed) }}</div>
+        </div>
+        <div class="stat-label">Almacenamiento usado</div>
+        <div class="storage-details">
+          <span class="max-storage">De 500MB disponibles</span>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="stat-card storage-card">
-  <!-- Porcentaje en la esquina superior derecha -->
-  <div class="storage-percentage">{{ ((storageUsed / storageLimit) * 100).toFixed(1) }}%</div>
-  
-  <div class="stat-icon-wrapper">
-    <div class="stat-icon storage-icon">
-      <mat-icon>cloud_done</mat-icon>
-    </div>
-  </div>
-  <div class="stat-content">
-    <div class="stat-value-container">
-      <div class="stat-value">{{ formatBytes(storageUsed) }}</div>
-    </div>
-    <div class="stat-label">Almacenamiento usado</div>
-    <div class="storage-details">
-      <span class="max-storage">De 500MB disponibles</span>
-    </div>
-  </div>
-</div>
-</div>
-
-  <!-- Documentos recientes -->
   <div class="recent-section">
     <div class="section-header">
       <h2>Documentos recientes</h2>
@@ -94,67 +85,56 @@
     </div>
 
     <div class="document-list" *ngIf="!isLoading">
-<mat-card class="document-card" *ngFor="let doc of recentDocuments" [class.favorite]="doc.isFavorite" (click)="openDocumentViewer(doc)">
-    <!-- Contenido principal del documento -->
-    <div class="document-content">
-      <div class="document-icon" [class.favorite]="doc.isFavorite" 
-           [ngStyle]="{'background-color': !doc.isFavorite ? 'rgba(' + getColorForMimeType(doc.mimeType) + ', 0.15)' : null}">
-        <mat-icon [ngStyle]="{'color': !doc.isFavorite ? getColorForMimeType(doc.mimeType) : null}">
-          {{ getIconForMimeType(doc.mimeType) }}
-        </mat-icon>
-      </div>
-      <div class="document-info">
-        <div class="document-name">
-          {{ doc.name }}
-          <mat-icon *ngIf="doc.isFavorite" class="favorite-indicator">star</mat-icon>
+      <mat-card class="document-card" *ngFor="let doc of recentDocuments" [class.favorite]="doc.isFavorite" (click)="openDocumentViewer(doc)">
+        <div class="document-content">
+          <div class="document-icon" [class.favorite]="doc.isFavorite" [ngStyle]="{'background-color': !doc.isFavorite ? 'rgba(' + getColorForMimeType(doc.mimeType) + ', 0.15)' : null}">
+            <mat-icon [ngStyle]="{'color': !doc.isFavorite ? getColorForMimeType(doc.mimeType) : null}">
+              {{ getIconForMimeType(doc.mimeType) }}
+            </mat-icon>
+          </div>
+          <div class="document-info">
+            <div class="document-name">
+              {{ doc.name }}
+              <mat-icon *ngIf="doc.isFavorite" class="favorite-indicator">star</mat-icon>
+            </div>
+            <div class="document-meta">
+              <span class="document-size"><mat-icon>storage</mat-icon>{{ formatBytes(doc.size) }}</span>
+              <span *ngIf="doc.folderId" class="document-folder">
+                <mat-icon>folder</mat-icon>
+                {{ getFolderName(doc.folderId) }}
+              </span>
+            </div>
+          </div>
         </div>
-        <div class="document-meta">
-          <span class="document-size"><mat-icon>storage</mat-icon>{{ formatBytes(doc.size) }}</span>
-        <span *ngIf="doc.folderId" class="document-folder">
-          <mat-icon>folder</mat-icon>
-          {{ getFolderName(doc.folderId) }}
-        </span>        </div>
+        <div class="document-footer">
+          <div class="document-date">
+            <mat-icon>schedule</mat-icon>{{ getTimeAgo(doc.updatedAt || '') }}
+          </div>
+          <div class="document-actions">
+            <button mat-icon-button class="action-button move-btn" (click)="openMoveDialog(doc, $event)" matTooltip="Mover documento">
+              <mat-icon>drive_file_move</mat-icon>
+            </button>
+            <button mat-icon-button class="action-button favorite-btn" (click)="toggleFavorite(doc, $event)" matTooltip="{{ doc.isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos' }}">
+              <mat-icon>{{ doc.isFavorite ? 'star' : 'star_outline' }}</mat-icon>
+            </button>
+            <button mat-icon-button class="action-button delete-btn" (click)="deleteDocument(doc, $event)" matTooltip="Eliminar">
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+          </div>
+        </div>
+      </mat-card>
+      <div class="empty-documents" *ngIf="recentDocuments.length === 0">
+        <mat-icon>description_off</mat-icon>
+        <p>No tienes documentos recientes</p>
+        <button mat-flat-button color="primary" [routerLink]="['/documents']">
+          Ir a mis documentos
+        </button>
       </div>
     </div>
-    
-    <!-- Footer con fecha y acciones -->
-    <div class="document-footer">
-      <div class="document-date">
-        <mat-icon>schedule</mat-icon>{{ getTimeAgo(doc.updatedAt || '') }}
-      </div>
-      <div class="document-actions">
-  <!-- Botón para visualizar el documento -->
-  <button mat-icon-button class="action-button move-btn" (click)="openMoveDialog(doc, $event)" matTooltip="Mover documento">
-  <mat-icon>drive_file_move</mat-icon>
-</button>
-  
-  <!-- Botón para marcar/desmarcar como favorito -->
-  <button mat-icon-button class="action-button favorite-btn" (click)="toggleFavorite(doc, $event)" matTooltip="{{ doc.isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos' }}">
-    <mat-icon>{{ doc.isFavorite ? 'star' : 'star_outline' }}</mat-icon>
-  </button>
-  
-  <!-- Botón para eliminar el documento -->
-  <button mat-icon-button class="action-button delete-btn" (click)="deleteDocument(doc, $event)" matTooltip="Eliminar">
-    <mat-icon>delete_outline</mat-icon>
-  </button>
-</div>
-    </div>
-  </mat-card>
-
-  <div class="empty-documents" *ngIf="recentDocuments.length === 0">
-    <mat-icon>description_off</mat-icon>
-    <p>No tienes documentos recientes</p>
-    <button mat-flat-button color="primary" [routerLink]="['/documents']">
-      Ir a mis documentos
-    </button>
   </div>
-</div>
-</div>
 
-  <!-- Separador visual entre secciones -->
   <div class="section-divider"></div>
 
-  <!-- Documentos destacados - siempre visible -->
   <div class="favorites-section">
     <div class="section-header">
       <h2>Documentos destacados</h2>
@@ -163,8 +143,6 @@
         <mat-icon>arrow_forward</mat-icon>
       </a>
     </div>
-
-    <!-- Lista de documentos destacados -->
     <div class="document-list" *ngIf="favoriteDocuments.length > 0">
       <mat-card class="document-card" *ngFor="let doc of favoriteDocuments" (click)="openDocumentViewer(doc)">
         <div class="document-content">
@@ -182,32 +160,24 @@
             </div>
           </div>
         </div>
-        
         <div class="document-footer">
           <div class="document-date">
             <mat-icon>schedule</mat-icon>{{ getTimeAgo(doc.updatedAt || '') }}
           </div>
           <div class="document-actions">
-          <!-- Botón para visualizar el documento -->
-  <button mat-icon-button class="action-button move-btn" (click)="openMoveDialog(doc, $event)" matTooltip="Mover documento">
-  <mat-icon>drive_file_move</mat-icon>
-</button>
-  
-  <!-- Botón para marcar/desmarcar como favorito -->
-  <button mat-icon-button class="action-button favorite-btn" (click)="toggleFavorite(doc, $event)" matTooltip="{{ doc.isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos' }}">
-    <mat-icon>{{ doc.isFavorite ? 'star' : 'star_outline' }}</mat-icon>
-  </button>
-  
-  <!-- Botón para eliminar el documento -->
-  <button mat-icon-button class="action-button delete-btn" (click)="deleteDocument(doc, $event)" matTooltip="Eliminar">
-    <mat-icon>delete_outline</mat-icon>
-  </button>
-        </div>
+            <button mat-icon-button class="action-button move-btn" (click)="openMoveDialog(doc, $event)" matTooltip="Mover documento">
+              <mat-icon>drive_file_move</mat-icon>
+            </button>
+            <button mat-icon-button class="action-button favorite-btn" (click)="toggleFavorite(doc, $event)" matTooltip="{{ doc.isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos' }}">
+              <mat-icon>{{ doc.isFavorite ? 'star' : 'star_outline' }}</mat-icon>
+            </button>
+            <button mat-icon-button class="action-button delete-btn" (click)="deleteDocument(doc, $event)" matTooltip="Eliminar">
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+          </div>
         </div>
       </mat-card>
     </div>
-
-    <!-- Mensaje cuando no hay documentos destacados -->
     <div class="empty-documents empty-favorites" *ngIf="favoriteDocuments.length === 0">
       <mat-icon class="star-icon-empty">grade</mat-icon>
       <p>No tienes documentos destacados</p>
@@ -219,10 +189,8 @@
     </div>
   </div>
 
-  <!-- Accesos rápidos -->
   <div class="quick-links-section">
     <h2>Accesos rápidos</h2>
-    
     <div class="quick-links">
       <a [routerLink]="['/documents']" class="quick-link-card">
         <div class="quick-link-icon documents">
@@ -230,21 +198,18 @@
         </div>
         <span>Mis Documentos</span>
       </a>
-
       <a [routerLink]="['/folders']" class="quick-link-card">
         <div class="quick-link-icon folders">
           <mat-icon>folder</mat-icon>
         </div>
         <span>Mis Carpetas</span>
       </a>
-
       <a [routerLink]="['/account']" class="quick-link-card">
         <div class="quick-link-icon settings">
           <mat-icon>account_circle</mat-icon>
         </div>
         <span>Cuenta</span>
       </a>
-
       <a [routerLink]="['/contacto']" class="quick-link-card">
         <div class="quick-link-icon help">
           <mat-icon>help</mat-icon>
