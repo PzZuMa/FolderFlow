@@ -5,6 +5,7 @@ import { Observable, tap, catchError, throwError, BehaviorSubject } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
 import { ErrorHandlerService } from './errorhandler.service';
 
+// Interfaces para tipado de respuestas y datos de usuario
 interface AuthResponse {
   token: string;
   user: UserInfo;
@@ -33,6 +34,10 @@ interface RegisterData extends LoginCredentials {
   name: string;
 }
 
+/**
+ * Servicio de autenticación: login, registro, gestión de sesión y perfil de usuario.
+ * Maneja el almacenamiento seguro del token y la información del usuario.
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -42,12 +47,15 @@ export class AuthService {
   private errorHandler = inject(ErrorHandlerService);
   private apiUrl = environment.apiUrl;
 
+  // Estado reactivo de login (BehaviorSubject para emitir cambios)
   private loggedInStatus = new BehaviorSubject<boolean>(this.hasToken());
   isLoggedIn$ = this.loggedInStatus.asObservable();
 
+  // Estado reactivo del usuario actual
   private currentUserSubject = new BehaviorSubject<UserInfo | null>(null);
   currentUser$ = this.currentUserSubject.asObservable();
 
+  // Claves para localStorage
   private readonly TOKEN_KEY = 'authToken';
   private readonly USER_KEY = 'currentUser';
 
@@ -55,6 +63,9 @@ export class AuthService {
     this.loadUserFromStorage();
   }
 
+  /**
+   * Carga el usuario actual desde localStorage al iniciar el servicio.
+   */
   private loadUserFromStorage(): void {
     try {
       const userJson = localStorage.getItem(this.USER_KEY);
@@ -67,6 +78,9 @@ export class AuthService {
     }
   }
 
+  /**
+   * Guarda el usuario actual en localStorage.
+   */
   private saveUserToStorage(user: UserInfo): void {
     try {
       localStorage.setItem(this.USER_KEY, JSON.stringify(user));
@@ -75,10 +89,16 @@ export class AuthService {
     }
   }
 
+  /**
+   * Devuelve si el usuario está logueado (token presente).
+   */
   public get isLoggedIn(): boolean {
     return this.hasToken();
   }
 
+  /**
+   * Registra un nuevo usuario.
+   */
   register(userData: RegisterData): Observable<RegisterResponse> {
     return this.http.post<RegisterResponse>(`${this.apiUrl}/auth/register`, userData)
       .pipe(
@@ -87,6 +107,9 @@ export class AuthService {
       );
   }
 
+  /**
+   * Realiza login y guarda el token y usuario en localStorage.
+   */
   login(credentials: LoginCredentials): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/auth/login`, credentials)
       .pipe(
@@ -112,6 +135,9 @@ export class AuthService {
       );
   }
 
+  /**
+   * Guarda el token JWT en localStorage y actualiza el estado de login.
+   */
   saveToken(token: string): void {
     try {
       localStorage.setItem(this.TOKEN_KEY, token);
@@ -121,6 +147,9 @@ export class AuthService {
     }
   }
 
+  /**
+   * Obtiene el token JWT almacenado.
+   */
   getToken(): string | null {
     try {
       return localStorage.getItem(this.TOKEN_KEY);
@@ -130,6 +159,9 @@ export class AuthService {
     }
   }
 
+  /**
+   * Elimina el token y la información del usuario de localStorage y actualiza el estado.
+   */
   removeToken(): void {
     try {
       localStorage.removeItem(this.TOKEN_KEY);
@@ -141,25 +173,40 @@ export class AuthService {
     }
   }
 
+  /**
+   * Comprueba si hay token almacenado.
+   */
   private hasToken(): boolean {
     return !!this.getToken();
   }
 
+  /**
+   * Cierra la sesión, elimina datos y redirige al login.
+   */
   logout(): void {
     this.removeToken();
     this.router.navigate(['/login']);
   }
 
+  /**
+   * Maneja errores generales y los transforma en mensajes amigables.
+   */
   private handleError(error: any): Observable<never> {
     const userMessage = this.errorHandler.getErrorMessage(error);
     return throwError(() => new Error(userMessage));
   }
 
+  /**
+   * Maneja errores de autenticación y los transforma en mensajes amigables.
+   */
   private handleAuthError(error: any): Observable<never> {
     const userMessage = this.errorHandler.getAuthErrorMessage(error);
     return throwError(() => new Error(userMessage));
   }
 
+  /**
+   * Actualiza el perfil del usuario (nombre y email).
+   */
   updateProfile(userData: { name: string; email: string }): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/auth/profile`, userData)
       .pipe(
@@ -179,6 +226,9 @@ export class AuthService {
       );
   }
 
+  /**
+   * Actualiza la imagen de perfil del usuario.
+   */
   updateProfileImage(imageData: { profileImage: string }): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/auth/profile-image`, imageData)
       .pipe(
@@ -197,6 +247,9 @@ export class AuthService {
       );
   }
 
+  /**
+   * Cambia la contraseña del usuario.
+   */
   changePassword(passwordData: { currentPassword: string; newPassword: string }): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/auth/password`, passwordData)
       .pipe(

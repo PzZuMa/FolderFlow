@@ -1,3 +1,8 @@
+/**
+ * Componente explorador de carpetas.
+ * Permite navegar, crear, renombrar, mover, eliminar carpetas y subir documentos.
+ * Gestiona la vista en modo grid/list y preferencias del usuario.
+ */
 import { Component, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
@@ -25,6 +30,9 @@ import { UserPreferencesService } from '../../../core/services/preferences.servi
 import { RenameFolderDialogComponent, RenameFolderDialogData } from '../../../shared/components/rename-folder-dialog/rename-folder-dialog.component';
 import { ErrorHandlerService } from '../../../core/services/errorhandler.service';
 
+/**
+ * Extiende Folder para incluir contadores de archivos y subcarpetas.
+ */
 interface FolderWithCounts extends Folder {
   fileCount?: number;
   folderCount?: number;
@@ -43,6 +51,7 @@ interface FolderWithCounts extends Folder {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FolderExplorerComponent implements OnInit, OnDestroy {
+  // Servicios y dependencias inyectadas
   private folderService = inject(FolderService);
   private documentService = inject(DocumentService);
   private dialog = inject(MatDialog);
@@ -53,7 +62,10 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
   private userPreferencesService = inject(UserPreferencesService);
   private errorHandler = inject(ErrorHandlerService);
 
+  // Referencia al input de archivos para subida
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+
+  // Estado de la vista y datos
   currentFolderId: string | null = null;
   parentOfCurrentFolderId: string | null = null;
   folders: FolderWithCounts[] = [];
@@ -63,6 +75,15 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
   breadcrumbs: Folder[] = [];
   viewType: 'grid' | 'list' = 'grid';
 
+  // Listas auxiliares para filtrado y búsqueda
+  filteredFolders: FolderWithCounts[] = [];
+  filteredDocuments: Document[] = [];
+  originalFolders: FolderWithCounts[] = [];
+  originalDocuments: Document[] = [];
+
+  /**
+   * Devuelve el nombre de la carpeta actual para mostrar en la cabecera.
+   */
   get currentFolderNameDisplay(): string {
     if (this.isLoading) {
       return 'Cargando...';
@@ -77,15 +98,20 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Carga preferencias y contenido inicial
     this.viewType = this.userPreferencesService.getViewType();
     this.loadContents(null);
   }
 
   ngOnDestroy(): void {
+    // Limpia recursos al destruir el componente
     this.destroy$.next();
     this.destroy$.complete();
   }
 
+  /**
+   * Carga carpetas, documentos y breadcrumbs de la carpeta actual.
+   */
   loadContents(folderId: string | null): void {
     this.isLoading = true;
     this.currentFolderId = folderId;
@@ -144,18 +170,30 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Navega a una carpeta hija.
+   */
   navigateToFolder(folderId: string | null): void {
     this.loadContents(folderId);
   }
 
+  /**
+   * Navega a la carpeta padre.
+   */
   navigateUp(): void {
     this.loadContents(this.parentOfCurrentFolderId);
   }
 
+  /**
+   * Abre el visor de documentos para el documento seleccionado.
+   */
   openDocumentViewer(document: Document): void {
     this.router.navigate(['/documents/view', document._id]);
   }
 
+  /**
+   * Navega a una carpeta desde el breadcrumb.
+   */
   navigateToBreadcrumb(folderId: string | null): void {
     const targetId = this.isRootId(folderId) ? null : folderId;
     if (targetId !== this.currentFolderId) {
@@ -163,6 +201,9 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Cambia el tipo de vista y guarda la preferencia.
+   */
   setViewType(type: 'grid' | 'list'): void {
     if (this.viewType !== type) {
       this.viewType = type;
@@ -171,6 +212,9 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Abre el diálogo para crear una nueva carpeta.
+   */
   openCreateFolderDialog(): void {
     const dialogRef = this.dialog.open(CreateFolderDialogComponent, {
       width: '400px'
@@ -199,12 +243,18 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Dispara el input de archivos para subir documentos.
+   */
   triggerFileInputClick(): void {
     if (this.fileInput && this.fileInput.nativeElement) {
       this.fileInput.nativeElement.click();
     }
   }
 
+  /**
+   * Carga estadísticas de archivos y subcarpetas para cada carpeta.
+   */
   private loadFolderStats(): void {
     if (!this.folders || this.folders.length === 0) return;
     const folderStatsRequests = this.folders.map(folder =>
@@ -232,6 +282,9 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+   * Maneja la selección de archivos para subir.
+   */
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) {
@@ -251,6 +304,9 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Abre el diálogo para renombrar una carpeta.
+   */
   openEditFolderNameDialog(folder: Folder, event: Event): void {
     event.stopPropagation();
     const dialogData: RenameFolderDialogData = {
@@ -269,6 +325,9 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Actualiza el nombre de una carpeta.
+   */
   private updateFolderName(folder: Folder, newName: string): void {
     this.isLoading = true;
     this.cdRef.markForCheck();
@@ -303,6 +362,9 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+   * Inicia el proceso de subida de un archivo.
+   */
   private startUploadProcess(upload: UploadStatus): void {
     upload.status = 'pending';
     this.cdRef.markForCheck();
@@ -352,6 +414,9 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+   * Carga los breadcrumbs de la carpeta actual.
+   */
   loadBreadcrumbs(folderId: string | null): void {
     this.folderService.getBreadcrumbs(folderId)
       .pipe(
@@ -371,6 +436,9 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+   * Calcula el ID de la carpeta padre a partir de los breadcrumbs.
+   */
   private calculateParentFolderId(): void {
     if (this.currentFolderId === null) {
       this.parentOfCurrentFolderId = null;
@@ -382,10 +450,16 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Determina si el ID corresponde a la raíz.
+   */
   isRootId(id: string | null | undefined): boolean {
     return id === null || id === '' || id === undefined;
   }
 
+  /**
+   * Confirma la subida del archivo en el backend tras subirlo a S3.
+   */
   private confirmUploadBackend(upload: UploadStatus): void {
     if (!upload.s3Key) {
       upload.status = 'error';
@@ -415,6 +489,9 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Descarga un documento usando una URL prefirmada.
+   */
   downloadFile(document: Document): void {
     this.documentService.requestDownloadUrl(document._id)
       .pipe(
@@ -429,6 +506,9 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+   * Abre el diálogo de confirmación para eliminar carpetas o documentos.
+   */
   openDeleteConfirmation(item: Folder | Document, itemType: 'folder' | 'document'): void {
     const dialogData: ConfirmationDialogData = {
       title: `Eliminar ${itemType === 'folder' ? 'Carpeta' : 'Archivo'}`,
@@ -446,6 +526,9 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Elimina una carpeta o documento.
+   */
   private deleteItem(item: Folder | Document, itemType: 'folder' | 'document'): void {
     this.isLoading = true;
     this.cdRef.markForCheck();
@@ -470,6 +553,9 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Abre el diálogo para mover carpetas o documentos.
+   */
   openMoveDialog(item: Folder | Document, itemType: 'folder' | 'document'): void {
     const dialogData: MoveItemDialogData = {
       itemToMove: item,
@@ -491,6 +577,9 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Mueve una carpeta o documento a otra carpeta.
+   */
   private moveItem(item: Folder | Document, itemType: 'folder' | 'document', destinationFolderId: string | null): void {
     this.isLoading = true;
     this.cdRef.markForCheck();
@@ -516,6 +605,9 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Devuelve el icono adecuado según el tipo MIME.
+   */
   getIconForMimeType(mimeType: string): string {
     if (mimeType.startsWith('image/')) return 'image';
     if (mimeType === 'application/pdf') return 'picture_as_pdf';
@@ -527,6 +619,9 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
     return 'insert_drive_file';
   }
 
+  /**
+   * Devuelve un color asociado al tipo MIME para iconos o etiquetas.
+   */
   getColorForMimeType(mimeType: string): string {
     if (mimeType.startsWith('image/')) return '25, 91, 255';
     if (mimeType === 'application/pdf') return '239, 71, 58';
@@ -542,6 +637,9 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
     return '100, 116, 139';
   }
 
+  /**
+   * Formatea bytes a una cadena legible (KB, MB, etc.).
+   */
   formatBytes(bytes: number, decimals = 2): string {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
@@ -551,21 +649,28 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
   }
 
+  /**
+   * Muestra un mensaje de éxito en un snackbar.
+   */
   private showSuccess(message: string): void {
     this.snackBar.open(message, 'Cerrar', { duration: 3000, panelClass: ['snackbar-success'] });
   }
+  /**
+   * Muestra un mensaje de error en un snackbar.
+   */
   private showError(message: string): void {
     this.snackBar.open(message, 'Cerrar', { duration: 3000, panelClass: ['snackbar-error'] });
   }
+  /**
+   * Muestra un mensaje informativo en un snackbar.
+   */
   private showInfo(message: string): void {
     this.snackBar.open(message, 'Cerrar', { duration: 3000, panelClass: ['snackbar-info'] });
   }
 
-  filteredFolders: FolderWithCounts[] = [];
-  filteredDocuments: Document[] = [];
-  originalFolders: FolderWithCounts[] = [];
-  originalDocuments: Document[] = [];
-
+  /**
+   * Filtra carpetas y documentos por término de búsqueda.
+   */
   filterItems(event: Event): void {
     const searchTerm = (event.target as HTMLInputElement).value.toLowerCase();
     if (!searchTerm) {
@@ -585,6 +690,9 @@ export class FolderExplorerComponent implements OnInit, OnDestroy {
     this.cdRef.markForCheck();
   }
 
+  /**
+   * Marca o desmarca un documento como favorito.
+   */
   toggleFavorite(doc: Document, event: Event): void {
     event.stopPropagation();
     const newStatus = !doc.isFavorite;

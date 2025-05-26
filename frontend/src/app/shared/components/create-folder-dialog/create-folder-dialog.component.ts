@@ -8,9 +8,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
+// Componente para el diálogo de creación de carpeta
 @Component({
   selector: 'app-create-folder-dialog',
   standalone: true,
+  // Importación de módulos necesarios para el funcionamiento del diálogo
   imports: [
     CommonModule,
     FormsModule,
@@ -20,6 +22,7 @@ import { CommonModule } from '@angular/common';
     MatButtonModule,
     MatIconModule
   ],
+  // Plantilla HTML del diálogo de creación de carpeta
   template: `
     <div class="dialog-container">
       <div class="dialog-header">
@@ -32,6 +35,7 @@ import { CommonModule } from '@angular/common';
         </div>
       </div>
       <mat-dialog-content>
+        <!-- Campo de texto para el nombre de la carpeta -->
         <mat-form-field appearance="outline" class="full-width" [class.error-field]="hasError">
           <mat-label>Nombre de la carpeta</mat-label>
           <input matInput 
@@ -45,10 +49,12 @@ import { CommonModule } from '@angular/common';
           <mat-icon matSuffix class="folder-icon">folder</mat-icon>
           <mat-hint align="end">{{folderName.length}}/50</mat-hint>
         </mat-form-field>
+        <!-- Mensaje de error si existe -->
         <div class="error-message" *ngIf="errorMessage">
           <mat-icon>error_outline</mat-icon>
           <span>{{ errorMessage }}</span>
         </div>
+        <!-- Sugerencias de nombres si el usuario no ha interactuado -->
         <div class="suggestions" *ngIf="!folderName && !hasInteracted">
           <p class="suggestions-title">Sugerencias:</p>
           <div class="suggestion-chips">
@@ -75,6 +81,7 @@ import { CommonModule } from '@angular/common';
       </mat-dialog-actions>
     </div>
   `,
+  // Estilos CSS específicos para el diálogo de creación de carpeta
   styles: [`
     .dialog-container {
       animation: dialogFadeIn 0.3s ease-out;
@@ -282,10 +289,15 @@ import { CommonModule } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateFolderDialogComponent implements OnInit {
+  // Nombre de la carpeta introducido por el usuario
   folderName: string = '';
+  // Mensaje de error a mostrar si el nombre no es válido
   errorMessage: string = '';
+  // Indica si hay un error en el campo de nombre
   hasError: boolean = false;
+  // Indica si el usuario ha interactuado con el campo de texto
   hasInteracted: boolean = false;
+  // Sugerencias de nombres de carpeta para mostrar al usuario
   folderSuggestions: string[] = [
     'Documentos',
     'Proyectos',
@@ -294,11 +306,16 @@ export class CreateFolderDialogComponent implements OnInit {
     'Trabajo',
     'Temporal'
   ];
+  // Referencia al diálogo para poder cerrarlo
   private dialogRef = inject(MatDialogRef<CreateFolderDialogComponent>);
+  // Referencia para detectar cambios manualmente
   private cdRef = inject(ChangeDetectorRef);
+  // Expresión regular para caracteres no válidos en nombres de carpeta
   private readonly invalidChars = /[<>:"/\\|?*\x00-\x1f]/g;
+  // Lista de nombres reservados por el sistema
   private readonly reservedNames = ['CON', 'PRN', 'AUX', 'NUL', 'COM1', 'COM2', 'COM3', 'COM4', 'COM5', 'COM6', 'COM7', 'COM8', 'COM9', 'LPT1', 'LPT2', 'LPT3', 'LPT4', 'LPT5', 'LPT6', 'LPT7', 'LPT8', 'LPT9'];
 
+  // Al iniciar el componente, enfoca el campo de texto
   ngOnInit(): void {
     setTimeout(() => {
       const input = document.querySelector('input[matInput]') as HTMLInputElement;
@@ -308,12 +325,14 @@ export class CreateFolderDialogComponent implements OnInit {
     }, 100);
   }
 
+  // Se ejecuta al cambiar el valor del input
   onInputChange(): void {
     this.hasInteracted = true;
     this.validateFolderName();
     this.cdRef.markForCheck();
   }
 
+  // Selecciona una sugerencia y la coloca en el campo de texto
   selectSuggestion(suggestion: string): void {
     this.folderName = suggestion;
     this.hasInteracted = true;
@@ -321,6 +340,7 @@ export class CreateFolderDialogComponent implements OnInit {
     this.cdRef.markForCheck();
   }
 
+  // Valida el nombre de la carpeta y actualiza los mensajes de error
   private validateFolderName(): void {
     this.errorMessage = '';
     this.hasError = false;
@@ -350,11 +370,13 @@ export class CreateFolderDialogComponent implements OnInit {
     }
   }
 
+  // Establece el mensaje de error y marca el campo como erróneo
   private setError(message: string): void {
     this.errorMessage = message;
     this.hasError = true;
   }
 
+  // Verifica si el nombre ingresado es válido para habilitar el botón de crear
   isValidName(): boolean {
     const trimmedName = this.folderName.trim();
     return trimmedName.length > 0 && 
@@ -367,10 +389,12 @@ export class CreateFolderDialogComponent implements OnInit {
            !/^[\s.]+$/.test(trimmedName);
   }
 
+  // Cierra el diálogo sin crear la carpeta
   onCancel(): void {
     this.dialogRef.close();
   }
 
+  // Envía el nombre de la carpeta si es válido, o muestra errores si no lo es
   onCreate(): void {
     if (this.isValidName()) {
       this.dialogRef.close(this.folderName.trim());

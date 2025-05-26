@@ -5,6 +5,10 @@ import { Title } from '@angular/platform-browser';
 import { FooterComponent } from "../footer/footer.component";
 import { PublicHeaderComponent } from "../public-header/public-header.component";
 
+/**
+ * Componente para mostrar las tarifas y planes de FolderFlow.
+ * Incluye detalles de cada plan, características generales y preguntas frecuentes.
+ */
 @Component({
   selector: 'app-tarifas',
   standalone: true,
@@ -18,6 +22,7 @@ import { PublicHeaderComponent } from "../public-header/public-header.component"
   styleUrls: ['./tarifas.component.scss']
 })
 export class TarifasComponent implements OnInit {
+  // Definición de los planes disponibles
   planes = [
     {
       nombre: 'Básico',
@@ -65,6 +70,7 @@ export class TarifasComponent implements OnInit {
     }
   ];
 
+  // Características generales de la plataforma
   caracteristicasGenerales = [
     {
       icono: '🔒',
@@ -88,6 +94,7 @@ export class TarifasComponent implements OnInit {
     }
   ];
 
+  // Preguntas frecuentes (FAQs)
   faqs = [
     {
       pregunta: '¿Puedo cambiar de plan en cualquier momento?',
@@ -108,9 +115,11 @@ export class TarifasComponent implements OnInit {
   ];
 
   constructor(private titleService: Title) {
+    // Establece el título de la página
     this.titleService.setTitle('Tarifas | FolderFlow');
   }
 
   ngOnInit(): void {
+    // No se requiere lógica adicional al inicializar
   }
 }

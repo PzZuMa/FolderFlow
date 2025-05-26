@@ -6,6 +6,8 @@ import authRoutes from './src/routes/auth.routes.js';
 import folderRoutes from './src/routes/folder.routes.js';
 import documentRoutes from './src/routes/document.routes.js';
 
+import { swaggerUi, swaggerSpec } from './src/config/swagger.js';
+
 dotenv.config();
 
 import { connectDB } from './src/config/database.js';
@@ -36,6 +38,8 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/folders', folderRoutes);
 app.use('/api/documents', documentRoutes);
+
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use((err, req, res, next) => {
   console.error('ERROR:', err.message);

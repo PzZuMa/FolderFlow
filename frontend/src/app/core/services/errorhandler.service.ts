@@ -1,12 +1,21 @@
 import { Injectable } from '@angular/core';
 
+/**
+ * Servicio centralizado para transformar errores de la API en mensajes amigables para el usuario.
+ * Permite personalizar mensajes según el código de error y el contexto.
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class ErrorHandlerService {
+  /**
+   * Devuelve un mensaje de error amigable según el error recibido.
+   * @param error Error recibido de la API o del cliente.
+   */
   getErrorMessage(error: any): string {
     console.error('Error completo:', error);
 
+    // Errores de red (sin respuesta del servidor)
     if (error.error instanceof ErrorEvent) {
       console.error('Error de red:', error.error.message);
       return 'No se pudo conectar con el servidor. Verifica tu conexión a internet.';
@@ -48,6 +57,9 @@ export class ErrorHandlerService {
     }
   }
 
+  /**
+   * Maneja errores 400 (Bad Request) y personaliza el mensaje según el contexto.
+   */
   private handleBadRequestError(errorMessage: string): string {
     const lowerMessage = errorMessage.toLowerCase();
 
@@ -70,6 +82,9 @@ export class ErrorHandlerService {
     return this.extractUserFriendlyMessage(errorMessage);
   }
 
+  /**
+   * Maneja errores 409 (Conflict) y personaliza el mensaje según el contexto.
+   */
   private handleConflictError(errorMessage: string): string {
     const lowerMessage = errorMessage.toLowerCase();
 
@@ -80,6 +95,9 @@ export class ErrorHandlerService {
     return this.extractUserFriendlyMessage(errorMessage);
   }
 
+  /**
+   * Extrae un mensaje seguro para el usuario o retorna un mensaje genérico si no es reconocible.
+   */
   private extractUserFriendlyMessage(errorMessage: string): string {
     const safeMessages = [
       'el nombre es obligatorio',
@@ -104,6 +122,9 @@ export class ErrorHandlerService {
     return 'Ocurrió un error inesperado. Por favor, intenta nuevamente.';
   }
 
+  /**
+   * Devuelve un mensaje de error específico para autenticación.
+   */
   getAuthErrorMessage(error: any): string {
     const baseMessage = this.getErrorMessage(error);
 
@@ -114,6 +135,9 @@ export class ErrorHandlerService {
     return baseMessage;
   }
 
+  /**
+   * Devuelve un mensaje de error específico para operaciones con archivos.
+   */
   getFileErrorMessage(error: any): string {
     const baseMessage = this.getErrorMessage(error);
 

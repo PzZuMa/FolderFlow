@@ -1,3 +1,8 @@
+/**
+ * Componente explorador de documentos.
+ * Permite listar, buscar, filtrar, subir, mover, eliminar y marcar como favorito documentos y carpetas.
+ * Gestiona la vista en modo grid/list y preferencias del usuario.
+ */
 import { MatMenuModule } from '@angular/material/menu';
 import { Folder, Document, UploadStatus } from '../../../core/models';
 import { CommonModule } from '@angular/common';
@@ -43,6 +48,7 @@ import { ErrorHandlerService } from '../../../core/services/errorhandler.service
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DocumentExplorerComponent implements OnInit, OnDestroy {
+  // Servicios y dependencias inyectadas
   private folderService = inject(FolderService);
   private documentService = inject(DocumentService);
   private dialog = inject(MatDialog);
@@ -54,8 +60,10 @@ export class DocumentExplorerComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   private userPreferencesService = inject(UserPreferencesService);
 
+  // Referencia al input de archivos para subida
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
+  // Estado de la vista y datos
   currentFolderId: string | null = null;
   folders: Folder[] = [];
   documents: Document[] = [];
@@ -70,12 +78,14 @@ export class DocumentExplorerComponent implements OnInit, OnDestroy {
   folderMap: Map<string, string> = new Map();
 
   ngOnInit(): void {
+    // Carga preferencias y documentos al iniciar
     this.viewType = this.userPreferencesService.getViewType();
     this.showOnlyFavorites = this.userPreferencesService.getFavoritesFilter();
     this.loadAllDocuments();
   }
 
   setViewType(type: 'grid' | 'list'): void {
+    // Cambia el tipo de vista y guarda la preferencia
     if (this.viewType !== type) {
       this.viewType = type;
       this.userPreferencesService.saveViewType(type);
@@ -84,11 +94,13 @@ export class DocumentExplorerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    // Limpia recursos al destruir el componente
     this.destroy$.next();
     this.destroy$.complete();
   }
 
   openMoveDialog(item: Folder | Document, itemType: 'folder' | 'document'): void {
+    // Abre el diálogo para mover carpetas o documentos
     const dialogData: MoveItemDialogData = {
       itemToMove: item,
       itemType: itemType,
@@ -114,10 +126,12 @@ export class DocumentExplorerComponent implements OnInit, OnDestroy {
   }
 
   triggerFileInputClick(): void {
+    // Dispara el input de archivos para subir documentos
     this.fileInput.nativeElement.click();
   }
 
   onFileSelected(event: Event): void {
+    // Maneja la selección de archivos para subir
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) {
       return;
@@ -139,6 +153,7 @@ export class DocumentExplorerComponent implements OnInit, OnDestroy {
   }
 
   private startUploadProcess(upload: UploadStatus): void {
+    // Inicia el proceso de subida de un archivo
     upload.status = 'pending';
     this.cdRef.markForCheck();
 
@@ -190,6 +205,7 @@ export class DocumentExplorerComponent implements OnInit, OnDestroy {
   }
 
   private moveItem(item: Folder | Document, itemType: 'folder' | 'document', destinationFolderId: string | null): void {
+    // Mueve una carpeta o documento a otra carpeta
     this.isLoading = true;
     this.cdRef.markForCheck();
 
@@ -218,6 +234,7 @@ export class DocumentExplorerComponent implements OnInit, OnDestroy {
   }
 
   private confirmUploadBackend(upload: UploadStatus): void {
+    // Confirma la subida del archivo en el backend tras subirlo a S3
     if (!upload.s3Key) {
       upload.status = 'error';
       upload.error = 'Falta S3 Key para confirmar.';
@@ -248,6 +265,7 @@ export class DocumentExplorerComponent implements OnInit, OnDestroy {
   }
 
   downloadFile(document: Document): void {
+    // Descarga un documento usando una URL prefirmada
     this.documentService.requestDownloadUrl(document._id)
       .pipe(
         takeUntil(this.destroy$),
@@ -262,6 +280,7 @@ export class DocumentExplorerComponent implements OnInit, OnDestroy {
   }
 
   openDeleteConfirmation(item: Folder | Document, itemType: 'folder' | 'document'): void {
+    // Abre el diálogo de confirmación para eliminar carpetas o documentos
     const dialogData: ConfirmationDialogData = {
       title: `Eliminar ${itemType === 'folder' ? 'Carpeta' : 'Archivo'}`,
       message: `¿Estás seguro de que deseas eliminar "${item.name}"? ${itemType === 'folder' ? 'Todo su contenido también será eliminado.' : ''}`,
@@ -281,6 +300,7 @@ export class DocumentExplorerComponent implements OnInit, OnDestroy {
   }
 
   private deleteItem(item: Folder | Document, itemType: 'folder' | 'document'): void {
+    // Elimina una carpeta o documento
     this.isLoading = true;
     this.cdRef.markForCheck();
 
@@ -307,6 +327,7 @@ export class DocumentExplorerComponent implements OnInit, OnDestroy {
   }
 
   getIconForMimeType(mimeType: string): string {
+    // Devuelve el icono adecuado según el tipo MIME
     if (mimeType.startsWith('image/')) return 'image';
     if (mimeType === 'application/pdf') return 'picture_as_pdf';
     if (mimeType.startsWith('video/')) return 'video_library';
@@ -319,6 +340,7 @@ export class DocumentExplorerComponent implements OnInit, OnDestroy {
   }
 
   formatBytes(bytes: number, decimals = 2): string {
+    // Formatea bytes a una cadena legible (KB, MB, etc.)
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
     const dm = decimals < 0 ? 0 : decimals;
@@ -328,25 +350,30 @@ export class DocumentExplorerComponent implements OnInit, OnDestroy {
   }
 
   private showSuccess(message: string): void {
+    // Muestra un mensaje de éxito en un snackbar
     this.snackBar.open(message, 'Cerrar', { duration: 3000, panelClass: ['snackbar-success'] });
   }
 
   private showError(message: string): void {
+    // Muestra un mensaje de error en un snackbar
     this.snackBar.open(message, 'Cerrar', { duration: 5000, panelClass: ['snackbar-error'] });
   }
 
   filterDocuments(event: Event): void {
+    // Filtra documentos por término de búsqueda
     this.searchTerm = (event.target as HTMLInputElement).value.toLowerCase();
     this.applyDocumentFilters();
   }
 
   toggleFavoritesFilter(): void {
+    // Activa/desactiva el filtro de favoritos y guarda la preferencia
     this.showOnlyFavorites = !this.showOnlyFavorites;
     this.userPreferencesService.saveFavoritesFilter(this.showOnlyFavorites);
     this.applyDocumentFilters();
   }
 
   applyDocumentFilters(): void {
+    // Aplica los filtros de favoritos y búsqueda a la lista de documentos
     let result = [...this.originalDocuments];
     if (this.showOnlyFavorites) {
       result = result.filter(doc => doc.isFavorite);
@@ -361,10 +388,12 @@ export class DocumentExplorerComponent implements OnInit, OnDestroy {
   }
 
   getFolderName(folderId: string): string {
+    // Devuelve el nombre de una carpeta por su ID
     return this.folderMap.get(folderId) || 'Carpeta';
   }
 
   loadAllDocuments(): void {
+    // Carga todas las carpetas y documentos del usuario
     this.isLoading = true;
     this.uploads = [];
     this.cdRef.markForCheck();
@@ -418,15 +447,18 @@ export class DocumentExplorerComponent implements OnInit, OnDestroy {
   }
 
   toggleViewType(): void {
+    // Cambia entre vista grid y lista
     this.viewType = this.viewType === 'grid' ? 'list' : 'grid';
     this.cdRef.markForCheck();
   }
 
   openDocumentViewer(document: Document): void {
+    // Navega al visor de documentos para el documento seleccionado
     this.router.navigate(['/documents/view', document._id]);
   }
 
   toggleFavorite(doc: Document, event: Event): void {
+    // Marca o desmarca un documento como favorito
     event.stopPropagation();
     const newStatus = !doc.isFavorite;
     this.documentService.toggleFavorite(doc._id, newStatus)
@@ -455,6 +487,7 @@ export class DocumentExplorerComponent implements OnInit, OnDestroy {
   }
 
   getColorForMimeType(mimeType: string): string {
+    // Devuelve un color asociado al tipo MIME para iconos o etiquetas
     if (mimeType.startsWith('image/')) return '#10b981';
     if (mimeType === 'application/pdf') return '#ef4444';
     if (mimeType.startsWith('video/')) return '#3b82f6';

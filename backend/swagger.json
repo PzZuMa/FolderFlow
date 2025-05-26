@@ -1,0 +1,781 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "FolderFlow API",
+    "version": "1.0.0",
+    "description": "Documentación de la API de FolderFlow"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "60f7c2e8b4d1c2a5d8e4b123"
+          },
+          "name": {
+            "type": "string",
+            "example": "Juan Pérez"
+          },
+          "email": {
+            "type": "string",
+            "example": "juan@email.com"
+          },
+          "profileImage": {
+            "type": "string",
+            "example": "default-profile.png"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Folder": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "ownerId": {
+            "type": "string"
+          },
+          "parentId": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Document": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "isFavorite": {
+            "type": "boolean"
+          },
+          "s3Key": {
+            "type": "string"
+          },
+          "mimeType": {
+            "type": "string"
+          },
+          "size": {
+            "type": "number"
+          },
+          "ownerId": {
+            "type": "string"
+          },
+          "folderId": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "summary": "Registrar un nuevo usuario",
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "usuario@email.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Usuario registrado correctamente"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Iniciar sesión",
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "usuario@email.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sesión iniciada correctamente"
+          }
+        }
+      }
+    },
+    "/auth/profile": {
+      "put": {
+        "summary": "Actualizar perfil de usuario",
+        "tags": [
+          "Auth"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Nombre Actualizado"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Perfil actualizado correctamente"
+          }
+        }
+      }
+    },
+    "/auth/profile-image": {
+      "put": {
+        "summary": "Actualizar imagen de perfil",
+        "tags": [
+          "Auth"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "image": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Imagen de perfil actualizada correctamente"
+          }
+        }
+      }
+    },
+    "/auth/password": {
+      "put": {
+        "summary": "Cambiar contraseña",
+        "tags": [
+          "Auth"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "currentPassword": {
+                    "type": "string",
+                    "example": "oldpassword"
+                  },
+                  "newPassword": {
+                    "type": "string",
+                    "example": "newpassword123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Contraseña cambiada correctamente"
+          }
+        }
+      }
+    },
+    "/documents/upload-url": {
+      "post": {
+        "summary": "Obtener URL para subir un documento",
+        "tags": [
+          "Documents"
+        ],
+        "responses": {
+          "200": {
+            "description": "URL de subida generada correctamente"
+          }
+        }
+      }
+    },
+    "/documents/confirm-upload": {
+      "post": {
+        "summary": "Confirmar la subida de un documento",
+        "tags": [
+          "Documents"
+        ],
+        "responses": {
+          "200": {
+            "description": "Subida confirmada correctamente"
+          }
+        }
+      }
+    },
+    "/documents": {
+      "get": {
+        "summary": "Listar documentos del usuario",
+        "tags": [
+          "Documents"
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de documentos"
+          }
+        }
+      }
+    },
+    "/documents/{documentId}/download-url": {
+      "get": {
+        "summary": "Obtener URL de descarga de un documento",
+        "tags": [
+          "Documents"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "documentId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID del documento"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "URL de descarga generada correctamente"
+          }
+        }
+      }
+    },
+    "/documents/{documentId}": {
+      "delete": {
+        "summary": "Eliminar un documento",
+        "tags": [
+          "Documents"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "documentId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID del documento"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Documento eliminado correctamente"
+          }
+        }
+      },
+      "get": {
+        "summary": "Obtener detalles de un documento",
+        "tags": [
+          "Documents"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "documentId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID del documento"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalles del documento"
+          }
+        }
+      }
+    },
+    "/documents/all": {
+      "get": {
+        "summary": "Obtener todos los documentos del usuario",
+        "tags": [
+          "Documents"
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista completa de documentos"
+          }
+        }
+      }
+    },
+    "/documents/{documentId}/move": {
+      "patch": {
+        "summary": "Mover un documento a otra carpeta",
+        "tags": [
+          "Documents"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "documentId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID del documento"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "targetFolderId": {
+                    "type": "string",
+                    "example": "60f7c2e8b4d1c2a5d8e4b456"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Documento movido correctamente"
+          }
+        }
+      }
+    },
+    "/documents/recent": {
+      "get": {
+        "summary": "Obtener documentos recientes",
+        "tags": [
+          "Documents"
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de documentos recientes"
+          }
+        }
+      }
+    },
+    "/documents/favorites": {
+      "get": {
+        "summary": "Obtener documentos favoritos",
+        "tags": [
+          "Documents"
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de documentos favoritos"
+          }
+        }
+      }
+    },
+    "/documents/stats": {
+      "get": {
+        "summary": "Obtener estadísticas de documentos",
+        "tags": [
+          "Documents"
+        ],
+        "responses": {
+          "200": {
+            "description": "Estadísticas obtenidas correctamente"
+          }
+        }
+      }
+    },
+    "/documents/{documentId}/favorite": {
+      "patch": {
+        "summary": "Marcar o desmarcar un documento como favorito",
+        "tags": [
+          "Documents"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "documentId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID del documento"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Estado de favorito actualizado"
+          }
+        }
+      }
+    },
+    "/documents/{documentId}/name": {
+      "patch": {
+        "summary": "Actualizar el nombre de un documento",
+        "tags": [
+          "Documents"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "documentId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID del documento"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Nuevo Nombre"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Nombre actualizado correctamente"
+          }
+        }
+      }
+    },
+    "/folders/stats": {
+      "get": {
+        "summary": "Obtener estadísticas de carpetas del usuario",
+        "tags": [
+          "Folders"
+        ],
+        "responses": {
+          "200": {
+            "description": "Estadísticas obtenidas correctamente"
+          }
+        }
+      }
+    },
+    "/folders": {
+      "post": {
+        "summary": "Crear una nueva carpeta",
+        "tags": [
+          "Folders"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Nueva Carpeta"
+                  },
+                  "parentId": {
+                    "type": "string",
+                    "example": "60f7c2e8b4d1c2a5d8e4b123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Carpeta creada correctamente"
+          }
+        }
+      },
+      "get": {
+        "summary": "Listar contenido de carpetas del usuario",
+        "tags": [
+          "Folders"
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de carpetas y archivos"
+          }
+        }
+      }
+    },
+    "/folders/{folderId}": {
+      "get": {
+        "summary": "Obtener detalles de una carpeta",
+        "tags": [
+          "Folders"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "folderId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID de la carpeta"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalles de la carpeta"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Eliminar una carpeta",
+        "tags": [
+          "Folders"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "folderId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID de la carpeta"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Carpeta eliminada correctamente"
+          }
+        }
+      }
+    },
+    "/folders/{folderId}/move": {
+      "patch": {
+        "summary": "Mover una carpeta a otra ubicación",
+        "tags": [
+          "Folders"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "folderId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID de la carpeta"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "targetParentId": {
+                    "type": "string",
+                    "example": "60f7c2e8b4d1c2a5d8e4b456"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Carpeta movida correctamente"
+          }
+        }
+      }
+    },
+    "/folders/by-ids": {
+      "post": {
+        "summary": "Obtener carpetas por IDs",
+        "tags": [
+          "Folders"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "id1",
+                      "id2"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Carpetas obtenidas correctamente"
+          }
+        }
+      }
+    },
+    "/folders/{folderId}/name": {
+      "patch": {
+        "summary": "Actualizar el nombre de una carpeta",
+        "tags": [
+          "Folders"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "folderId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID de la carpeta"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Nuevo Nombre"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Nombre actualizado correctamente"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Autenticación y gestión de usuario"
+    },
+    {
+      "name": "Documents",
+      "description": "Operaciones sobre documentos"
+    },
+    {
+      "name": "Folders",
+      "description": "Operaciones sobre carpetas"
+    }
+  ]
+}

@@ -20,6 +20,7 @@ import { Document } from '../../core/models/document.model';
 import { ConfirmationDialogComponent } from '../../shared/components/confirmation-dialog/confirmation-dialog.component';
 import { MoveItemDialogComponent, MoveItemDialogData, MoveItemDialogResult } from '../../shared/components/move-item-dialog/move-item-dialog.component';
 
+// Componente principal de la página de inicio del usuario autenticado
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -41,6 +42,7 @@ import { MoveItemDialogComponent, MoveItemDialogData, MoveItemDialogResult } fro
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomeComponent implements OnInit {
+  // Inyección de servicios y dependencias
   private documentService = inject(DocumentService);
   private folderService = inject(FolderService);
   private authService = inject(AuthService);
@@ -51,6 +53,7 @@ export class HomeComponent implements OnInit {
   private snackBar = inject(MatSnackBar);
   private errorHandler = inject(ErrorHandlerService);
 
+  // Variables de estado y datos
   isLoading = true;
   userName = '';
   recentDocuments: Document[] = [];
@@ -58,9 +61,10 @@ export class HomeComponent implements OnInit {
   totalDocuments = 0;
   totalFolders = 0;
   storageUsed = 0;
-  storageLimit = 0.5 * 1024 * 1024 * 1024;
+  storageLimit = 0.5 * 1024 * 1024 * 1024; // 0.5 GB
   folderMap: Map<string, string> = new Map();
 
+  // Capitaliza el nombre del usuario para mostrarlo correctamente
   capitalizeUserName(name: string): string {
     if (!name) return 'Usuario';
     return name.split(' ')
@@ -68,6 +72,7 @@ export class HomeComponent implements OnInit {
       .join(' ');
   }
 
+  // Inicializa datos del usuario y documentos recientes/favoritos
   ngOnInit(): void {
     this.authService.currentUser$.pipe(
       takeUntil(this.destroy$)
@@ -94,10 +99,12 @@ export class HomeComponent implements OnInit {
     this.loadStatistics();
   }
 
+  // Navega al visor de documentos
   openDocumentViewer(document: Document): void {
     this.router.navigate(['/documents/view', document._id]);
   }
 
+  // Elimina un documento tras confirmación
   deleteDocument(doc: Document, event: Event): void {
     event.stopPropagation();
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
@@ -129,11 +136,13 @@ export class HomeComponent implements OnInit {
       });
   }
 
+  // Limpia recursos al destruir el componente
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
+  // Devuelve un mensaje de bienvenida según la hora
   getWelcomeMessage(): string {
     const now = new Date();
     const hour = now.getHours();
@@ -146,6 +155,7 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  // Carga documentos recientes y favoritos, y los folders asociados
   loadRecentDocuments(): void {
     this.isLoading = true;
     this.cdRef.markForCheck();
@@ -203,18 +213,22 @@ export class HomeComponent implements OnInit {
     });
   }
 
+  // Muestra un mensaje de éxito
   private showSuccess(message: string): void {
     this.snackBar.open(message, 'Cerrar', { duration: 3000, panelClass: ['snackbar-success'] });
   }
 
+  // Muestra un mensaje de error
   private showError(message: string): void {
     this.snackBar.open(message, 'Cerrar', { duration: 5000, panelClass: ['snackbar-error'] });
   }
 
+  // Devuelve el nombre de la carpeta a partir de su ID
   getFolderName(folderId: string): string {
     return this.folderMap.get(folderId) || 'Carpeta';
   }
 
+  // Devuelve un color asociado al tipo MIME
   getColorForMimeType(mimeType: string): string {
     if (mimeType.startsWith('image/')) return '#10b981';
     if (mimeType === 'application/pdf') return '#ef4444';
@@ -228,6 +242,7 @@ export class HomeComponent implements OnInit {
     return '#6b4fbb';
   }
 
+  // Marca o desmarca un documento como favorito
   toggleFavorite(doc: Document, event?: Event): void {
     if (event) {
       event.stopPropagation();
@@ -246,6 +261,7 @@ export class HomeComponent implements OnInit {
       });
   }
 
+  // Actualiza los arrays de documentos recientes y favoritos tras un cambio
   private updateDocumentInLists(updatedDoc: Document): void {
     const recentIndex = this.recentDocuments.findIndex(d => d._id === updatedDoc._id);
     if (recentIndex !== -1) {
@@ -263,6 +279,7 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  // Carga estadísticas de documentos y carpetas
   loadStatistics(): void {
     this.documentService.getDocumentStats().pipe(
       takeUntil(this.destroy$)
@@ -284,6 +301,7 @@ export class HomeComponent implements OnInit {
     });
   }
 
+  // Descarga un documento usando una URL prefirmada
   downloadFile(doc: Document, event?: Event): void {
     if (event) {
       event.stopPropagation();
@@ -295,6 +313,7 @@ export class HomeComponent implements OnInit {
       });
   }
 
+  // Formatea bytes a una cadena legible
   formatBytes(bytes: number): string {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
@@ -306,6 +325,7 @@ export class HomeComponent implements OnInit {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
   }
 
+  // Devuelve el icono adecuado según el tipo MIME
   getIconForMimeType(mimeType: string): string {
     if (mimeType.startsWith('image/')) return 'image';
     if (mimeType === 'application/pdf') return 'picture_as_pdf';
@@ -318,6 +338,7 @@ export class HomeComponent implements OnInit {
     return 'insert_drive_file';
   }
 
+  // Devuelve el tiempo transcurrido desde la fecha dada
   getTimeAgo(date: string | Date): string {
     const now = new Date();
     const past = new Date(date);
@@ -329,6 +350,7 @@ export class HomeComponent implements OnInit {
     return past.toLocaleDateString();
   }
 
+  // Abre el diálogo para mover un documento a otra carpeta
   openMoveDialog(doc: Document, event: Event): void {
     event.stopPropagation();
     const dialogData: MoveItemDialogData = {

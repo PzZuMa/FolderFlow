@@ -8,6 +8,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon';
 import { ErrorHandlerService } from '../../core/services/errorhandler.service';
 
+// Componente de gestión de cuenta de usuario
 @Component({
   selector: 'app-account',
   standalone: true,
@@ -20,16 +21,23 @@ import { ErrorHandlerService } from '../../core/services/errorhandler.service';
   styleUrls: ['./account.component.scss']
 })
 export class AccountComponent implements OnInit, OnDestroy {
+  // Formularios reactivos para perfil y contraseña
   profileForm!: FormGroup;
   passwordForm!: FormGroup;
+
+  // Estados de envío y carga
   submitted = false;
   passwordSubmitted = false;
   isLoading = false;
   isPasswordLoading = false;
+
+  // Mensajes de éxito y error
   successMessage: string | null = null;
   errorMessage: string | null = null;
   passwordSuccessMessage: string | null = null;
   passwordErrorMessage: string | null = null;
+
+  // Imagen de perfil y estados asociados
   selectedFile: File | null = null;
   previewUrl: string | null = null;
   currentProfileImage: string | null = null;
@@ -37,27 +45,33 @@ export class AccountComponent implements OnInit, OnDestroy {
   imageSuccessMessage: string | null = null;
   imageErrorMessage: string | null = null;
   isDefaultImage: boolean = false;
+
+  // Control de ciclo de vida
   private destroy$ = new Subject<void>();
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
   private errorHandler = inject(ErrorHandlerService);
 
+  // Constructor que establece el título de la página
   constructor(private titleService: Title) {
     this.titleService.setTitle('Mi Cuenta | FolderFlow');
   }
 
+  // Inicializa formularios y carga datos del usuario
   ngOnInit(): void {
     this.initProfileForm();
     this.initPasswordForm();
     this.loadUserData();
   }
 
+  // Limpia recursos al destruir el componente
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
+  // Inicializa el formulario de perfil
   private initProfileForm(): void {
     this.profileForm = this.fb.group({
       name: ['', [Validators.required]],
@@ -65,6 +79,7 @@ export class AccountComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Inicializa el formulario de cambio de contraseña
   private initPasswordForm(): void {
     this.passwordForm = this.fb.group({
       currentPassword: ['', [Validators.required]],
@@ -75,6 +90,7 @@ export class AccountComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Valida que las contraseñas coincidan
   private passwordMatchValidator(form: FormGroup) {
     const newPassword = form.get('newPassword')?.value;
     const confirmPassword = form.get('confirmPassword')?.value;
@@ -85,6 +101,7 @@ export class AccountComponent implements OnInit, OnDestroy {
     return null;
   }
 
+  // Carga los datos del usuario autenticado
   private loadUserData(): void {
     this.authService.currentUser$
       .pipe(takeUntil(this.destroy$))
@@ -115,6 +132,7 @@ export class AccountComponent implements OnInit, OnDestroy {
       });
   }
 
+  // Maneja la selección de un archivo de imagen para el perfil
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
@@ -141,6 +159,7 @@ export class AccountComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Redimensiona la imagen seleccionada para optimizarla
   private resizeAndPreview(file: File): void {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -179,6 +198,7 @@ export class AccountComponent implements OnInit, OnDestroy {
     img.src = URL.createObjectURL(file);
   }
 
+  // Crea una vista previa de la imagen seleccionada
   private createImagePreview(): void {
     if (!this.selectedFile) return;
     const reader = new FileReader();
@@ -188,6 +208,7 @@ export class AccountComponent implements OnInit, OnDestroy {
     reader.readAsDataURL(this.selectedFile);
   }
 
+  // Sube la imagen de perfil al servidor
   uploadProfileImage(): void {
     if (!this.selectedFile) return;
     this.isImageLoading = true;
@@ -217,6 +238,7 @@ export class AccountComponent implements OnInit, OnDestroy {
     reader.readAsDataURL(this.selectedFile);
   }
 
+  // Restablece la imagen de perfil al valor por defecto
   removeProfileImage(): void {
     this.isImageLoading = true;
     this.imageSuccessMessage = null;
@@ -242,6 +264,7 @@ export class AccountComponent implements OnInit, OnDestroy {
       });
   }
 
+  // Envía el formulario de perfil para actualizar datos
   onSubmitProfile(): void {
     this.submitted = true;
     this.successMessage = null;
@@ -267,6 +290,7 @@ export class AccountComponent implements OnInit, OnDestroy {
       });
   }
 
+  // Envía el formulario de cambio de contraseña
   onSubmitPassword(): void {
     this.passwordSubmitted = true;
     this.passwordSuccessMessage = null;
@@ -296,22 +320,27 @@ export class AccountComponent implements OnInit, OnDestroy {
       });
   }
 
+  // Estados para mostrar/ocultar contraseñas en los inputs
   showCurrentPassword: boolean = false;
   showNewPassword: boolean = false;
   showConfirmPassword: boolean = false;
 
+  // Alterna la visibilidad del campo de contraseña actual
   toggleCurrentPasswordVisibility(): void {
     this.showCurrentPassword = !this.showCurrentPassword;
   }
 
+  // Alterna la visibilidad del campo de nueva contraseña
   toggleNewPasswordVisibility(): void {
     this.showNewPassword = !this.showNewPassword;
   }
 
+  // Alterna la visibilidad del campo de confirmación de contraseña
   toggleConfirmPasswordVisibility(): void {
     this.showConfirmPassword = !this.showConfirmPassword;
   }
 
+  // Getters para los controles de los formularios
   get name() { return this.profileForm.get('name'); }
   get email() { return this.profileForm.get('email'); }
   get currentPassword() { return this.passwordForm.get('currentPassword'); }

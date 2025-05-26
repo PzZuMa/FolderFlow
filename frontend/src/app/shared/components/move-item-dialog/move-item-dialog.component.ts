@@ -15,19 +15,22 @@ import { FolderService } from '../../../core/services/folder.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CreateFolderDialogComponent } from '../create-folder-dialog/create-folder-dialog.component';
 
+// Interfaz para los datos que recibe el diálogo de mover elemento
 export interface MoveItemDialogData {
-  itemToMove: Folder | Document;
-  itemType: 'folder' | 'document';
-  currentFolderId: string | null;
+  itemToMove: Folder | Document; // Elemento a mover (carpeta o documento)
+  itemType: 'folder' | 'document'; // Tipo de elemento
+  currentFolderId: string | null; // Carpeta actual donde está el elemento
 }
 
+// Interfaz para el resultado devuelto al cerrar el diálogo
 export interface MoveItemDialogResult {
-  destinationFolderId: string | null;
+  destinationFolderId: string | null; // Carpeta destino seleccionada
 }
 
 @Component({
   selector: 'app-move-item-dialog',
   standalone: true,
+  // Importación de módulos necesarios para el funcionamiento del diálogo
   imports: [
     CommonModule,
     MatDialogModule,
@@ -39,6 +42,7 @@ export interface MoveItemDialogResult {
     MatTooltipModule,
     MatSnackBarModule
   ],
+  // Plantilla HTML del diálogo de mover elemento
   template: `
     <div class="dialog-container">
       <div class="dialog-header">
@@ -49,6 +53,7 @@ export interface MoveItemDialogResult {
       </div>
       <div class="breadcrumb-section">
         <div class="breadcrumb-container">
+          <!-- Muestra la ruta de carpetas (breadcrumb) para navegación -->
           <ng-container *ngFor="let crumb of dialogBreadcrumbs; let isLast = last">
             <button mat-button class="breadcrumb-button"
                   (click)="selectBreadcrumbInDialog(crumb._id)"
@@ -60,19 +65,23 @@ export interface MoveItemDialogResult {
             <mat-icon class="breadcrumb-separator" *ngIf="!isLast">chevron_right</mat-icon>
           </ng-container>
         </div>
+        <!-- Botón para crear una nueva carpeta en la ubicación actual -->
         <button mat-icon-button class="create-folder-button" (click)="openCreateFolderInDialog()" 
                 matTooltip="Crear nueva carpeta aquí" type="button">
           <mat-icon>create_new_folder</mat-icon>
         </button>
       </div>
       <mat-dialog-content class="dialog-content">
+        <!-- Indicador de carga mientras se obtienen las carpetas -->
         <div *ngIf="isLoading" class="loading-indicator">
           <mat-progress-spinner diameter="40" mode="indeterminate"></mat-progress-spinner>
         </div>
+        <!-- Mensaje de error si ocurre un problema al cargar -->
         <div *ngIf="errorMessage && !isLoading" class="error-message">
           <mat-icon color="warn">error</mat-icon>
           <span>{{ errorMessage }}</span>
         </div>
+        <!-- Lista de carpetas disponibles para mover el elemento -->
         <div *ngIf="!isLoading && !errorMessage" class="folders-container">
           <div *ngFor="let folder of foldersInDialog"
                class="folder-item"
@@ -81,6 +90,7 @@ export interface MoveItemDialogResult {
             <mat-icon class="folder-icon">folder</mat-icon>
             <span class="folder-name">{{ folder.name }}</span>
           </div>
+          <!-- Mensaje si no hay subcarpetas -->
           <p *ngIf="foldersInDialog.length === 0" class="empty-folder-message">
             No hay subcarpetas aquí.
           </p>
@@ -100,6 +110,7 @@ export interface MoveItemDialogResult {
       </mat-dialog-actions>
     </div>
   `,
+  // Estilos CSS específicos para el diálogo de mover elemento
   styles: [`
     .dialog-container {
       animation: dialogFadeIn 0.3s ease-out;
@@ -304,29 +315,44 @@ export interface MoveItemDialogResult {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MoveItemDialogComponent implements OnInit, OnDestroy {
+  // Referencia al diálogo para poder cerrarlo y devolver el resultado
   private dialogRef = inject(MatDialogRef<MoveItemDialogComponent, MoveItemDialogResult>);
+  // Datos recibidos por el diálogo (elemento a mover, tipo, carpeta actual)
   public data: MoveItemDialogData = inject(MAT_DIALOG_DATA);
+  // Servicio para gestionar carpetas
   private folderService = inject(FolderService);
+  // Referencia para detectar cambios manualmente
   private cdRef = inject(ChangeDetectorRef);
+  // Subject para cancelar suscripciones al destruir el componente
   private destroy$ = new Subject<void>();
+  // Referencia al servicio de diálogos para abrir otros diálogos
   private dialog = inject(MatDialog);
+  // Servicio para mostrar notificaciones
   private snackBar = inject(MatSnackBar);
 
+  // Estado de carga
   isLoading = false;
+  // Carpeta actualmente seleccionada en el diálogo
   dialogCurrentFolderId: string | null = null;
+  // Lista de carpetas mostradas en el diálogo
   foldersInDialog: Folder[] = [];
+  // Breadcrumbs para navegación de carpetas
   dialogBreadcrumbs: Folder[] = [];
+  // Mensaje de error si ocurre algún problema
   errorMessage: string | null = null;
 
+  // Al iniciar el componente, carga el contenido de la carpeta raíz
   ngOnInit(): void {
     this.loadDialogContents(null);
   }
 
+  // Al destruir el componente, cancela todas las suscripciones
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
+  // Carga las carpetas y breadcrumbs de la carpeta indicada
   loadDialogContents(folderId: string | null): void {
     this.isLoading = true;
     this.dialogCurrentFolderId = folderId;
@@ -348,9 +374,11 @@ export class MoveItemDialogComponent implements OnInit, OnDestroy {
         this.cdRef.markForCheck();
       })
     ).subscribe(result => {
+      // Filtra la carpeta que se está moviendo para no mostrarla como destino
       this.foldersInDialog = result.folders.filter(f =>
           !(this.data.itemType === 'folder' && f._id === this.data.itemToMove._id)
       );
+      // Si no hay breadcrumbs, muestra la raíz
       this.dialogBreadcrumbs = result.breadcrumbs.length > 0
                          ? result.breadcrumbs
                          : [{ _id: '', name: 'Raíz', parentId: null, ownerId: '' }];
@@ -358,10 +386,12 @@ export class MoveItemDialogComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Selecciona una carpeta para mostrar su contenido
   selectFolderInDialog(folderId: string): void {
     this.loadDialogContents(folderId);
   }
 
+  // Permite navegar por los breadcrumbs (ruta de carpetas)
   selectBreadcrumbInDialog(folderId: string | null): void {
     const targetId = folderId === '' ? null : folderId;
     if (targetId !== this.dialogCurrentFolderId) {
@@ -369,6 +399,7 @@ export class MoveItemDialogComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Acción para mover el elemento a la carpeta seleccionada
   onMoveHere(): void {
     if (!this.isMoveAllowed()) return;
     const result: MoveItemDialogResult = {
@@ -377,6 +408,7 @@ export class MoveItemDialogComponent implements OnInit, OnDestroy {
     this.dialogRef.close(result);
   }
 
+  // Abre el diálogo para crear una nueva carpeta en la ubicación actual
   openCreateFolderInDialog(): void {
     const createDialogRef = this.dialog.open(CreateFolderDialogComponent, {
       width: '400px',
@@ -400,6 +432,7 @@ export class MoveItemDialogComponent implements OnInit, OnDestroy {
             })
           )
           .subscribe((newFolder) => {
+            // Añade la nueva carpeta a la lista actual
             this.foldersInDialog = [...this.foldersInDialog, newFolder];
             this.cdRef.markForCheck();
           });
@@ -407,14 +440,18 @@ export class MoveItemDialogComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Cierra el diálogo sin mover el elemento
   onCancel(): void {
     this.dialogRef.close();
   }
 
+  // Determina si es posible mover el elemento a la carpeta seleccionada
   isMoveAllowed(): boolean {
+    // No permite mover a la misma carpeta actual
     if (this.dialogCurrentFolderId === this.data.currentFolderId) {
         return false;
     }
+    // No permite mover una carpeta dentro de sí misma
     if (this.data.itemType === 'folder' && this.dialogCurrentFolderId === this.data.itemToMove._id) {
         return false;
     }

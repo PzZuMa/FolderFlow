@@ -8,14 +8,16 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 
+// Interfaz para los datos que recibe el diálogo de renombrar carpeta
 export interface RenameFolderDialogData {
-  folderName: string;
-  folderId: string;
+  folderName: string; // Nombre actual de la carpeta
+  folderId: string;   // ID de la carpeta a renombrar
 }
 
 @Component({
   selector: 'app-rename-folder-dialog',
   standalone: true,
+  // Importación de módulos necesarios para el funcionamiento del diálogo
   imports: [
     CommonModule,
     MatDialogModule,
@@ -25,6 +27,7 @@ export interface RenameFolderDialogData {
     MatIconModule,
     ReactiveFormsModule
   ],
+  // Plantilla HTML del diálogo de renombrar carpeta
   template: `
     <div class="dialog-container">
       <div class="dialog-header">
@@ -37,6 +40,7 @@ export interface RenameFolderDialogData {
         </div>
       </div>
       <mat-dialog-content>
+        <!-- Formulario reactivo para el nombre de la carpeta -->
         <form [formGroup]="nameForm" (ngSubmit)="onSubmit()">
           <mat-form-field appearance="outline" class="full-width" [class.error-field]="hasError">
             <mat-label>Nombre de la carpeta</mat-label>
@@ -51,6 +55,7 @@ export interface RenameFolderDialogData {
             <mat-icon matSuffix class="folder-icon">folder</mat-icon>
             <mat-hint align="end">{{getCurrentLength()}}/100</mat-hint>
           </mat-form-field>
+          <!-- Mensaje de error si existe -->
           <div class="error-message" *ngIf="errorMessage">
             <mat-icon>error_outline</mat-icon>
             <span>{{ errorMessage }}</span>
@@ -71,6 +76,7 @@ export interface RenameFolderDialogData {
       </mat-dialog-actions>
     </div>
   `,
+  // Estilos CSS específicos para el diálogo de renombrar carpeta
   styles: [`
     .dialog-container {
       animation: dialogFadeIn 0.3s ease-out;
@@ -239,11 +245,17 @@ export interface RenameFolderDialogData {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RenameFolderDialogComponent implements OnInit {
+  // Formulario reactivo para el nombre de la carpeta
   nameForm: FormGroup;
+  // Estado de carga para evitar acciones múltiples
   isLoading = false;
+  // Mensaje de error a mostrar si el nombre no es válido
   errorMessage: string = '';
+  // Indica si hay un error en el campo de nombre
   hasError: boolean = false;
+  // Expresión regular para caracteres no válidos en nombres de carpeta
   private readonly invalidChars = /[<>:"/\\|?*\x00-\x1f]/g;
+  // Lista de nombres reservados por el sistema
   private readonly reservedNames = ['CON', 'PRN', 'AUX', 'NUL', 'COM1', 'COM2', 'COM3', 'COM4', 'COM5', 'COM6', 'COM7', 'COM8', 'COM9', 'LPT1', 'LPT2', 'LPT3', 'LPT4', 'LPT5', 'LPT6', 'LPT7', 'LPT8', 'LPT9'];
 
   constructor(
@@ -252,6 +264,7 @@ export class RenameFolderDialogComponent implements OnInit {
     private cdRef: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) public data: RenameFolderDialogData
   ) {
+    // Inicialización del formulario con el nombre actual de la carpeta
     this.nameForm = this.fb.group({
       name: [
         this.data.folderName,
@@ -264,6 +277,7 @@ export class RenameFolderDialogComponent implements OnInit {
     });
   }
 
+  // Al iniciar el componente, enfoca y selecciona el campo de texto
   ngOnInit(): void {
     setTimeout(() => {
       const input = document.querySelector('input[formControlName="name"]') as HTMLInputElement;
@@ -274,11 +288,13 @@ export class RenameFolderDialogComponent implements OnInit {
     }, 100);
   }
 
+  // Se ejecuta al cambiar el valor del input
   onInputChange(): void {
     this.validateFolderName();
     this.cdRef.markForCheck();
   }
 
+  // Valida el nombre de la carpeta y actualiza los mensajes de error
   private validateFolderName(): void {
     this.errorMessage = '';
     this.hasError = false;
@@ -310,15 +326,18 @@ export class RenameFolderDialogComponent implements OnInit {
     }
   }
 
+  // Establece el mensaje de error y marca el campo como erróneo
   private setError(message: string): void {
     this.errorMessage = message;
     this.hasError = true;
   }
 
+  // Devuelve la longitud actual del nombre ingresado
   getCurrentLength(): number {
     return this.nameForm.get('name')?.value?.length || 0;
   }
 
+  // Verifica si el nombre ingresado es válido para habilitar el botón de guardar
   isValidName(): boolean {
     const control = this.nameForm.get('name');
     if (!control) return false;
@@ -333,10 +352,12 @@ export class RenameFolderDialogComponent implements OnInit {
            !/^[\s.]+$/.test(trimmedName);
   }
 
+  // Cierra el diálogo sin realizar cambios
   onCancel(): void {
     this.dialogRef.close();
   }
 
+  // Envía el nuevo nombre si es válido, o muestra errores si no lo es
   onSubmit(): void {
     if (this.isValidName() && !this.isLoading) {
       const newName = this.nameForm.value.name.trim();

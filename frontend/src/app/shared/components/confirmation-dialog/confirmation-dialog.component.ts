@@ -5,19 +5,22 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 
+// Interfaz que define los datos que puede recibir el diálogo de confirmación
 export interface ConfirmationDialogData {
-  title?: string;
-  message: string;
-  confirmButtonText?: string;
-  cancelButtonText?: string;
-  icon?: string;
-  type?: 'warning' | 'error' | 'info' | 'success';
+  title?: string; // Título opcional del diálogo
+  message: string; // Mensaje principal a mostrar
+  confirmButtonText?: string; // Texto personalizado para el botón de confirmar
+  cancelButtonText?: string; // Texto personalizado para el botón de cancelar
+  icon?: string; // Icono personalizado a mostrar
+  type?: 'warning' | 'error' | 'info' | 'success'; // Tipo de diálogo para estilos e iconos
 }
 
 @Component({
   selector: 'app-confirmation-dialog',
   standalone: true,
+  // Importación de módulos necesarios para el funcionamiento del diálogo
   imports: [CommonModule, MatDialogModule, MatButtonModule, MatIconModule],
+  // Plantilla HTML del diálogo de confirmación
   template: `
     <div class="dialog-container" [ngClass]="dialogType">
       <div class="dialog-header">
@@ -40,6 +43,7 @@ export interface ConfirmationDialogData {
       </mat-dialog-actions>
     </div>
   `,
+  // Estilos CSS específicos para el diálogo de confirmación
   styles: [`
     .dialog-container {
       animation: dialogFadeIn 0.3s ease-out;
@@ -99,6 +103,7 @@ export interface ConfirmationDialogData {
       border-radius: 8px;
       height: 40px;
     }
+    /* Estilos para cada tipo de diálogo según el tipo recibido */
     .warning .icon-container {
       background-color: rgba(255, 202, 40, 0.1);
     }
@@ -136,14 +141,18 @@ export interface ConfirmationDialogData {
   `]
 })
 export class ConfirmationDialogComponent {
+  // Referencia al diálogo para poder cerrarlo desde el componente
   private dialogRef = inject(MatDialogRef<ConfirmationDialogComponent>);
 
+  // Inyección de los datos recibidos por el diálogo
   constructor(@Inject(MAT_DIALOG_DATA) public data: ConfirmationDialogData) {}
 
+  // Devuelve el tipo de diálogo para aplicar estilos CSS (por defecto 'warning')
   get dialogType(): string {
     return this.data.type || 'warning';
   }
   
+  // Devuelve el icono a mostrar según el tipo de diálogo o el icono personalizado recibido
   get dialogIcon(): string {
     if (this.data.icon) return this.data.icon;
     switch (this.dialogType) {
@@ -155,6 +164,7 @@ export class ConfirmationDialogComponent {
     }
   }
   
+  // Devuelve el color del botón de acción según el tipo de diálogo
   get actionButtonColor(): string {
     switch (this.dialogType) {
       case 'error': return 'warn';
@@ -165,6 +175,7 @@ export class ConfirmationDialogComponent {
     }
   }
   
+  // Devuelve el icono del botón de acción si el texto incluye "eliminar"
   get actionButtonIcon(): string | null {
     if (this.data.confirmButtonText?.toLowerCase().includes('eliminar')) {
       return 'delete_outline';
@@ -172,10 +183,12 @@ export class ConfirmationDialogComponent {
     return null;
   }
 
+  // Cierra el diálogo indicando que el usuario canceló la acción (retorna false)
   onCancel(): void {
     this.dialogRef.close(false);
   }
 
+  // Cierra el diálogo indicando que el usuario confirmó la acción (retorna true)
   onConfirm(): void {
     this.dialogRef.close(true);
   }

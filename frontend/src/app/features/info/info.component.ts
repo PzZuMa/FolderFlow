@@ -5,6 +5,10 @@ import { Title } from '@angular/platform-browser';
 import { FooterComponent } from "../footer/footer.component";
 import { PublicHeaderComponent } from "../public-header/public-header.component";
 
+/**
+ * Componente de información "Quiénes somos".
+ * Muestra el equipo y las tecnologías utilizadas en FolderFlow.
+ */
 @Component({
   selector: 'app-info',
   standalone: true,
@@ -18,6 +22,7 @@ import { PublicHeaderComponent } from "../public-header/public-header.component"
   styleUrls: ['./info.component.scss']
 })
 export class InfoComponent implements OnInit {
+  // Miembros del equipo
   teamMembers = [
     {
       name: 'Pablo Zumaquero',
@@ -45,6 +50,7 @@ export class InfoComponent implements OnInit {
     }
   ];
 
+  // Tecnologías empleadas en el proyecto
   technologies = [
     { name: 'Angular', description: 'Framework frontend para interfaces dinámicas y responsivas', image: 'assets/tech/angular.png' },
     { name: 'Node.js', description: 'Entorno de ejecución para un backend eficiente', image: 'assets/tech/nodejs.png' },
@@ -53,9 +59,11 @@ export class InfoComponent implements OnInit {
   ];
 
   constructor(private titleService: Title) {
+    // Establece el título de la página
     this.titleService.setTitle('Quiénes Somos | FolderFlow');
   }
 
   ngOnInit(): void {
+    // No se requiere lógica adicional al inicializar
   }
 }

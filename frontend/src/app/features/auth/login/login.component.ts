@@ -6,6 +6,10 @@ import { Title } from '@angular/platform-browser';
 import { AuthService } from '../../../core/services/auth.service';
 import { ErrorHandlerService } from '../../../core/services/errorhandler.service';
 
+/**
+ * Componente de inicio de sesión.
+ * Permite a los usuarios autenticarse y acceder a la aplicación.
+ */
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -19,26 +23,37 @@ import { ErrorHandlerService } from '../../../core/services/errorhandler.service
 })
 export class LoginComponent implements OnInit {
   constructor(private titleService: Title) {
+    // Establece el título de la página
     this.titleService.setTitle('Iniciar sesión | FolderFlow');
   }
 
+  // Formulario reactivo de login
   loginForm!: FormGroup;
+  // Estado de carga para mostrar spinner o deshabilitar el botón
   isLoading = false;
+  // Mensaje de error si ocurre algún fallo
   errorMessage: string | null = null;
+  // Indica si el formulario fue enviado
   submitted = false;
 
+  // Inyección de dependencias para formularios, autenticación, navegación y manejo de errores
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
   private errorHandler = inject(ErrorHandlerService);
 
   ngOnInit(): void {
+    // Inicializa el formulario con validaciones
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
+  /**
+   * Envía el formulario de login.
+   * Si es exitoso, redirige al home.
+   */
   onSubmit(): void {
     this.submitted = true;
 
@@ -62,6 +77,7 @@ export class LoginComponent implements OnInit {
     });
   }
 
+  // Getters para facilitar el acceso a los controles del formulario en la plantilla
   get email() { return this.loginForm.get('email'); }
   get password() { return this.loginForm.get('password'); }
 }

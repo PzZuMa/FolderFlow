@@ -1,3 +1,9 @@
+/**
+ * Componente visor de documentos.
+ * Permite visualizar PDFs, imágenes, archivos de texto, audio y vídeo.
+ * Incluye navegación de páginas, zoom, rotación, edición de nombre y descarga.
+ * Utiliza PDF.js para renderizar archivos PDF.
+ */
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild, NgZone, AfterViewInit, inject } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -42,9 +48,11 @@ declare global {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit {
+  // Referencias a elementos del DOM para el canvas PDF y el contenedor principal
   @ViewChild('pdfCanvas', { static: false }) pdfCanvas?: ElementRef<HTMLCanvasElement>;
   @ViewChild('viewerMain', { static: false }) viewerMain?: ElementRef<HTMLElement>;
 
+  // Estado y datos del documento
   documentId: string | null = null;
   document: Document | null = null;
   documentUrl: string | null = null;
@@ -56,6 +64,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   textContent: string = '';
   private errorHandler = inject(ErrorHandlerService);
 
+  // Estado y control de PDF.js
   pdfLoaded: boolean = false;
   pdfDoc: any = null;
   currentPage: number = 1;
@@ -65,12 +74,15 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   private isRendering: boolean = false;
   private pendingRender: boolean = false;
 
+  // Rotación de imágenes
   imageRotation: number = 0;
 
+  // Edición de nombre de documento
   isEditingName: boolean = false;
   editedName: string = '';
   originalName: string = '';
 
+  // Control de ciclo de vida y renderizado
   private destroy$ = new Subject<void>();
   private pdfLibraryLoaded: boolean = false;
   private viewInitialized$ = new Subject<void>();
@@ -86,6 +98,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   ) {}
 
   ngOnInit(): void {
+    // Inicializa PDF.js y carga el documento según el parámetro de ruta
     this.initializePdfLibrary().then(() => {
       this.route.paramMap.pipe(
         takeUntil(this.destroy$)
@@ -104,6 +117,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   ngAfterViewInit(): void {
+    // Observa cambios de tamaño para ajustar el renderizado
     this.setupResizeObserver();
     setTimeout(() => {
       this.viewInitialized$.next();
@@ -111,6 +125,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   ngOnDestroy(): void {
+    // Limpia recursos y observadores
     this.cleanup();
     this.destroy$.next();
     this.destroy$.complete();
@@ -121,6 +136,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   private cleanup(): void {
+    // Cancela renderizados y libera memoria de PDF.js
     if (this.renderTask) {
       this.renderTask.cancel();
       this.renderTask = null;
@@ -134,6 +150,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   private setupResizeObserver(): void {
+    // Observa el tamaño del contenedor para ajustar el zoom del PDF
     if (!this.viewerMain?.nativeElement) return;
     this.resizeObserver = new ResizeObserver(entries => {
       if (this.fileType === 'pdf' && this.pdfLoaded && !this.isRendering) {
@@ -146,6 +163,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   private debounceRender(): void {
+    // Evita renderizados excesivos al redimensionar
     if (this.pendingRender) return;
     this.pendingRender = true;
     timer(150).pipe(
@@ -159,6 +177,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   private async initializePdfLibrary(): Promise<void> {
+    // Carga PDF.js dinámicamente si no está disponible
     if (this.pdfLibraryLoaded) return;
     try {
       if (typeof (window as any).pdfjsLib !== 'undefined') {
@@ -176,6 +195,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   private loadPdfScript(): Promise<void> {
+    // Inserta el script de PDF.js en el DOM si no existe
     return new Promise((resolve, reject) => {
       const existingScript = document.querySelector('script[src*="pdfjs-dist"]');
       if (existingScript) {
@@ -196,6 +216,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   private configurePdfJs(): void {
+    // Configura la ruta del worker de PDF.js
     const pdfjsLib = (window as any).pdfjsLib;
     if (pdfjsLib && pdfjsLib.GlobalWorkerOptions) {
       pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
@@ -203,6 +224,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   loadDocument(documentId: string): void {
+    // Carga los metadatos y la URL de descarga del documento
     this.resetState();
     this.documentService.getDocumentById(documentId).pipe(
       takeUntil(this.destroy$),
@@ -223,6 +245,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   private resetState(): void {
+    // Reinicia el estado del visor antes de cargar un nuevo documento
     this.isLoading = true;
     this.loadError = false;
     this.pdfLoaded = false;
@@ -231,6 +254,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   private handleDocumentByType(): void {
+    // Lógica para visualizar el documento según su tipo
     switch (this.fileType) {
       case 'pdf':
         this.loadPdfDocument();
@@ -245,6 +269,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   private async loadPdfDocument(): Promise<void> {
+    // Carga y renderiza un documento PDF usando PDF.js
     if (!this.documentUrl) {
       this.handleError('URL del documento no disponible');
       return;
@@ -274,6 +299,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   private waitForViewAndRender(): void {
+    // Espera a que la vista esté lista antes de renderizar el PDF
     if (this.canRenderNow()) {
       this.calculateInitialZoomAndRender();
       return;
@@ -296,6 +322,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   private canRenderNow(): boolean {
+    // Determina si se puede renderizar el PDF en este momento
     return !!(this.pdfDoc &&
       this.pdfLibraryLoaded &&
       !this.isRendering &&
@@ -303,6 +330,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   private retryRender(maxAttempts: number, delayMs: number): Observable<boolean> {
+    // Reintenta el renderizado varias veces si la vista aún no está lista
     return timer(0, delayMs).pipe(
       map((attempt) => {
         if (this.canRenderNow() && this.pdfCanvas?.nativeElement) {
@@ -320,6 +348,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   private async calculateInitialZoomAndRender(): Promise<void> {
+    // Calcula el zoom inicial para ajustar el PDF al contenedor y renderiza la primera página
     if (!this.canRenderNow()) {
       return;
     }
@@ -350,6 +379,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   private fallbackRender(): void {
+    // Renderizado alternativo si falla el cálculo de zoom inicial
     this.zoomLevel = 100;
     this.isLoading = false;
     this.cdRef.detectChanges();
@@ -367,6 +397,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   private async renderCurrentPage(): Promise<void> {
+    // Renderiza la página actual del PDF
     if (this.isRendering || !this.pdfDoc || !this.pdfLoaded) {
       return;
     }
@@ -374,6 +405,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   private async renderPage(pageNumber: number): Promise<void> {
+    // Renderiza una página específica del PDF en el canvas
     if (this.isRendering) {
       return;
     }
@@ -427,6 +459,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   previousPage(): void {
+    // Navega a la página anterior del PDF
     if (this.currentPage > 1 && !this.isRendering) {
       this.currentPage--;
       this.renderCurrentPage();
@@ -434,6 +467,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   nextPage(): void {
+    // Navega a la página siguiente del PDF
     if (this.currentPage < this.totalPages && !this.isRendering) {
       this.currentPage++;
       this.renderCurrentPage();
@@ -441,6 +475,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   zoomIn(): void {
+    // Aumenta el zoom del PDF
     if (!this.isRendering) {
       this.zoomLevel = Math.min(this.zoomLevel + 25, 300);
       this.updateViewAfterZoom();
@@ -448,6 +483,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   zoomOut(): void {
+    // Disminuye el zoom del PDF
     if (!this.isRendering) {
       this.zoomLevel = Math.max(this.zoomLevel - 25, 25);
       this.updateViewAfterZoom();
@@ -455,6 +491,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   private updateViewAfterZoom(): void {
+    // Actualiza la vista tras cambiar el zoom
     if (this.fileType === 'pdf' && this.pdfLoaded) {
       timer(50).pipe(
         takeUntil(this.destroy$)
@@ -466,17 +503,20 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   rotateImage(): void {
+    // Rota la imagen 90 grados
     this.imageRotation = (this.imageRotation + 90) % 360;
     this.cdRef.markForCheck();
   }
 
   onImageLoad(): void {
+    // Resetea el zoom y rotación al cargar una imagen
     this.zoomLevel = 100;
     this.imageRotation = 0;
     this.cdRef.markForCheck();
   }
 
   toggleFullscreen(): void {
+    // Activa o desactiva el modo pantalla completa
     const elem = this.viewerMain?.nativeElement;
     if (!elem) return;
     if (!document.fullscreenElement) {
@@ -490,6 +530,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
 
   @HostListener('document:fullscreenchange', ['$event'])
   onFullscreenChange(event: Event): void {
+    // Detecta cambios de pantalla completa y ajusta el visor
     this.isFullscreen = !!document.fullscreenElement;
     this.cdRef.markForCheck();
     if (this.fileType === 'pdf' && this.pdfLoaded && !this.isRendering) {
@@ -502,6 +543,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   private fetchTextContent(): void {
+    // Descarga y muestra el contenido de archivos de texto
     if (!this.documentUrl) return;
     fetch(this.documentUrl)
       .then(response => {
@@ -521,6 +563,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   startEditingName(): void {
+    // Activa el modo de edición del nombre del documento
     if (this.document) {
       this.originalName = this.document.name;
       this.editedName = this.getNameWithoutExtension(this.document.name);
@@ -537,12 +580,14 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   cancelEditingName(): void {
+    // Cancela la edición del nombre
     this.isEditingName = false;
     this.editedName = '';
     this.cdRef.markForCheck();
   }
 
   saveDocumentName(): void {
+    // Guarda el nuevo nombre del documento
     if (!this.document || !this.editedName.trim() || !this.documentId) {
       this.cancelEditingName();
       return;
@@ -570,6 +615,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   onNameKeyDown(event: KeyboardEvent): void {
+    // Maneja teclas Enter y Escape en la edición de nombre
     if (event.key === 'Enter') {
       event.preventDefault();
       this.saveDocumentName();
@@ -580,15 +626,18 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   downloadFile(): void {
+    // Descarga el archivo actual
     if (!this.document || !this.documentUrl) return;
     window.open(this.documentUrl, '_blank');
   }
 
   goBack(): void {
+    // Navega hacia atrás en el historial
     this.location.back();
   }
 
   private handleError(message: string): void {
+    // Muestra un mensaje de error y detiene la carga
     this.loadError = true;
     this.isLoading = false;
     this.errorMessage = message;
@@ -596,16 +645,19 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   private getNameWithoutExtension(fileName: string): string {
+    // Obtiene el nombre del archivo sin la extensión
     const lastDotIndex = fileName.lastIndexOf('.');
     return lastDotIndex > 0 ? fileName.substring(0, lastDotIndex) : fileName;
   }
 
   private getFileExtension(fileName: string): string {
+    // Obtiene la extensión del archivo
     const lastDotIndex = fileName.lastIndexOf('.');
     return lastDotIndex > 0 ? fileName.substring(lastDotIndex + 1) : '';
   }
 
   private determineFileType(mimeType: string, fileName: string): void {
+    // Determina el tipo de archivo para el visor según el MIME y la extensión
     const extension = this.getFileExtension(fileName).toLowerCase();
     if (mimeType === 'application/pdf') {
       this.fileType = 'pdf';
@@ -625,6 +677,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   getFileTypeLabel(mimeType: string): string {
+    // Devuelve una etiqueta legible para el tipo de archivo
     if (!this.document) return 'Archivo';
     const extension = this.getFileExtension(this.document.name).toLowerCase();
     const typeMap: { [key: string]: string } = {
@@ -655,6 +708,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   formatBytes(bytes: number, decimals = 2): string {
+    // Formatea bytes a una cadena legible (KB, MB, etc.)
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
     const dm = decimals < 0 ? 0 : decimals;
@@ -664,6 +718,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   private showSuccess(message: string): void {
+    // Muestra un mensaje de éxito en un snackbar
     this.snackBar.open(message, 'Cerrar', {
       duration: 3000,
       panelClass: ['snackbar-success']
@@ -671,6 +726,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   private showError(message: string): void {
+    // Muestra un mensaje de error en un snackbar
     this.snackBar.open(message, 'Cerrar', {
       duration: 3000,
       panelClass: ['snackbar-error']
