@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { FooterComponent } from "../footer/footer.component";
@@ -14,11 +14,10 @@ import { ErrorHandlerService } from '../../../app/core/services/errorhandler.ser
   selector: 'app-contacto',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     FooterComponent,
     PublicHeaderComponent
-  ],
+],
   templateUrl: './contacto.component.html',
   styleUrls: ['./contacto.component.scss']
 })

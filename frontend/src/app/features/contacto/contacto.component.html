@@ -41,77 +41,103 @@
           <div class="form-field">
             <label for="nameInput">Nombre</label>
             <input type="text"
-                   id="nameInput"
-                   class="form-input"
-                   formControlName="name"
-                   placeholder="Tu nombre completo"
-                   required
-                   aria-describedby="nameError"
-                   [class.is-invalid]="submitted && name?.invalid">
-            <div id="nameError" *ngIf="submitted && name?.invalid" class="field-error-message">
-              <div *ngIf="name?.hasError('required')">El nombre es obligatorio.</div>
+              id="nameInput"
+              class="form-input"
+              formControlName="name"
+              placeholder="Tu nombre completo"
+              required
+              aria-describedby="nameError"
+              [class.is-invalid]="submitted && name?.invalid">
+              @if (submitted && name?.invalid) {
+                <div id="nameError" class="field-error-message">
+                  @if (name?.hasError('required')) {
+                    <div>El nombre es obligatorio.</div>
+                  }
+                </div>
+              }
+            </div>
+            <div class="form-field">
+              <label for="emailInput">Email</label>
+              <input type="email"
+                id="emailInput"
+                class="form-input"
+                formControlName="email"
+                placeholder="tu@email.com"
+                required
+                aria-describedby="emailError"
+                [class.is-invalid]="submitted && email?.invalid">
+                @if (submitted && email?.invalid) {
+                  <div id="emailError" class="field-error-message">
+                    @if (email?.hasError('required')) {
+                      <div>El email es obligatorio.</div>
+                    }
+                    @if (email?.hasError('email')) {
+                      <div>Introduce un formato de email válido.</div>
+                    }
+                  </div>
+                }
+              </div>
+              <div class="form-field">
+                <label for="subjectInput">Asunto</label>
+                <input type="text"
+                  id="subjectInput"
+                  class="form-input"
+                  formControlName="subject"
+                  placeholder="Asunto de tu mensaje"
+                  required
+                  aria-describedby="subjectError"
+                  [class.is-invalid]="submitted && subject?.invalid">
+                  @if (submitted && subject?.invalid) {
+                    <div id="subjectError" class="field-error-message">
+                      @if (subject?.hasError('required')) {
+                        <div>El asunto es obligatorio.</div>
+                      }
+                    </div>
+                  }
+                </div>
+                <div class="form-field">
+                  <label for="messageInput">Mensaje</label>
+                  <textarea
+                    id="messageInput"
+                    class="form-input"
+                    formControlName="message"
+                    placeholder="Escribe tu mensaje aquí"
+                    rows="5"
+                    required
+                    aria-describedby="messageError"
+                  [class.is-invalid]="submitted && message?.invalid"></textarea>
+                  @if (submitted && message?.invalid) {
+                    <div id="messageError" class="field-error-message">
+                      @if (message?.hasError('required')) {
+                        <div>El mensaje es obligatorio.</div>
+                      }
+                      @if (message?.hasError('minlength')) {
+                        <div>El mensaje debe tener al menos 10 caracteres.</div>
+                      }
+                    </div>
+                  }
+                </div>
+                @if (successMessage) {
+                  <div class="success-message-container">
+                    <div class="success-message">{{ successMessage }}</div>
+                  </div>
+                }
+                @if (errorMessage) {
+                  <div class="error-message-container">
+                    <div class="error-message">{{ errorMessage }}</div>
+                  </div>
+                }
+                <div class="button-container">
+                  <button class="btn-primary" type="submit" [disabled]="isLoading">
+                    @if (isLoading) {
+                      <span class="loading-spinner"></span>
+                    }
+                    <span>{{ isLoading ? 'Enviando...' : 'Enviar Mensaje' }}</span>
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
-          <div class="form-field">
-            <label for="emailInput">Email</label>
-            <input type="email"
-                   id="emailInput"
-                   class="form-input"
-                   formControlName="email"
-                   placeholder="tu@email.com"
-                   required
-                   aria-describedby="emailError"
-                   [class.is-invalid]="submitted && email?.invalid">
-            <div id="emailError" *ngIf="submitted && email?.invalid" class="field-error-message">
-              <div *ngIf="email?.hasError('required')">El email es obligatorio.</div>
-              <div *ngIf="email?.hasError('email')">Introduce un formato de email válido.</div>
-            </div>
-          </div>
-          <div class="form-field">
-            <label for="subjectInput">Asunto</label>
-            <input type="text"
-                   id="subjectInput"
-                   class="form-input"
-                   formControlName="subject"
-                   placeholder="Asunto de tu mensaje"
-                   required
-                   aria-describedby="subjectError"
-                   [class.is-invalid]="submitted && subject?.invalid">
-            <div id="subjectError" *ngIf="submitted && subject?.invalid" class="field-error-message">
-              <div *ngIf="subject?.hasError('required')">El asunto es obligatorio.</div>
-            </div>
-          </div>
-          <div class="form-field">
-            <label for="messageInput">Mensaje</label>
-            <textarea
-                   id="messageInput"
-                   class="form-input"
-                   formControlName="message"
-                   placeholder="Escribe tu mensaje aquí"
-                   rows="5"
-                   required
-                   aria-describedby="messageError"
-                   [class.is-invalid]="submitted && message?.invalid"></textarea>
-            <div id="messageError" *ngIf="submitted && message?.invalid" class="field-error-message">
-              <div *ngIf="message?.hasError('required')">El mensaje es obligatorio.</div>
-              <div *ngIf="message?.hasError('minlength')">El mensaje debe tener al menos 10 caracteres.</div>
-            </div>
-          </div>
-          <div *ngIf="successMessage" class="success-message-container">
-            <div class="success-message">{{ successMessage }}</div>
-          </div>
-          <div *ngIf="errorMessage" class="error-message-container">
-            <div class="error-message">{{ errorMessage }}</div>
-          </div>
-          <div class="button-container">
-            <button class="btn-primary" type="submit" [disabled]="isLoading">
-              <span *ngIf="isLoading" class="loading-spinner"></span>
-              <span>{{ isLoading ? 'Enviando...' : 'Enviar Mensaje' }}</span>
-            </button>
-          </div>
-        </form>
+        </div>
+        <app-footer></app-footer>
       </div>
-    </div>
-  </div>
-  <app-footer></app-footer>
-</div>

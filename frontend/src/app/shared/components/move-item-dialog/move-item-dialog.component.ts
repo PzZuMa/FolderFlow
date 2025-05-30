@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
@@ -32,7 +32,6 @@ export interface MoveItemDialogResult {
   standalone: true,
   // Importación de módulos necesarios para el funcionamiento del diálogo
   imports: [
-    CommonModule,
     MatDialogModule,
     MatListModule,
     MatIconModule,
@@ -41,7 +40,7 @@ export interface MoveItemDialogResult {
     MatToolbarModule,
     MatTooltipModule,
     MatSnackBarModule
-  ],
+],
   // Plantilla HTML del diálogo de mover elemento
   template: `
     <div class="dialog-container">
@@ -54,62 +53,76 @@ export interface MoveItemDialogResult {
       <div class="breadcrumb-section">
         <div class="breadcrumb-container">
           <!-- Muestra la ruta de carpetas (breadcrumb) para navegación -->
-          <ng-container *ngFor="let crumb of dialogBreadcrumbs; let isLast = last">
+          @for (crumb of dialogBreadcrumbs; track crumb; let isLast = $last) {
             <button mat-button class="breadcrumb-button"
-                  (click)="selectBreadcrumbInDialog(crumb._id)"
-                  [disabled]="isLast"
-                  type="button">
-              <mat-icon *ngIf="crumb.name === 'Raíz'">home</mat-icon>
+              (click)="selectBreadcrumbInDialog(crumb._id)"
+              [disabled]="isLast"
+              type="button">
+              @if (crumb.name === 'Raíz') {
+                <mat-icon>home</mat-icon>
+              }
               <span class="crumb-name">{{ crumb.name }}</span>
             </button>
-            <mat-icon class="breadcrumb-separator" *ngIf="!isLast">chevron_right</mat-icon>
-          </ng-container>
+            @if (!isLast) {
+              <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
+            }
+          }
         </div>
         <!-- Botón para crear una nueva carpeta en la ubicación actual -->
-        <button mat-icon-button class="create-folder-button" (click)="openCreateFolderInDialog()" 
-                matTooltip="Crear nueva carpeta aquí" type="button">
+        <button mat-icon-button class="create-folder-button" (click)="openCreateFolderInDialog()"
+          matTooltip="Crear nueva carpeta aquí" type="button">
           <mat-icon>create_new_folder</mat-icon>
         </button>
       </div>
       <mat-dialog-content class="dialog-content">
         <!-- Indicador de carga mientras se obtienen las carpetas -->
-        <div *ngIf="isLoading" class="loading-indicator">
-          <mat-progress-spinner diameter="40" mode="indeterminate"></mat-progress-spinner>
-        </div>
-        <!-- Mensaje de error si ocurre un problema al cargar -->
-        <div *ngIf="errorMessage && !isLoading" class="error-message">
-          <mat-icon color="warn">error</mat-icon>
-          <span>{{ errorMessage }}</span>
-        </div>
-        <!-- Lista de carpetas disponibles para mover el elemento -->
-        <div *ngIf="!isLoading && !errorMessage" class="folders-container">
-          <div *ngFor="let folder of foldersInDialog"
-               class="folder-item"
-               (click)="selectFolderInDialog(folder._id)"
-               matTooltip="Abrir carpeta {{folder.name}}">
-            <mat-icon class="folder-icon">folder</mat-icon>
-            <span class="folder-name">{{ folder.name }}</span>
+        @if (isLoading) {
+          <div class="loading-indicator">
+            <mat-progress-spinner diameter="40" mode="indeterminate"></mat-progress-spinner>
           </div>
-          <!-- Mensaje si no hay subcarpetas -->
-          <p *ngIf="foldersInDialog.length === 0" class="empty-folder-message">
-            No hay subcarpetas aquí.
-          </p>
-        </div>
+        }
+        <!-- Mensaje de error si ocurre un problema al cargar -->
+        @if (errorMessage && !isLoading) {
+          <div class="error-message">
+            <mat-icon color="warn">error</mat-icon>
+            <span>{{ errorMessage }}</span>
+          </div>
+        }
+        <!-- Lista de carpetas disponibles para mover el elemento -->
+        @if (!isLoading && !errorMessage) {
+          <div class="folders-container">
+            @for (folder of foldersInDialog; track folder) {
+              <div
+                class="folder-item"
+                (click)="selectFolderInDialog(folder._id)"
+                matTooltip="Abrir carpeta {{folder.name}}">
+                <mat-icon class="folder-icon">folder</mat-icon>
+                <span class="folder-name">{{ folder.name }}</span>
+              </div>
+            }
+            <!-- Mensaje si no hay subcarpetas -->
+            @if (foldersInDialog.length === 0) {
+              <p class="empty-folder-message">
+                No hay subcarpetas aquí.
+              </p>
+            }
+          </div>
+        }
       </mat-dialog-content>
       <mat-dialog-actions align="end">
         <button mat-button class="cancel-button" (click)="onCancel()">
           Cancelar
         </button>
         <button mat-flat-button color="primary"
-                class="move-button"
-                (click)="onMoveHere()"
-                [disabled]="!isMoveAllowed()">
+          class="move-button"
+          (click)="onMoveHere()"
+          [disabled]="!isMoveAllowed()">
           <mat-icon>move_up</mat-icon>
           <span>Mover Aquí</span>
         </button>
       </mat-dialog-actions>
     </div>
-  `,
+    `,
   // Estilos CSS específicos para el diálogo de mover elemento
   styles: [`
     .dialog-container {

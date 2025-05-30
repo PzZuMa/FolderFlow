@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { Title } from '@angular/platform-browser';
 import { AuthService } from '../../../core/services/auth.service';
 import { ErrorHandlerService } from '../../../core/services/errorhandler.service';
@@ -14,10 +14,9 @@ import { ErrorHandlerService } from '../../../core/services/errorhandler.service
   selector: 'app-login',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     RouterLink
-  ],
+],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })

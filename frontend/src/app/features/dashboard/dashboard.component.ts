@@ -4,7 +4,7 @@
  */
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { Title } from '@angular/platform-browser';
 import { PublicHeaderComponent } from '../public-header/public-header.component';
 import { AuthService } from '../../core/services/auth.service';
@@ -13,7 +13,6 @@ import { AuthService } from '../../core/services/auth.service';
   selector: 'app-dashboard',
   standalone: true,
   imports: [
-    CommonModule,
     PublicHeaderComponent
 ],
   templateUrl: './dashboard.component.html',

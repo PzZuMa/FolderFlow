@@ -7,62 +7,84 @@
       <div class="form-field">
         <label for="nameInput">Nombre</label>
         <input type="text"
-               id="nameInput"
-               class="form-input"
-               formControlName="name"
-               placeholder="Ingresa tu nombre completo"
-               required
-               aria-describedby="nameError"
-               [class.is-invalid]="submitted && name?.invalid">
-        <div id="nameError" *ngIf="submitted && name?.invalid" class="field-error-message">
-          <div *ngIf="name?.hasError('required')">El nombre es obligatorio.</div>
+          id="nameInput"
+          class="form-input"
+          formControlName="name"
+          placeholder="Ingresa tu nombre completo"
+          required
+          aria-describedby="nameError"
+          [class.is-invalid]="submitted && name?.invalid">
+          @if (submitted && name?.invalid) {
+            <div id="nameError" class="field-error-message">
+              @if (name?.hasError('required')) {
+                <div>El nombre es obligatorio.</div>
+              }
+            </div>
+          }
+        </div>
+        <div class="form-field">
+          <label for="emailInput">Email</label>
+          <input type="email"
+            id="emailInput"
+            class="form-input"
+            formControlName="email"
+            placeholder="ejemplo@empresa.com"
+            required
+            aria-describedby="emailError"
+            [class.is-invalid]="submitted && email?.invalid">
+            @if (submitted && email?.invalid) {
+              <div id="emailError" class="field-error-message">
+                @if (email?.hasError('required')) {
+                  <div>El email es obligatorio.</div>
+                }
+                @if (email?.hasError('email')) {
+                  <div>Introduce un formato de email válido.</div>
+                }
+              </div>
+            }
+          </div>
+          <div class="form-field">
+            <label for="passwordInput">Contraseña</label>
+            <input type="password"
+              id="passwordInput"
+              class="form-input"
+              formControlName="password"
+              placeholder="Mínimo 6 caracteres"
+              required
+              aria-describedby="passwordError"
+              [class.is-invalid]="submitted && password?.invalid">
+              @if (submitted && password?.invalid) {
+                <div id="passwordError" class="field-error-message">
+                  @if (password?.hasError('required')) {
+                    <div>La contraseña es obligatoria.</div>
+                  }
+                  @if (password?.hasError('minlength')) {
+                    <div>La contraseña debe tener al menos 6 caracteres.</div>
+                  }
+                </div>
+              }
+            </div>
+            @if (successMessage && !errorMessage) {
+              <div class="success-message-container">
+                <div class="success-message">{{ successMessage }}</div>
+              </div>
+            }
+            @if (errorMessage) {
+              <div class="error-message-container">
+                <div class="error-message">{{ errorMessage }}</div>
+              </div>
+            }
+            <div class="button-container">
+              <button type="submit" [disabled]="isLoading">
+                @if (isLoading) {
+                  <span class="loading-spinner"></span>
+                }
+                <span>{{ isLoading ? 'Creando cuenta...' : 'Registrarse' }}</span>
+              </button>
+            </div>
+          </form>
+          <div class="auth-footer">
+            ¿Ya tienes cuenta? <a routerLink="/login" class="auth-link">Inicia sesión aquí</a>
+          </div>
         </div>
       </div>
-      <div class="form-field">
-        <label for="emailInput">Email</label>
-        <input type="email"
-               id="emailInput"
-               class="form-input"
-               formControlName="email"
-               placeholder="ejemplo@empresa.com"
-               required
-               aria-describedby="emailError"
-               [class.is-invalid]="submitted && email?.invalid">
-        <div id="emailError" *ngIf="submitted && email?.invalid" class="field-error-message">
-          <div *ngIf="email?.hasError('required')">El email es obligatorio.</div>
-          <div *ngIf="email?.hasError('email')">Introduce un formato de email válido.</div>
-        </div>
-      </div>
-      <div class="form-field">
-        <label for="passwordInput">Contraseña</label>
-        <input type="password"
-               id="passwordInput"
-               class="form-input"
-               formControlName="password"
-               placeholder="Mínimo 6 caracteres"
-               required
-               aria-describedby="passwordError"
-               [class.is-invalid]="submitted && password?.invalid">
-        <div id="passwordError" *ngIf="submitted && password?.invalid" class="field-error-message">
-          <div *ngIf="password?.hasError('required')">La contraseña es obligatoria.</div>
-          <div *ngIf="password?.hasError('minlength')">La contraseña debe tener al menos 6 caracteres.</div>
-        </div>
-      </div>
-      <div *ngIf="successMessage && !errorMessage" class="success-message-container">
-        <div class="success-message">{{ successMessage }}</div>
-      </div>
-      <div *ngIf="errorMessage" class="error-message-container">
-         <div class="error-message">{{ errorMessage }}</div>
-      </div>
-      <div class="button-container">
-        <button type="submit" [disabled]="isLoading">
-          <span *ngIf="isLoading" class="loading-spinner"></span>
-          <span>{{ isLoading ? 'Creando cuenta...' : 'Registrarse' }}</span>
-        </button>
-      </div>
-    </form>
-    <div class="auth-footer">
-      ¿Ya tienes cuenta? <a routerLink="/login" class="auth-link">Inicia sesión aquí</a>
-    </div>
-  </div>
-</div>

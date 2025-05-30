@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
 import { Router } from '@angular/router';
@@ -13,10 +13,9 @@ import { ErrorHandlerService } from '../../core/services/errorhandler.service';
   selector: 'app-account',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
-    MatIconModule,
-  ],
+    MatIconModule
+],
   templateUrl: './account.component.html',
   styleUrls: ['./account.component.scss']
 })

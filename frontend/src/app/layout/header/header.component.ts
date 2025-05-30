@@ -7,7 +7,7 @@ import { Router, RouterModule } from '@angular/router';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { AuthService } from '../../core/services/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { CommonModule } from '@angular/common';
+
 import { ErrorHandlerService } from '../../../app/core/services/errorhandler.service';
 
 // Componente de cabecera principal de la aplicación
@@ -19,9 +19,8 @@ import { ErrorHandlerService } from '../../../app/core/services/errorhandler.ser
     MatIconModule,
     MatButtonModule,
     MatMenuModule,
-    RouterModule,
-    CommonModule,
-  ],
+    RouterModule
+],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })

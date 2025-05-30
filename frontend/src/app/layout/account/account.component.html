@@ -13,31 +13,49 @@
       <p class="card-description">Personaliza tu foto de perfil</p>
       <div class="profile-image-container">
         <div class="profile-image-preview">
-          <img *ngIf="previewUrl" [src]="previewUrl" alt="Vista previa de foto de perfil">
-          <img *ngIf="!previewUrl && currentProfileImage && !isDefaultImage" [src]="currentProfileImage" alt="Foto de perfil actual">
-          <img *ngIf="!previewUrl && (isDefaultImage || !currentProfileImage)" src="assets/images/pfp-default.png" alt="Foto de perfil predeterminada">
+          @if (previewUrl) {
+            <img [src]="previewUrl" alt="Vista previa de foto de perfil">
+          }
+          @if (!previewUrl && currentProfileImage && !isDefaultImage) {
+            <img [src]="currentProfileImage" alt="Foto de perfil actual">
+          }
+          @if (!previewUrl && (isDefaultImage || !currentProfileImage)) {
+            <img src="assets/images/pfp-default.png" alt="Foto de perfil predeterminada">
+          }
         </div>
         <div class="profile-image-actions">
           <label class="btn btn-secondary" for="profileImageInput">
             Seleccionar imagen
             <input type="file" id="profileImageInput" hidden (change)="onFileSelected($event)" accept="image/png, image/jpeg, image/jpg">
           </label>
-          <button *ngIf="selectedFile" class="btn btn-primary" (click)="uploadProfileImage()" [disabled]="isImageLoading">
-            <span *ngIf="isImageLoading" class="loading-spinner"></span>
-            <span>{{ isImageLoading ? 'Subiendo...' : 'Guardar imagen' }}</span>
-          </button>
-          <button *ngIf="!isDefaultImage && !selectedFile" class="btn btn-danger" (click)="removeProfileImage()" [disabled]="isImageLoading">
-            <span *ngIf="isImageLoading" class="loading-spinner"></span>
-            <span>{{ isImageLoading ? 'Restableciendo...' : 'Eliminar foto' }}</span>
-          </button>
+          @if (selectedFile) {
+            <button class="btn btn-primary" (click)="uploadProfileImage()" [disabled]="isImageLoading">
+              @if (isImageLoading) {
+                <span class="loading-spinner"></span>
+              }
+              <span>{{ isImageLoading ? 'Subiendo...' : 'Guardar imagen' }}</span>
+            </button>
+          }
+          @if (!isDefaultImage && !selectedFile) {
+            <button class="btn btn-danger" (click)="removeProfileImage()" [disabled]="isImageLoading">
+              @if (isImageLoading) {
+                <span class="loading-spinner"></span>
+              }
+              <span>{{ isImageLoading ? 'Restableciendo...' : 'Eliminar foto' }}</span>
+            </button>
+          }
         </div>
       </div>
-      <div *ngIf="imageSuccessMessage" class="success-message-container">
-        <div class="success-message">{{ imageSuccessMessage }}</div>
-      </div>
-      <div *ngIf="imageErrorMessage" class="error-message-container">
-        <div class="error-message">{{ imageErrorMessage }}</div>
-      </div>
+      @if (imageSuccessMessage) {
+        <div class="success-message-container">
+          <div class="success-message">{{ imageSuccessMessage }}</div>
+        </div>
+      }
+      @if (imageErrorMessage) {
+        <div class="error-message-container">
+          <div class="error-message">{{ imageErrorMessage }}</div>
+        </div>
+      }
     </div>
     <div class="account-card">
       <h2>Información Personal</h2>
@@ -46,143 +64,181 @@
         <div class="form-field">
           <label for="nameInput">Nombre</label>
           <input type="text"
-                 id="nameInput"
-                 class="form-input"
-                 formControlName="name"
-                 placeholder="Tu nombre completo"
-                 required
-                 aria-describedby="nameError"
-                 [class.is-invalid]="submitted && name?.invalid">
-          <div id="nameError" *ngIf="submitted && name?.invalid" class="field-error-message">
-            <div *ngIf="name?.hasError('required')">El nombre es obligatorio.</div>
+            id="nameInput"
+            class="form-input"
+            formControlName="name"
+            placeholder="Tu nombre completo"
+            required
+            aria-describedby="nameError"
+            [class.is-invalid]="submitted && name?.invalid">
+            @if (submitted && name?.invalid) {
+              <div id="nameError" class="field-error-message">
+                @if (name?.hasError('required')) {
+                  <div>El nombre es obligatorio.</div>
+                }
+              </div>
+            }
           </div>
+          <div class="form-field">
+            <label for="emailInput">Email</label>
+            <input type="email"
+              id="emailInput"
+              class="form-input"
+              formControlName="email"
+              placeholder="ejemplo@empresa.com"
+              required
+              aria-describedby="emailError"
+              [class.is-invalid]="submitted && email?.invalid">
+              @if (submitted && email?.invalid) {
+                <div id="emailError" class="field-error-message">
+                  @if (email?.hasError('required')) {
+                    <div>El email es obligatorio.</div>
+                  }
+                  @if (email?.hasError('email')) {
+                    <div>Introduce un formato de email válido.</div>
+                  }
+                </div>
+              }
+            </div>
+            @if (successMessage) {
+              <div class="success-message-container">
+                <div class="success-message">{{ successMessage }}</div>
+              </div>
+            }
+            @if (errorMessage) {
+              <div class="error-message-container">
+                <div class="error-message">{{ errorMessage }}</div>
+              </div>
+            }
+            <div class="button-container">
+              <button type="submit" [disabled]="isLoading">
+                @if (isLoading) {
+                  <span class="loading-spinner"></span>
+                }
+                <span>{{ isLoading ? 'Guardando...' : 'Guardar cambios' }}</span>
+              </button>
+            </div>
+          </form>
         </div>
-        <div class="form-field">
-          <label for="emailInput">Email</label>
-          <input type="email"
-                 id="emailInput"
-                 class="form-input"
-                 formControlName="email"
-                 placeholder="ejemplo@empresa.com"
-                 required
-                 aria-describedby="emailError"
-                 [class.is-invalid]="submitted && email?.invalid">
-          <div id="emailError" *ngIf="submitted && email?.invalid" class="field-error-message">
-            <div *ngIf="email?.hasError('required')">El email es obligatorio.</div>
-            <div *ngIf="email?.hasError('email')">Introduce un formato de email válido.</div>
-          </div>
-        </div>
-        <div *ngIf="successMessage" class="success-message-container">
-          <div class="success-message">{{ successMessage }}</div>
-        </div>
-        <div *ngIf="errorMessage" class="error-message-container">
-          <div class="error-message">{{ errorMessage }}</div>
-        </div>
-        <div class="button-container">
-          <button type="submit" [disabled]="isLoading">
-            <span *ngIf="isLoading" class="loading-spinner"></span>
-            <span>{{ isLoading ? 'Guardando...' : 'Guardar cambios' }}</span>
-          </button>
-        </div>
-      </form>
-    </div>
-    <div class="account-card">
-      <h2>Cambiar contraseña</h2>
-      <p class="card-description">Actualiza tu contraseña para mantener segura tu cuenta</p>
-      <form [formGroup]="passwordForm" (ngSubmit)="onSubmitPassword()" novalidate>
-        <div class="form-field">
-          <label for="currentPasswordInput">Contraseña actual</label>
-          <div class="password-input-container">
-            <input [type]="showCurrentPassword ? 'text' : 'password'"
-                   id="currentPasswordInput"
-                   class="form-input"
-                   formControlName="currentPassword"
-                   placeholder="Ingresa tu contraseña actual"
-                   required
-                   aria-describedby="currentPasswordError"
-                   [class.is-invalid]="passwordSubmitted && currentPassword?.invalid">
-            <button type="button" 
-                    class="toggle-visibility-btn" 
-                    (click)="toggleCurrentPasswordVisibility()" 
+        <div class="account-card">
+          <h2>Cambiar contraseña</h2>
+          <p class="card-description">Actualiza tu contraseña para mantener segura tu cuenta</p>
+          <form [formGroup]="passwordForm" (ngSubmit)="onSubmitPassword()" novalidate>
+            <div class="form-field">
+              <label for="currentPasswordInput">Contraseña actual</label>
+              <div class="password-input-container">
+                <input [type]="showCurrentPassword ? 'text' : 'password'"
+                  id="currentPasswordInput"
+                  class="form-input"
+                  formControlName="currentPassword"
+                  placeholder="Ingresa tu contraseña actual"
+                  required
+                  aria-describedby="currentPasswordError"
+                  [class.is-invalid]="passwordSubmitted && currentPassword?.invalid">
+                  <button type="button"
+                    class="toggle-visibility-btn"
+                    (click)="toggleCurrentPasswordVisibility()"
                     [attr.aria-label]="showCurrentPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
                     [attr.title]="showCurrentPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'">
-              <mat-icon>{{ showCurrentPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
-            </button>
+                    <mat-icon>{{ showCurrentPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                  </button>
+                </div>
+                @if (passwordSubmitted && currentPassword?.invalid) {
+                  <div id="currentPasswordError" class="field-error-message">
+                    @if (currentPassword?.hasError('required')) {
+                      <div>La contraseña actual es obligatoria.</div>
+                    }
+                  </div>
+                }
+              </div>
+              <div class="form-field">
+                <label for="newPasswordInput">Nueva contraseña</label>
+                <div class="password-input-container">
+                  <input [type]="showNewPassword ? 'text' : 'password'"
+                    id="newPasswordInput"
+                    class="form-input"
+                    formControlName="newPassword"
+                    placeholder="Ingresa tu nueva contraseña"
+                    required
+                    aria-describedby="newPasswordError"
+                    [class.is-invalid]="passwordSubmitted && newPassword?.invalid">
+                    <button type="button"
+                      class="toggle-visibility-btn"
+                      (click)="toggleNewPasswordVisibility()"
+                      [attr.aria-label]="showNewPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                      [attr.title]="showNewPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+                      <mat-icon>{{ showNewPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                    </button>
+                  </div>
+                  @if (passwordSubmitted && newPassword?.invalid) {
+                    <div id="newPasswordError" class="field-error-message">
+                      @if (newPassword?.hasError('required')) {
+                        <div>La nueva contraseña es obligatoria.</div>
+                      }
+                      @if (newPassword?.hasError('minlength')) {
+                        <div>La contraseña debe tener al menos 6 caracteres.</div>
+                      }
+                    </div>
+                  }
+                </div>
+                <div class="form-field">
+                  <label for="confirmPasswordInput">Confirmar contraseña</label>
+                  <div class="password-input-container">
+                    <input [type]="showConfirmPassword ? 'text' : 'password'"
+                      id="confirmPasswordInput"
+                      class="form-input"
+                      formControlName="confirmPassword"
+                      placeholder="Confirma tu nueva contraseña"
+                      required
+                      aria-describedby="confirmPasswordError"
+                      [class.is-invalid]="passwordSubmitted && confirmPassword?.invalid">
+                      <button type="button"
+                        class="toggle-visibility-btn"
+                        (click)="toggleConfirmPasswordVisibility()"
+                        [attr.aria-label]="showConfirmPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                        [attr.title]="showConfirmPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+                        <mat-icon>{{ showConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                      </button>
+                    </div>
+                    @if (passwordSubmitted && confirmPassword?.invalid) {
+                      <div id="confirmPasswordError" class="field-error-message">
+                        @if (confirmPassword?.hasError('required')) {
+                          <div>La confirmación es obligatoria.</div>
+                        }
+                        @if (confirmPassword?.hasError('passwordMismatch')) {
+                          <div>Las contraseñas no coinciden.</div>
+                        }
+                      </div>
+                    }
+                  </div>
+                  @if (passwordSuccessMessage) {
+                    <div class="success-message-container">
+                      <div class="success-message">{{ passwordSuccessMessage }}</div>
+                    </div>
+                  }
+                  @if (passwordErrorMessage) {
+                    <div class="error-message-container">
+                      <div class="error-message">{{ passwordErrorMessage }}</div>
+                    </div>
+                  }
+                  <div class="button-container">
+                    <button type="submit" [disabled]="isPasswordLoading">
+                      @if (isPasswordLoading) {
+                        <span class="loading-spinner"></span>
+                      }
+                      <span>{{ isPasswordLoading ? 'Cambiando...' : 'Cambiar contraseña' }}</span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+              <div class="account-card">
+                <h2>Preferencias</h2>
+                <p class="card-description">Personaliza tu experiencia en FolderFlow</p>
+                <div class="coming-soon">
+                  <div class="coming-soon-icon">🔄</div>
+                  <p>Próximamente disponible</p>
+                  <span>Esta funcionalidad estará disponible en futuras actualizaciones</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <div id="currentPasswordError" *ngIf="passwordSubmitted && currentPassword?.invalid" class="field-error-message">
-            <div *ngIf="currentPassword?.hasError('required')">La contraseña actual es obligatoria.</div>
-          </div>
-        </div>
-        <div class="form-field">
-          <label for="newPasswordInput">Nueva contraseña</label>
-          <div class="password-input-container">
-            <input [type]="showNewPassword ? 'text' : 'password'"
-                   id="newPasswordInput"
-                   class="form-input"
-                   formControlName="newPassword"
-                   placeholder="Ingresa tu nueva contraseña"
-                   required
-                   aria-describedby="newPasswordError"
-                   [class.is-invalid]="passwordSubmitted && newPassword?.invalid">
-            <button type="button" 
-                    class="toggle-visibility-btn" 
-                    (click)="toggleNewPasswordVisibility()" 
-                    [attr.aria-label]="showNewPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
-                    [attr.title]="showNewPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'">
-              <mat-icon>{{ showNewPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
-            </button>
-          </div>
-          <div id="newPasswordError" *ngIf="passwordSubmitted && newPassword?.invalid" class="field-error-message">
-            <div *ngIf="newPassword?.hasError('required')">La nueva contraseña es obligatoria.</div>
-            <div *ngIf="newPassword?.hasError('minlength')">La contraseña debe tener al menos 6 caracteres.</div>
-          </div>
-        </div>
-        <div class="form-field">
-          <label for="confirmPasswordInput">Confirmar contraseña</label>
-          <div class="password-input-container">
-            <input [type]="showConfirmPassword ? 'text' : 'password'"
-                   id="confirmPasswordInput"
-                   class="form-input"
-                   formControlName="confirmPassword"
-                   placeholder="Confirma tu nueva contraseña"
-                   required
-                   aria-describedby="confirmPasswordError"
-                   [class.is-invalid]="passwordSubmitted && confirmPassword?.invalid">
-            <button type="button" 
-                    class="toggle-visibility-btn" 
-                    (click)="toggleConfirmPasswordVisibility()" 
-                    [attr.aria-label]="showConfirmPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
-                    [attr.title]="showConfirmPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'">
-              <mat-icon>{{ showConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
-            </button>
-          </div>
-          <div id="confirmPasswordError" *ngIf="passwordSubmitted && confirmPassword?.invalid" class="field-error-message">
-            <div *ngIf="confirmPassword?.hasError('required')">La confirmación es obligatoria.</div>
-            <div *ngIf="confirmPassword?.hasError('passwordMismatch')">Las contraseñas no coinciden.</div>
-          </div>
-        </div>
-        <div *ngIf="passwordSuccessMessage" class="success-message-container">
-          <div class="success-message">{{ passwordSuccessMessage }}</div>
-        </div>
-        <div *ngIf="passwordErrorMessage" class="error-message-container">
-          <div class="error-message">{{ passwordErrorMessage }}</div>
-        </div>
-        <div class="button-container">
-          <button type="submit" [disabled]="isPasswordLoading">
-            <span *ngIf="isPasswordLoading" class="loading-spinner"></span>
-            <span>{{ isPasswordLoading ? 'Cambiando...' : 'Cambiar contraseña' }}</span>
-          </button>
-        </div>
-      </form>
-    </div>
-    <div class="account-card">
-      <h2>Preferencias</h2>
-      <p class="card-description">Personaliza tu experiencia en FolderFlow</p>
-      <div class="coming-soon">
-        <div class="coming-soon-icon">🔄</div>
-        <p>Próximamente disponible</p>
-        <span>Esta funcionalidad estará disponible en futuras actualizaciones</span>
-      </div>
-    </div>
-  </div>
-</div>

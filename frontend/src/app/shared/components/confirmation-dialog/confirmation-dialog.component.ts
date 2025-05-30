@@ -27,7 +27,9 @@ export interface ConfirmationDialogData {
         <div class="icon-container">
           <mat-icon>{{ dialogIcon }}</mat-icon>
         </div>
-        <h2 mat-dialog-title *ngIf="data.title">{{ data.title }}</h2>
+        @if (data.title) {
+          <h2 mat-dialog-title>{{ data.title }}</h2>
+        }
       </div>
       <mat-dialog-content>
         <p class="dialog-message">{{ data.message }}</p>
@@ -37,12 +39,14 @@ export interface ConfirmationDialogData {
           {{ data.cancelButtonText || 'Cancelar' }}
         </button>
         <button mat-flat-button [color]="actionButtonColor" class="confirm-button" (click)="onConfirm()">
-          <mat-icon *ngIf="actionButtonIcon">{{ actionButtonIcon }}</mat-icon>
+          @if (actionButtonIcon) {
+            <mat-icon>{{ actionButtonIcon }}</mat-icon>
+          }
           <span>{{ data.confirmButtonText || 'Confirmar' }}</span>
         </button>
       </mat-dialog-actions>
     </div>
-  `,
+    `,
   // Estilos CSS específicos para el diálogo de confirmación
   styles: [`
     .dialog-container {

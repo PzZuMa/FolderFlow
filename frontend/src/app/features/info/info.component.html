@@ -70,16 +70,18 @@
           <div class="divider"></div>
         </div>
         <div class="team-grid">
-          <div class="team-member" *ngFor="let member of teamMembers">
-            <div class="member-image">
-              <img [src]="member.image" [alt]="member.name">
+          @for (member of teamMembers; track member) {
+            <div class="team-member">
+              <div class="member-image">
+                <img [src]="member.image" [alt]="member.name">
+              </div>
+              <div class="member-info">
+                <h3>{{member.name}}</h3>
+                <p class="position">{{member.position}}</p>
+                <p class="description">{{member.description}}</p>
+              </div>
             </div>
-            <div class="member-info">
-              <h3>{{member.name}}</h3>
-              <p class="position">{{member.position}}</p>
-              <p class="description">{{member.description}}</p>
-            </div>
-          </div>
+          }
         </div>
       </div>
     </section>
@@ -93,13 +95,15 @@
           <p>En FolderFlow, desarrollamos nuestra plataforma con tecnologías modernas y robustas que garantizan seguridad, rendimiento y escalabilidad para gestionar los documentos de tu empresa:</p>
         </div>
         <div class="tech-grid">
-          <div class="tech-item" *ngFor="let tech of technologies">
-            <div class="tech-icon">
-              <img [src]="tech.image" [alt]="tech.name">
+          @for (tech of technologies; track tech) {
+            <div class="tech-item">
+              <div class="tech-icon">
+                <img [src]="tech.image" [alt]="tech.name">
+              </div>
+              <h3>{{tech.name}}</h3>
+              <p>{{tech.description}}</p>
             </div>
-            <h3>{{tech.name}}</h3>
-            <p>{{tech.description}}</p>
-          </div>
+          }
         </div>
         <div class="tech-footer">
           <p>Nuestra arquitectura distribuida asegura alta disponibilidad, mientras que la implementación de buenas prácticas de seguridad protege los datos sensibles de tu empresa en todo momento.</p>

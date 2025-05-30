@@ -6,7 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 
 // Componente para el diálogo de creación de carpeta
 @Component({
@@ -14,14 +14,13 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   // Importación de módulos necesarios para el funcionamiento del diálogo
   imports: [
-    CommonModule,
     FormsModule,
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
     MatIconModule
-  ],
+],
   // Plantilla HTML del diálogo de creación de carpeta
   template: `
     <div class="dialog-container">
@@ -38,49 +37,54 @@ import { CommonModule } from '@angular/common';
         <!-- Campo de texto para el nombre de la carpeta -->
         <mat-form-field appearance="outline" class="full-width" [class.error-field]="hasError">
           <mat-label>Nombre de la carpeta</mat-label>
-          <input matInput 
-                 [(ngModel)]="folderName" 
-                 cdkFocusInitial 
-                 placeholder="Mi carpeta"
-                 maxlength="50"
-                 (keyup.enter)="onCreate()"
-                 (input)="onInputChange()"
-                 autocomplete="off">
-          <mat-icon matSuffix class="folder-icon">folder</mat-icon>
-          <mat-hint align="end">{{folderName.length}}/50</mat-hint>
-        </mat-form-field>
-        <!-- Mensaje de error si existe -->
-        <div class="error-message" *ngIf="errorMessage">
-          <mat-icon>error_outline</mat-icon>
-          <span>{{ errorMessage }}</span>
-        </div>
-        <!-- Sugerencias de nombres si el usuario no ha interactuado -->
-        <div class="suggestions" *ngIf="!folderName && !hasInteracted">
-          <p class="suggestions-title">Sugerencias:</p>
-          <div class="suggestion-chips">
-            <button mat-button 
-                    class="suggestion-chip" 
-                    *ngFor="let suggestion of folderSuggestions"
+          <input matInput
+            [(ngModel)]="folderName"
+            cdkFocusInitial
+            placeholder="Mi carpeta"
+            maxlength="50"
+            (keyup.enter)="onCreate()"
+            (input)="onInputChange()"
+            autocomplete="off">
+            <mat-icon matSuffix class="folder-icon">folder</mat-icon>
+            <mat-hint align="end">{{folderName.length}}/50</mat-hint>
+          </mat-form-field>
+          <!-- Mensaje de error si existe -->
+          @if (errorMessage) {
+            <div class="error-message">
+              <mat-icon>error_outline</mat-icon>
+              <span>{{ errorMessage }}</span>
+            </div>
+          }
+          <!-- Sugerencias de nombres si el usuario no ha interactuado -->
+          @if (!folderName && !hasInteracted) {
+            <div class="suggestions">
+              <p class="suggestions-title">Sugerencias:</p>
+              <div class="suggestion-chips">
+                @for (suggestion of folderSuggestions; track suggestion) {
+                  <button mat-button
+                    class="suggestion-chip"
                     (click)="selectSuggestion(suggestion)">
-              {{ suggestion }}
-            </button>
-          </div>
-        </div>
-      </mat-dialog-content>
-      <mat-dialog-actions align="end">
-        <button mat-button class="cancel-button" (click)="onCancel()">
-          Cancelar
-        </button>
-        <button mat-flat-button color="primary" 
-                [disabled]="!isValidName()" 
-                class="create-button" 
-                (click)="onCreate()">
-          <mat-icon>add</mat-icon>
-          <span>Crear carpeta</span>
-        </button>
-      </mat-dialog-actions>
-    </div>
-  `,
+                    {{ suggestion }}
+                  </button>
+                }
+              </div>
+            </div>
+          }
+        </mat-dialog-content>
+        <mat-dialog-actions align="end">
+          <button mat-button class="cancel-button" (click)="onCancel()">
+            Cancelar
+          </button>
+          <button mat-flat-button color="primary"
+            [disabled]="!isValidName()"
+            class="create-button"
+            (click)="onCreate()">
+            <mat-icon>add</mat-icon>
+            <span>Crear carpeta</span>
+          </button>
+        </mat-dialog-actions>
+      </div>
+    `,
   // Estilos CSS específicos para el diálogo de creación de carpeta
   styles: [`
     .dialog-container {

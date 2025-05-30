@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { HeaderComponent } from '../header/header.component';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 
@@ -9,11 +9,10 @@ import { SidebarComponent } from '../sidebar/sidebar.component';
   selector: 'app-main-layout',
   standalone: true,
   imports: [
-    CommonModule,
     RouterModule,
     HeaderComponent,
     SidebarComponent
-  ],
+],
   templateUrl: './main-layout.component.html',
   styleUrls: ['./main-layout.component.scss']
 })

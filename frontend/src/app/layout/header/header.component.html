@@ -8,14 +8,20 @@
     <span class="logo-text">FolderFlow</span>
   </div>
   <span class="header-spacer"></span>
-  <div class="user-name" *ngIf="userName">{{ userName.toUpperCase() }}</div>
+  @if (userName) {
+    <div class="user-name">{{ userName.toUpperCase() }}</div>
+  }
   <button mat-icon-button class="logout-button" (click)="logout()" aria-label="Cerrar sesión">
     <mat-icon>logout</mat-icon>
   </button>
   <div class="profile-container">
     <button (click)="navigateToAccount()" aria-label="User menu" class="profile-button">
-      <img *ngIf="userProfileImage" [src]="userProfileImage" class="profile-image" alt="Foto de perfil">
-      <mat-icon *ngIf="!userProfileImage" class="profile-icon">account_circle</mat-icon>
+      @if (userProfileImage) {
+        <img [src]="userProfileImage" class="profile-image" alt="Foto de perfil">
+      }
+      @if (!userProfileImage) {
+        <mat-icon class="profile-icon">account_circle</mat-icon>
+      }
     </button>
   </div>
   <mat-menu #userMenu="matMenu">

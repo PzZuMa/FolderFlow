@@ -84,53 +84,63 @@
       </a>
     </div>
 
-    <div class="document-list" *ngIf="!isLoading">
-      <mat-card class="document-card" *ngFor="let doc of recentDocuments" [class.favorite]="doc.isFavorite" (click)="openDocumentViewer(doc)">
-        <div class="document-content">
-          <div class="document-icon" [class.favorite]="doc.isFavorite" [ngStyle]="{'background-color': !doc.isFavorite ? 'rgba(' + getColorForMimeType(doc.mimeType) + ', 0.15)' : null}">
-            <mat-icon [ngStyle]="{'color': !doc.isFavorite ? getColorForMimeType(doc.mimeType) : null}">
-              {{ getIconForMimeType(doc.mimeType) }}
-            </mat-icon>
-          </div>
-          <div class="document-info">
-            <div class="document-name">
-              {{ doc.name }}
-              <mat-icon *ngIf="doc.isFavorite" class="favorite-indicator">star</mat-icon>
+    @if (!isLoading) {
+      <div class="document-list">
+        @for (doc of recentDocuments; track doc) {
+          <mat-card class="document-card" [class.favorite]="doc.isFavorite" (click)="openDocumentViewer(doc)">
+            <div class="document-content">
+              <div class="document-icon" [class.favorite]="doc.isFavorite" [ngStyle]="{'background-color': !doc.isFavorite ? 'rgba(' + getColorForMimeType(doc.mimeType) + ', 0.15)' : null}">
+                <mat-icon [ngStyle]="{'color': !doc.isFavorite ? getColorForMimeType(doc.mimeType) : null}">
+                  {{ getIconForMimeType(doc.mimeType) }}
+                </mat-icon>
+              </div>
+              <div class="document-info">
+                <div class="document-name">
+                  {{ doc.name }}
+                  @if (doc.isFavorite) {
+                    <mat-icon class="favorite-indicator">star</mat-icon>
+                  }
+                </div>
+                <div class="document-meta">
+                  <span class="document-size"><mat-icon>storage</mat-icon>{{ formatBytes(doc.size) }}</span>
+                  @if (doc.folderId) {
+                    <span class="document-folder">
+                      <mat-icon>folder</mat-icon>
+                      {{ getFolderName(doc.folderId) }}
+                    </span>
+                  }
+                </div>
+              </div>
             </div>
-            <div class="document-meta">
-              <span class="document-size"><mat-icon>storage</mat-icon>{{ formatBytes(doc.size) }}</span>
-              <span *ngIf="doc.folderId" class="document-folder">
-                <mat-icon>folder</mat-icon>
-                {{ getFolderName(doc.folderId) }}
-              </span>
+            <div class="document-footer">
+              <div class="document-date">
+                <mat-icon>schedule</mat-icon>{{ getTimeAgo(doc.updatedAt || '') }}
+              </div>
+              <div class="document-actions">
+                <button mat-icon-button class="action-button move-btn" (click)="openMoveDialog(doc, $event)" matTooltip="Mover documento">
+                  <mat-icon>drive_file_move</mat-icon>
+                </button>
+                <button mat-icon-button class="action-button favorite-btn" (click)="toggleFavorite(doc, $event)" matTooltip="{{ doc.isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos' }}">
+                  <mat-icon>{{ doc.isFavorite ? 'star' : 'star_outline' }}</mat-icon>
+                </button>
+                <button mat-icon-button class="action-button delete-btn" (click)="deleteDocument(doc, $event)" matTooltip="Eliminar">
+                  <mat-icon>delete_outline</mat-icon>
+                </button>
+              </div>
             </div>
-          </div>
-        </div>
-        <div class="document-footer">
-          <div class="document-date">
-            <mat-icon>schedule</mat-icon>{{ getTimeAgo(doc.updatedAt || '') }}
-          </div>
-          <div class="document-actions">
-            <button mat-icon-button class="action-button move-btn" (click)="openMoveDialog(doc, $event)" matTooltip="Mover documento">
-              <mat-icon>drive_file_move</mat-icon>
-            </button>
-            <button mat-icon-button class="action-button favorite-btn" (click)="toggleFavorite(doc, $event)" matTooltip="{{ doc.isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos' }}">
-              <mat-icon>{{ doc.isFavorite ? 'star' : 'star_outline' }}</mat-icon>
-            </button>
-            <button mat-icon-button class="action-button delete-btn" (click)="deleteDocument(doc, $event)" matTooltip="Eliminar">
-              <mat-icon>delete_outline</mat-icon>
+          </mat-card>
+        }
+        @if (recentDocuments.length === 0) {
+          <div class="empty-documents">
+            <mat-icon>description_off</mat-icon>
+            <p>No tienes documentos recientes</p>
+            <button mat-flat-button color="primary" [routerLink]="['/documents']">
+              Ir a mis documentos
             </button>
           </div>
-        </div>
-      </mat-card>
-      <div class="empty-documents" *ngIf="recentDocuments.length === 0">
-        <mat-icon>description_off</mat-icon>
-        <p>No tienes documentos recientes</p>
-        <button mat-flat-button color="primary" [routerLink]="['/documents']">
-          Ir a mis documentos
-        </button>
+        }
       </div>
-    </div>
+    }
   </div>
 
   <div class="section-divider"></div>
@@ -143,50 +153,58 @@
         <mat-icon>arrow_forward</mat-icon>
       </a>
     </div>
-    <div class="document-list" *ngIf="favoriteDocuments.length > 0">
-      <mat-card class="document-card" *ngFor="let doc of favoriteDocuments" (click)="openDocumentViewer(doc)">
-        <div class="document-content">
-          <div class="document-icon favorite">
-            <mat-icon>{{ getIconForMimeType(doc.mimeType) }}</mat-icon>
-          </div>
-          <div class="document-info">
-            <div class="document-name">{{ doc.name }}</div>
-            <div class="document-meta">
-              <span class="document-size"><mat-icon>storage</mat-icon>{{ formatBytes(doc.size) }}</span>
-              <span *ngIf="doc.folderId" class="document-folder">
-                <mat-icon>folder</mat-icon>
-                {{ getFolderName(doc.folderId) }}
-              </span>
+    @if (favoriteDocuments.length > 0) {
+      <div class="document-list">
+        @for (doc of favoriteDocuments; track doc) {
+          <mat-card class="document-card" (click)="openDocumentViewer(doc)">
+            <div class="document-content">
+              <div class="document-icon favorite">
+                <mat-icon>{{ getIconForMimeType(doc.mimeType) }}</mat-icon>
+              </div>
+              <div class="document-info">
+                <div class="document-name">{{ doc.name }}</div>
+                <div class="document-meta">
+                  <span class="document-size"><mat-icon>storage</mat-icon>{{ formatBytes(doc.size) }}</span>
+                  @if (doc.folderId) {
+                    <span class="document-folder">
+                      <mat-icon>folder</mat-icon>
+                      {{ getFolderName(doc.folderId) }}
+                    </span>
+                  }
+                </div>
+              </div>
             </div>
+            <div class="document-footer">
+              <div class="document-date">
+                <mat-icon>schedule</mat-icon>{{ getTimeAgo(doc.updatedAt || '') }}
+              </div>
+              <div class="document-actions">
+                <button mat-icon-button class="action-button move-btn" (click)="openMoveDialog(doc, $event)" matTooltip="Mover documento">
+                  <mat-icon>drive_file_move</mat-icon>
+                </button>
+                <button mat-icon-button class="action-button favorite-btn" (click)="toggleFavorite(doc, $event)" matTooltip="{{ doc.isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos' }}">
+                  <mat-icon>{{ doc.isFavorite ? 'star' : 'star_outline' }}</mat-icon>
+                </button>
+                <button mat-icon-button class="action-button delete-btn" (click)="deleteDocument(doc, $event)" matTooltip="Eliminar">
+                  <mat-icon>delete_outline</mat-icon>
+                </button>
+              </div>
+            </div>
+          </mat-card>
+        }
+      </div>
+    }
+    @if (favoriteDocuments.length === 0) {
+      <div class="empty-documents empty-favorites">
+        <mat-icon class="star-icon-empty">grade</mat-icon>
+        <p>No tienes documentos destacados</p>
+        <button mat-raised-button class="favorite-cta-button" [routerLink]="['/documents']">
+          <div class="button-content">
+            <span>Marcar documentos como favoritos</span>
           </div>
-        </div>
-        <div class="document-footer">
-          <div class="document-date">
-            <mat-icon>schedule</mat-icon>{{ getTimeAgo(doc.updatedAt || '') }}
-          </div>
-          <div class="document-actions">
-            <button mat-icon-button class="action-button move-btn" (click)="openMoveDialog(doc, $event)" matTooltip="Mover documento">
-              <mat-icon>drive_file_move</mat-icon>
-            </button>
-            <button mat-icon-button class="action-button favorite-btn" (click)="toggleFavorite(doc, $event)" matTooltip="{{ doc.isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos' }}">
-              <mat-icon>{{ doc.isFavorite ? 'star' : 'star_outline' }}</mat-icon>
-            </button>
-            <button mat-icon-button class="action-button delete-btn" (click)="deleteDocument(doc, $event)" matTooltip="Eliminar">
-              <mat-icon>delete_outline</mat-icon>
-            </button>
-          </div>
-        </div>
-      </mat-card>
-    </div>
-    <div class="empty-documents empty-favorites" *ngIf="favoriteDocuments.length === 0">
-      <mat-icon class="star-icon-empty">grade</mat-icon>
-      <p>No tienes documentos destacados</p>
-      <button mat-raised-button class="favorite-cta-button" [routerLink]="['/documents']">
-        <div class="button-content">
-          <span>Marcar documentos como favoritos</span>
-        </div>
-      </button>
-    </div>
+        </button>
+      </div>
+    }
   </div>
 
   <div class="quick-links-section">

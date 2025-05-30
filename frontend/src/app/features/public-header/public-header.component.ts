@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterLink, Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { AuthService } from '../../core/services/auth.service';
@@ -12,9 +12,8 @@ import { AuthService } from '../../core/services/auth.service';
   selector: 'app-public-header',
   standalone: true,
   imports: [
-    CommonModule,
-    RouterLink,
-  ],
+    RouterLink
+],
   templateUrl: './public-header.component.html',
   styleUrls: ['./public-header.component.scss']
 })

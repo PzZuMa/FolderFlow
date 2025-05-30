@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterLink } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { FooterComponent } from '../footer/footer.component';
@@ -13,11 +13,10 @@ import { PublicHeaderComponent } from '../public-header/public-header.component'
   selector: 'app-politica-cookies',
   standalone: true,
   imports: [
-    CommonModule,
     RouterLink,
     FooterComponent,
     PublicHeaderComponent
-  ],
+],
   templateUrl: './politica-cookies.component.html',
   styleUrls: ['./politica-cookies.component.scss']
 })

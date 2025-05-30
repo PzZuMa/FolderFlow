@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { Title } from '@angular/platform-browser';
 import { FooterComponent } from "../footer/footer.component";
 import { PublicHeaderComponent } from "../public-header/public-header.component";
@@ -13,11 +13,10 @@ import { PublicHeaderComponent } from "../public-header/public-header.component"
   selector: 'app-tarifas',
   standalone: true,
   imports: [
-    CommonModule,
     RouterLink,
     FooterComponent,
     PublicHeaderComponent
-  ],
+],
   templateUrl: './tarifas.component.html',
   styleUrls: ['./tarifas.component.scss']
 })

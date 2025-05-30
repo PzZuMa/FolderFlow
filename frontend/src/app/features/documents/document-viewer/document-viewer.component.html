@@ -7,175 +7,215 @@
         </button>
         <div class="document-meta">
           <div class="document-title-container">
-            <h1 class="document-title" *ngIf="!isEditingName" (click)="startEditingName()" 
+            @if (!isEditingName) {
+              <h1 class="document-title" (click)="startEditingName()"
                 matTooltip="Hacer clic para editar el nombre">
-              {{ document?.name || 'Documento' }}
-              <mat-icon class="edit-name-icon">edit</mat-icon>
-            </h1>
-            <div class="name-editor" *ngIf="isEditingName">
-              <input 
-                type="text" 
-                [(ngModel)]="editedName" 
-                (keydown)="onNameKeyDown($event)"
-                (blur)="saveDocumentName()"
-                class="name-input"
-                placeholder="Nombre del documento"
-                maxlength="100">
-              <div class="name-editor-actions">
-                <button mat-icon-button class="save-btn" (click)="saveDocumentName()" matTooltip="Guardar">
-                  <mat-icon>check</mat-icon>
-                </button>
-                <button mat-icon-button class="cancel-btn" (click)="cancelEditingName()" matTooltip="Cancelar">
-                  <mat-icon>close</mat-icon>
-                </button>
+                {{ document?.name || 'Documento' }}
+                <mat-icon class="edit-name-icon">edit</mat-icon>
+              </h1>
+            }
+            @if (isEditingName) {
+              <div class="name-editor">
+                <input
+                  type="text"
+                  [(ngModel)]="editedName"
+                  (keydown)="onNameKeyDown($event)"
+                  (blur)="saveDocumentName()"
+                  class="name-input"
+                  placeholder="Nombre del documento"
+                  maxlength="100">
+                  <div class="name-editor-actions">
+                    <button mat-icon-button class="save-btn" (click)="saveDocumentName()" matTooltip="Guardar">
+                      <mat-icon>check</mat-icon>
+                    </button>
+                    <button mat-icon-button class="cancel-btn" (click)="cancelEditingName()" matTooltip="Cancelar">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+            @if (document) {
+              <div class="document-details">
+                <span class="file-size">{{ formatBytes(document.size) }}</span>
+                <span class="file-type">{{ getFileTypeLabel(document.mimeType) }}</span>
+                <span class="last-modified">Modificado {{ document.updatedAt | date:'short' }}</span>
               </div>
-            </div>
-          </div>          
-          <div class="document-details" *ngIf="document">
-            <span class="file-size">{{ formatBytes(document.size) }}</span>
-            <span class="file-type">{{ getFileTypeLabel(document.mimeType) }}</span>
-            <span class="last-modified">Modificado {{ document.updatedAt | date:'short' }}</span>
+            }
           </div>
         </div>
-      </div>
-      <div class="header-actions">
-        <div class="control-group" [ngSwitch]="fileType">
-          <ng-container *ngSwitchCase="'pdf'">
-            <div class="zoom-controls">
-              <button mat-icon-button class="control-btn" (click)="zoomOut()" matTooltip="Reducir zoom" [disabled]="zoomLevel <= 25">
-                <mat-icon>zoom_out</mat-icon>
-              </button>
-              <span class="zoom-display">{{ zoomLevel }}%</span>
-              <button mat-icon-button class="control-btn" (click)="zoomIn()" matTooltip="Ampliar zoom" [disabled]="zoomLevel >= 300">
-                <mat-icon>zoom_in</mat-icon>
-              </button>
-            </div>
-            <div class="page-controls" *ngIf="totalPages > 1">
-              <button mat-icon-button class="control-btn" (click)="previousPage()" [disabled]="currentPage === 1" matTooltip="Página anterior">
-                <mat-icon>chevron_left</mat-icon>
-              </button>
-              <span class="page-display">{{ currentPage }} de {{ totalPages }}</span>
-              <button mat-icon-button class="control-btn" (click)="nextPage()" [disabled]="currentPage === totalPages" matTooltip="Página siguiente">
-                <mat-icon>chevron_right</mat-icon>
-              </button>
-            </div>
-          </ng-container>
-          <ng-container *ngSwitchCase="'image'">
-            <div class="zoom-controls">
-              <button mat-icon-button class="control-btn" (click)="zoomOut()" matTooltip="Reducir zoom" [disabled]="zoomLevel <= 25">
-                <mat-icon>zoom_out</mat-icon>
-              </button>
-              <span class="zoom-display">{{ zoomLevel }}%</span>
-              <button mat-icon-button class="control-btn" (click)="zoomIn()" matTooltip="Ampliar zoom" [disabled]="zoomLevel >= 300">
-                <mat-icon>zoom_in</mat-icon>
-              </button>
-            </div>
-            <button mat-icon-button class="control-btn rotate-btn" (click)="rotateImage()" matTooltip="Rotar imagen">
-              <mat-icon>rotate_right</mat-icon>
+        <div class="header-actions">
+          <div class="control-group">
+            @switch (fileType) {
+              @case ('pdf') {
+                <div class="zoom-controls">
+                  <button mat-icon-button class="control-btn" (click)="zoomOut()" matTooltip="Reducir zoom" [disabled]="zoomLevel <= 25">
+                    <mat-icon>zoom_out</mat-icon>
+                  </button>
+                  <span class="zoom-display">{{ zoomLevel }}%</span>
+                  <button mat-icon-button class="control-btn" (click)="zoomIn()" matTooltip="Ampliar zoom" [disabled]="zoomLevel >= 300">
+                    <mat-icon>zoom_in</mat-icon>
+                  </button>
+                </div>
+                @if (totalPages > 1) {
+                  <div class="page-controls">
+                    <button mat-icon-button class="control-btn" (click)="previousPage()" [disabled]="currentPage === 1" matTooltip="Página anterior">
+                      <mat-icon>chevron_left</mat-icon>
+                    </button>
+                    <span class="page-display">{{ currentPage }} de {{ totalPages }}</span>
+                    <button mat-icon-button class="control-btn" (click)="nextPage()" [disabled]="currentPage === totalPages" matTooltip="Página siguiente">
+                      <mat-icon>chevron_right</mat-icon>
+                    </button>
+                  </div>
+                }
+              }
+              @case ('image') {
+                <div class="zoom-controls">
+                  <button mat-icon-button class="control-btn" (click)="zoomOut()" matTooltip="Reducir zoom" [disabled]="zoomLevel <= 25">
+                    <mat-icon>zoom_out</mat-icon>
+                  </button>
+                  <span class="zoom-display">{{ zoomLevel }}%</span>
+                  <button mat-icon-button class="control-btn" (click)="zoomIn()" matTooltip="Ampliar zoom" [disabled]="zoomLevel >= 300">
+                    <mat-icon>zoom_in</mat-icon>
+                  </button>
+                </div>
+                <button mat-icon-button class="control-btn rotate-btn" (click)="rotateImage()" matTooltip="Rotar imagen">
+                  <mat-icon>rotate_right</mat-icon>
+                </button>
+              }
+            }
+          </div>
+          <div class="action-buttons">
+            <button mat-stroked-button class="edit-btn disabled"
+              matTooltip="Esta función no está disponible actualmente. Estará disponible en futuras actualizaciones."
+              matTooltipClass="edit-tooltip"
+              disabled>
+              <mat-icon>edit</mat-icon>
+              <span>Editar</span>
             </button>
-          </ng-container>
-        </div>
-        <div class="action-buttons">
-          <button mat-stroked-button class="edit-btn disabled" 
-                  matTooltip="Esta función no está disponible actualmente. Estará disponible en futuras actualizaciones."
-                  matTooltipClass="edit-tooltip"
-                  disabled>
-            <mat-icon>edit</mat-icon>
-            <span>Editar</span>
-          </button>
-          <button mat-flat-button color="primary" class="download-btn" (click)="downloadFile()" matTooltip="Descargar archivo">
-            <mat-icon>download</mat-icon>
-            <span>Descargar</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </header>
-  <main class="viewer-main">
-    <div *ngIf="isLoading && !document" class="loading-state">
-      <div class="loading-content">
-        <mat-spinner diameter="60" color="primary"></mat-spinner>
-        <h3>Cargando documento</h3>
-        <p>Preparando la vista previa...</p>
-      </div>
-    </div>
-    <div *ngIf="loadError && !isLoading" class="error-state">
-      <div class="error-content">
-        <div class="error-icon">
-          <mat-icon>error_outline</mat-icon>
-        </div>
-        <h3>No se puede mostrar el documento</h3>
-        <p class="error-message">{{ errorMessage }}</p>
-        <div class="error-actions">
-          <button mat-flat-button color="primary" (click)="downloadFile()">
-            <mat-icon>download</mat-icon>
-            Descargar archivo
-          </button>
-          <button mat-stroked-button (click)="loadDocument(documentId!)">
-            <mat-icon>refresh</mat-icon>
-            Reintentar
-          </button>
-        </div>
-      </div>
-    </div>
-    <div class="document-content" *ngIf="!isLoading && !loadError" [ngSwitch]="fileType">
-      <div *ngSwitchCase="'pdf'" class="pdf-container">
-        <div class="pdf-viewer" *ngIf="pdfLoaded || !isLoading">
-          <canvas #pdfCanvas class="pdf-canvas" 
-                  [style.opacity]="isLoading ? 0.5 : 1"
-                  *ngIf="pdfLoaded"></canvas>
-        </div>
-        <div class="pdf-loading" *ngIf="isLoading && fileType === 'pdf'">
-          <mat-spinner diameter="40" color="primary"></mat-spinner>
-          <p>Cargando PDF...</p>
-        </div>
-      </div>
-      <div *ngSwitchCase="'image'" class="image-container">
-        <div class="image-viewer">
-          <img [src]="documentUrl" 
-               [style.transform]="'rotate(' + imageRotation + 'deg) scale(' + zoomLevel/100 + ')'" 
-               [alt]="document?.name || 'Imagen'" 
-               (load)="onImageLoad()" 
-               class="preview-image" />
-        </div>
-      </div>
-      <div *ngSwitchCase="'text'" class="text-container">
-        <div class="text-viewer">
-          <pre class="text-content">{{ textContent }}</pre>
-        </div>
-      </div>
-      <div *ngSwitchCase="'audio'" class="audio-container">
-        <div class="audio-player">
-          <div class="audio-info">
-            <mat-icon class="audio-icon">audiotrack</mat-icon>
-            <h3>{{ document?.name }}</h3>
-          </div>
-          <audio controls [src]="(documentUrl ?? '') | safeUrl" class="audio-control"></audio>
-        </div>
-      </div>
-      <div *ngSwitchCase="'video'" class="video-container">
-        <video controls [src]="(documentUrl ?? '') | safeUrl" class="video-player"></video>
-      </div>
-      <div *ngSwitchDefault class="unsupported-container">
-        <div class="unsupported-content">
-          <div class="unsupported-icon">
-            <mat-icon>description</mat-icon>
-          </div>
-          <h3>Vista previa no disponible</h3>
-          <p *ngIf="document?.mimeType === 'text/html' || document?.name?.toLowerCase()?.endsWith('.html') || document?.name?.toLowerCase()?.endsWith('.htm')">
-            Los archivos HTML no se pueden visualizar por motivos de seguridad
-          </p>
-          <p *ngIf="!(document?.mimeType === 'text/html' || document?.name?.toLowerCase()?.endsWith('.html') || document?.name?.toLowerCase()?.endsWith('.htm'))">
-            Este tipo de archivo no se puede visualizar en el navegador
-          </p>
-          <div class="unsupported-actions">
-            <button mat-flat-button color="primary" (click)="downloadFile()">
+            <button mat-flat-button color="primary" class="download-btn" (click)="downloadFile()" matTooltip="Descargar archivo">
               <mat-icon>download</mat-icon>
-              Descargar archivo
+              <span>Descargar</span>
             </button>
           </div>
         </div>
       </div>
+    </header>
+    <main class="viewer-main">
+      @if (isLoading && !document) {
+        <div class="loading-state">
+          <div class="loading-content">
+            <mat-spinner diameter="60" color="primary"></mat-spinner>
+            <h3>Cargando documento</h3>
+            <p>Preparando la vista previa...</p>
+          </div>
+        </div>
+      }
+      @if (loadError && !isLoading) {
+        <div class="error-state">
+          <div class="error-content">
+            <div class="error-icon">
+              <mat-icon>error_outline</mat-icon>
+            </div>
+            <h3>No se puede mostrar el documento</h3>
+            <p class="error-message">{{ errorMessage }}</p>
+            <div class="error-actions">
+              <button mat-flat-button color="primary" (click)="downloadFile()">
+                <mat-icon>download</mat-icon>
+                Descargar archivo
+              </button>
+              <button mat-stroked-button (click)="loadDocument(documentId!)">
+                <mat-icon>refresh</mat-icon>
+                Reintentar
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+      @if (!isLoading && !loadError) {
+        <div class="document-content">
+          @switch (fileType) {
+            @case ('pdf') {
+              <div class="pdf-container">
+                @if (pdfLoaded || !isLoading) {
+                  <div class="pdf-viewer">
+                    @if (pdfLoaded) {
+                      <canvas #pdfCanvas class="pdf-canvas"
+                        [style.opacity]="isLoading ? 0.5 : 1"
+                      ></canvas>
+                    }
+                  </div>
+                }
+                @if (isLoading && fileType === 'pdf') {
+                  <div class="pdf-loading">
+                    <mat-spinner diameter="40" color="primary"></mat-spinner>
+                    <p>Cargando PDF...</p>
+                  </div>
+                }
+              </div>
+            }
+            @case ('image') {
+              <div class="image-container">
+                <div class="image-viewer">
+                  <img [src]="documentUrl"
+                    [style.transform]="'rotate(' + imageRotation + 'deg) scale(' + zoomLevel/100 + ')'"
+                    [alt]="document?.name || 'Imagen'"
+                    (load)="onImageLoad()"
+                    class="preview-image" />
+                  </div>
+                </div>
+              }
+              @case ('text') {
+                <div class="text-container">
+                  <div class="text-viewer">
+                    <pre class="text-content">{{ textContent }}</pre>
+                  </div>
+                </div>
+              }
+              @case ('audio') {
+                <div class="audio-container">
+                  <div class="audio-player">
+                    <div class="audio-info">
+                      <mat-icon class="audio-icon">audiotrack</mat-icon>
+                      <h3>{{ document?.name }}</h3>
+                    </div>
+                    <audio controls [src]="(documentUrl ?? '') | safeUrl" class="audio-control"></audio>
+                  </div>
+                </div>
+              }
+              @case ('video') {
+                <div class="video-container">
+                  <video controls [src]="(documentUrl ?? '') | safeUrl" class="video-player"></video>
+                </div>
+              }
+              @default {
+                <div class="unsupported-container">
+                  <div class="unsupported-content">
+                    <div class="unsupported-icon">
+                      <mat-icon>description</mat-icon>
+                    </div>
+                    <h3>Vista previa no disponible</h3>
+                    @if (document?.mimeType === 'text/html' || document?.name?.toLowerCase()?.endsWith('.html') || document?.name?.toLowerCase()?.endsWith('.htm')) {
+                      <p>
+                        Los archivos HTML no se pueden visualizar por motivos de seguridad
+                      </p>
+                    }
+                    @if (!(document?.mimeType === 'text/html' || document?.name?.toLowerCase()?.endsWith('.html') || document?.name?.toLowerCase()?.endsWith('.htm'))) {
+                      <p>
+                        Este tipo de archivo no se puede visualizar en el navegador
+                      </p>
+                    }
+                    <div class="unsupported-actions">
+                      <button mat-flat-button color="primary" (click)="downloadFile()">
+                        <mat-icon>download</mat-icon>
+                        Descargar archivo
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              }
+            }
+          </div>
+        }
+      </main>
     </div>
-  </main>
-</div>

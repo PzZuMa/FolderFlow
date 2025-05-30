@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,14 +19,13 @@ export interface RenameFolderDialogData {
   standalone: true,
   // Importación de módulos necesarios para el funcionamiento del diálogo
   imports: [
-    CommonModule,
     MatDialogModule,
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
     ReactiveFormsModule
-  ],
+],
   // Plantilla HTML del diálogo de renombrar carpeta
   template: `
     <div class="dialog-container">
@@ -44,38 +43,40 @@ export interface RenameFolderDialogData {
         <form [formGroup]="nameForm" (ngSubmit)="onSubmit()">
           <mat-form-field appearance="outline" class="full-width" [class.error-field]="hasError">
             <mat-label>Nombre de la carpeta</mat-label>
-            <input matInput 
-                   formControlName="name"
-                   cdkFocusInitial
-                   placeholder="Mi carpeta"
-                   maxlength="100"
-                   (keyup.enter)="onSubmit()"
-                   (input)="onInputChange()"
-                   autocomplete="off">
-            <mat-icon matSuffix class="folder-icon">folder</mat-icon>
-            <mat-hint align="end">{{getCurrentLength()}}/100</mat-hint>
-          </mat-form-field>
-          <!-- Mensaje de error si existe -->
-          <div class="error-message" *ngIf="errorMessage">
-            <mat-icon>error_outline</mat-icon>
-            <span>{{ errorMessage }}</span>
-          </div>
-        </form>
-      </mat-dialog-content>
-      <mat-dialog-actions align="end">
-        <button mat-button class="cancel-button" (click)="onCancel()">
-          Cancelar
-        </button>
-        <button mat-flat-button color="primary" 
-                [disabled]="!isValidName() || isLoading" 
-                class="save-button" 
-                (click)="onSubmit()">
-          <mat-icon>save</mat-icon>
-          <span>Guardar cambios</span>
-        </button>
-      </mat-dialog-actions>
-    </div>
-  `,
+            <input matInput
+              formControlName="name"
+              cdkFocusInitial
+              placeholder="Mi carpeta"
+              maxlength="100"
+              (keyup.enter)="onSubmit()"
+              (input)="onInputChange()"
+              autocomplete="off">
+              <mat-icon matSuffix class="folder-icon">folder</mat-icon>
+              <mat-hint align="end">{{getCurrentLength()}}/100</mat-hint>
+            </mat-form-field>
+            <!-- Mensaje de error si existe -->
+            @if (errorMessage) {
+              <div class="error-message">
+                <mat-icon>error_outline</mat-icon>
+                <span>{{ errorMessage }}</span>
+              </div>
+            }
+          </form>
+        </mat-dialog-content>
+        <mat-dialog-actions align="end">
+          <button mat-button class="cancel-button" (click)="onCancel()">
+            Cancelar
+          </button>
+          <button mat-flat-button color="primary"
+            [disabled]="!isValidName() || isLoading"
+            class="save-button"
+            (click)="onSubmit()">
+            <mat-icon>save</mat-icon>
+            <span>Guardar cambios</span>
+          </button>
+        </mat-dialog-actions>
+      </div>
+    `,
   // Estilos CSS específicos para el diálogo de renombrar carpeta
   styles: [`
     .dialog-container {

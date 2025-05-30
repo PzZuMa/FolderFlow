@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterLink } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { FooterComponent } from "../footer/footer.component";
@@ -13,11 +13,10 @@ import { PublicHeaderComponent } from "../public-header/public-header.component"
   selector: 'app-info',
   standalone: true,
   imports: [
-    CommonModule,
     RouterLink,
     FooterComponent,
     PublicHeaderComponent
-  ],
+],
   templateUrl: './info.component.html',
   styleUrls: ['./info.component.scss']
 })
